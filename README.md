@@ -1,4 +1,4 @@
-Link-board app | Tsoha
+# Link-board app | Tsoha
 
 Link-board is an app where users can post links to news, articles and pictures. Links 
 submitted by users start a new discussion thread where other users can participate. The board 
