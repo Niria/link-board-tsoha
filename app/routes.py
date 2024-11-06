@@ -20,19 +20,19 @@ def login():
         result = db.session.execute(sql, {"username":username})
         user = result.fetchone()
         if not user:
-            return "Invalid username"
+            return render_template("error.html", message="Invalid username"), 401
         else:
             hashed_pw = user.password
             if check_password_hash(hashed_pw, password):
                 session["username"] = username
             else:
-                return "Invalid password"
+                return render_template("error.html", message="Invalid password"), 401
         return redirect(url_for("index"))
 
 @app.route("/logout")
 def logout():
     del session["username"]
-    return redirect("/")
+    return redirect(url_for("index"))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -43,16 +43,18 @@ def register():
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         if password1 != password2:
-            return "Passwords don't match"
+            return render_template("error.html", message="Passwords don't match")
         if len(username) < 3 or len(username) > 20:
-            return "Username must be between 3 and 20 characters long."
+            return render_template("error.html", 
+                                   message="Username must be between 3 and 20 characters long.")
         if len(password1) < 4 or len(password1) > 64:
-            return "Password must be between 4 and 64 characters long."
+            return render_template("error.html", 
+                                   message="Password must be between 4 and 64 characters long.")
         
         sql = text("SELECT id FROM users WHERE username=:username")
         user = db.session.execute(sql, {"username":username}).fetchone()
         if user:
-            return "Username already exists."
+            return render_template("error.html", message="Username already exists.")
         
         hashed_password = generate_password_hash(password1)
         sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
