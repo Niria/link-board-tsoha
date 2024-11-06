@@ -4,5 +4,5 @@ from os import getenv
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
-from . import routes
+from . import routes, auth
 
