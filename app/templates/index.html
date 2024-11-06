@@ -2,4 +2,10 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <h1>Index</h1>
+{% for category in categories %}
+<span><a href="/c/{{ category[0].lower() }}">{{ category[0] }}</a></span>
+{% endfor %}
+{% for thread in threads %}
+<p>{{ thread[0] }}</p>
+{% endfor %}
 {% endblock %}

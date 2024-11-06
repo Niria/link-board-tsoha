@@ -9,8 +9,15 @@ CREATE TABLE users (
     user_role SMALLINT DEFAULT 0
 );
 
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    is_public BOOLEAN DEFAULT FALSE
+);
+
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
+    category_id INTEGER REFERENCES categories,
     title TEXT NOT NULL,
     content TEXT,
     link_url TEXT NOT NULL,
@@ -25,12 +32,6 @@ CREATE TABLE replies (
     parent_id INTEGER REFERENCES replies,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
-    is_public BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE permissions (
