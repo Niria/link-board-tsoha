@@ -2,7 +2,7 @@ from .db import db
 from sqlalchemy.sql import text
 
 
-def get_categories():
+def get_category_list():
     sql = text("""SELECT c.name
                     FROM categories AS c
                    WHERE c.is_public=:public""")
@@ -19,7 +19,7 @@ def get_category(name: str):
     category = db.session.execute(sql, {"name":name, "visible":True})
     return category.fetchall()
 
-def get_threads():
+def get_all_threads():
     sql = text("""SELECT t.title 
                     FROM threads AS t 
                     JOIN categories AS c 
@@ -27,4 +27,15 @@ def get_threads():
                    WHERE c.is_public=:public""")
     
     threads = db.session.execute(sql, {"public":True})
+    return threads.fetchall()
+
+def get_category_threads(category):
+    sql = text("""SELECT t.title 
+                    FROM threads AS t 
+                    JOIN categories AS c 
+                      ON c.id=t.category_id 
+                   WHERE c.is_public=:public
+                     AND c.name=:category""")
+    
+    threads = db.session.execute(sql, {"public":True, "category":category})
     return threads.fetchall()
