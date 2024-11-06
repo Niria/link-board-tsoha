@@ -1,3 +1,5 @@
-{% for category in categories %}
-<span><a href="/c/{{ category[0].lower() }}">{{ category[0] }}</a></span>
-{% endfor %}
+<div class="category-nav-container">
+    {% for category in categories %}
+    <span><a class="category-link" href="/c/{{ category[0].lower() }}">{{ category[0] }}</a></span>
+    {% endfor %}
+</div>

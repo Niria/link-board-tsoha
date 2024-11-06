@@ -4,11 +4,13 @@
 {% block navbar %}
 <nav class="navbar-container">
     <div class="navbar">
-        <a href="{{ url_for('index') }}"><div><strong>Link Board</strong></div></a>
+        <a href="{{ url_for('index') }}"><div class="app-title">Link Board</div></a>
         <div>
             {% if session.username %}
-            You are logged in as {{ session.username }}
-            <a href="{{ url_for('logout') }}">Log out</a>
+            <div>
+                <div>Logged in as {{ session.username }}</div>
+                <a href="{{ url_for('logout') }}">Log out</a>
+            </div>
             {% else %}
             <a href="{{ url_for('login') }}">Log in</a>
             {% endif %}

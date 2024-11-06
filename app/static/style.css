@@ -3,6 +3,10 @@ body {
     margin: 0px;
 }
 
+h1 {
+    color: darkslategray;
+}
+
 .navbar-container {
     display: flex;
     align-items: center;
@@ -23,16 +27,19 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    font-size: smaller;
+    text-align: right;
 
 }
 
 .navbar-container a {
     text-decoration: none;
-    color: darkcyan;
+    color: darkred;
+    padding: 2px;
 }
 
 .navbar a:hover {
-    background-color: bisque;
+    background-color: aquamarine;
 }
 
 .content-container {
@@ -56,14 +63,41 @@ body {
 }
 
 .listview-thread-container {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
+    padding: 4px;
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 12px;
+    background-color: beige;
+    border: solid;
+    border-width: 3px;
+    border-color: lightgray;
+    border-radius: 4px;
 }
 
 .listview-thread-details {
     font-size: smaller;
 }
+
+.app-title {
+    font-size: larger;
+    font-weight: 600;
+    color: darkcyan;
+}
+
+.category-link {
+    text-decoration: none;
+    color: darkcyan;
+}
+
+.category-link:hover {
+    background-color: bisque;
+}
+
+.category-nav-container {
+    max-width: 1280px;
+    width: 100%;
+}
+
+

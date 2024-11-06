@@ -7,8 +7,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if session["username"]:
-        return redirect(url_for("index"))
     if request.method == "GET":
         return render_template("login.html")
     elif request.method == "POST":
