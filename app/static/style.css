@@ -14,7 +14,7 @@ h1 {
 }
 
 .navbar {
-    height: 50px;
+    height: 64px;
     padding-inline: 16px;
     background-color: antiquewhite;
     color: darkcyan;
@@ -32,14 +32,14 @@ h1 {
 
 }
 
+.navbar a:hover {
+    background-color: aquamarine;
+}
+
 .navbar-container a {
     text-decoration: none;
     color: darkred;
     padding: 2px;
-}
-
-.navbar a:hover {
-    background-color: aquamarine;
 }
 
 .content-container {
@@ -98,6 +98,10 @@ h1 {
 .category-nav-container {
     max-width: 1280px;
     width: 100%;
+}
+
+.category-nav-container > span:not(:last-child)::after {
+    content: " | ";
 }
 
 

@@ -3,19 +3,5 @@
 {% block content %}
 {% include "category_nav.html" %}
 <h1>{{ category.capitalize() }}</h1>
-{% for thread in threads %}
-<div class="listview-thread-container">
-    <a href="">
-        <div class="thread-link"></div>
-    </a>
-    <div>
-        <a href="">{{ thread[0] }}</a>
-        <div class="listview-thread-details">
-            <div>{{ thread[1] }}</div>
-            <span>{{ thread[2] }}</span>
-            <span>- {{ thread[3] }}</span>
-        </div>
-    </div>
-</div>
-{% endfor %}
+{% include "thread_list.html" %}
 {% endblock %}

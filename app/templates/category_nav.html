@@ -1,4 +1,5 @@
 <div class="category-nav-container">
+    <span><a class="category-link" href="{{ url_for('index') }}">all</a></span>
     {% for category in categories %}
     <span><a class="category-link" href="/c/{{ category[0].lower() }}">{{ category[0] }}</a></span>
     {% endfor %}

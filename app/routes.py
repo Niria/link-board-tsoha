@@ -6,7 +6,7 @@ from .content import get_category_list, get_category_threads, get_all_threads
 def index():
     categories = get_category_list()
     threads = get_all_threads()
-    return render_template("index.html", categories=categories, threads=threads)
+    return render_template("index.html", categories=categories, category="all", threads=threads)
 
 
 @app.route("/c/<string:category>")
