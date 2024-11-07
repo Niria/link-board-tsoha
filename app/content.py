@@ -32,3 +32,18 @@ def get_category_threads(category):
                                        "category":category, 
                                        "visible":True})
     return threads.fetchall()
+
+def get_thread(id: int):
+    sql = text("""SELECT t.title, t.content, t.link_url
+                    FROM threads AS t
+                    JOIN replies AS r 
+                      ON t.id=r.thread_id
+                    JOIN categories AS c
+                      ON c.id=t.category_id
+                   WHERE t.visible=:visible
+                     AND c.is_public=:public
+                     AND t.id=:id""")
+    thread = db.session.execute(sql, {"visible":True, 
+                                      "is_public":True, 
+                                      "id":id})
+    return thread

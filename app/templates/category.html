@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{{ category[0] }}{% endblock %}
 {% block content %}
-{% include "category_nav.html" %}
 <h1>{{ category.capitalize() }}</h1>
 {% include "thread_list.html" %}
 {% endblock %}
