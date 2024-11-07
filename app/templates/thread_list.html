@@ -1,14 +1,14 @@
 {% for thread in threads %}
 <div class="listview-thread-container">
-    <a href="">
+    <a href="/p/{{ thread['id'] }}">
         <div class="thread-link"></div>
     </a>
     <div>
-        <a href="">{{ thread[0] }}</a>
+        <a href="/p/{{ thread['id'] }}">{{ thread['title'] }}</a>
         <div class="listview-thread-details">
-            <div>{{ thread[1] }}</div>
-            <span><a href="/c/{{ thread[3] }}">{{ thread[2] }}</a></span>
-            <span>- <a href="/c/{{ thread[3] }}">{{ thread[3] }}</a></span>
+            <div>{{ thread['content'] }}</div>
+            <span><a href="/c/{{ thread['category'] }}">{{ thread['link_url'] }}</a></span>
+            <span>- <a href="/c/{{ thread['category'] }}">{{ thread['category'] }}</a></span>
         </div>
     </div>
 </div>

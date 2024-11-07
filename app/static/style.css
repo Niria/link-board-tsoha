@@ -114,4 +114,29 @@ h1 {
     content: " | ";
 }
 
+.thread-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-inline: 1rem;
+    padding-block: 1rem;
+    border: solid;
+    border-width: 0.25rem;
+    border-color: gray;
+    border-radius: 0.5rem;
+}
+
+.reply-container {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-inline: 1rem;
+    padding-block: 1rem;
+    border: solid;
+    border-width: 0.125rem;
+    border-color: gray;
+    border-radius: 0.5rem;
+}
+
 
