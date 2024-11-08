@@ -126,6 +126,7 @@ h1 {
     border-width: 0.25rem;
     border-color: gray;
     border-radius: 0.5rem;
+    background-color: beige;
 }
 
 .reply-container {
@@ -137,6 +138,7 @@ h1 {
     border-width: 0.125rem;
     border-color: gray;
     border-radius: 0.5rem;
+    background-color: floralwhite;
 }
 
 
