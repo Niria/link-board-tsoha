@@ -57,13 +57,13 @@ def get_thread(id: int):
 
 def get_replies(thread_id: int):
     sql = text("""WITH RECURSIVE reply_tree(
-                        id,
-                        user_id, 
-                        parent_id,
-                        content, 
-                        created_at, 
-                        path) AS (
-                        SELECT r.id, 
+                       id,
+                       user_id, 
+                       parent_id,
+                       content, 
+                       created_at, 
+                       path) 
+                    AS (SELECT r.id, 
                                r.user_id, 
                                r.parent_id, 
                                r.content, 
@@ -82,7 +82,8 @@ def get_replies(thread_id: int):
                                path || r.id
                           FROM replies AS r
                           JOIN reply_tree AS rt
-                            ON rt.id=r.parent_id)
+                            ON rt.id=r.parent_id
+                       )
                 
                  SELECT rt.id, 
                         rt.user_id, 

@@ -125,20 +125,49 @@ h1 {
     border: solid;
     border-width: 0.25rem;
     border-color: gray;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     background-color: beige;
 }
 
-.reply-container {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+.reply-content {
+    /* margin-left: calc(var(--reply-depth)*2rem); */
     padding-inline: 1rem;
     padding-block: 1rem;
     border: solid;
     border-width: 0.125rem;
     border-color: gray;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     background-color: floralwhite;
+    margin-top: 1rem;
+    z-index: 2;
 }
 
+.reply-container {
+    display: flex;
+    flex-direction: row;
+    /* margin-bottom: 1rem; */
+}
 
+.reply-chain {
+    margin-left: calc((2*var(--reply-depth) - 1)*1rem);
+    height: 2rem;
+    width: 1rem;
+    border-left: solid;
+    border-bottom: solid;
+    border-color: darkgray;
+    border-width: 0.125rem;
+}
+
+.reply-chain-container {
+    position: relative;
+}
+
+.reply-chain:before {
+    content: '';
+    position: absolute;
+    width: 0.125rem;
+    height: 6rem;
+    background-color: darkgray;
+    top: -6rem;
+    left: calc((2*var(--reply-depth) - 1)*1rem);
+}
