@@ -23,6 +23,8 @@ def login():
                 session["username"] = user.username
                 session["display_name"] = user.display_name
                 session["user_id"] = user.id
+                if request.form.get("next"):
+                    return redirect(request.form["next"])
             else:
                 return render_template("error.html", message="Invalid password"), 401
         return redirect(url_for("index"))
@@ -30,7 +32,9 @@ def login():
 @app.route("/logout")
 def logout():
     del session["username"]
-    return redirect(url_for("index"))
+    del session["display_name"]
+    del session["user_id"]
+    return redirect(url_for("login"))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
