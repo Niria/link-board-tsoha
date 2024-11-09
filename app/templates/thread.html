@@ -9,15 +9,18 @@
         <div>{{ thread.content }}</div>
         <span><a href="/c/{{ thread.category }}">{{ thread.link_url }}</a></span>
         <span>- <a href="/c/{{ thread.category }}">{{ thread.category }}</a></span>
+    
+        <button onclick="toggleCommentForm(event)" value="thread">Reply</button>
         {% with reply=None %}
             {% include "comment_form.html" %}
         {% endwith %}
-</div>
+    </div>
 </div>
 {% for reply in replies %}
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
         <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} | {{ reply.display_name}}</div>
         <div>{{ reply.content }}</div>
+        <button onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}
     </div>
 {% endfor %}

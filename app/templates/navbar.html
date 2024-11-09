@@ -4,7 +4,7 @@
         <div>
             {% if session.username %}
             <div>
-                <div>Logged in as {{ session.username }}</div>
+                <div>Logged in as {{ session.display_name or session.username }}</div>
                 <a href="{{ url_for('logout') }}">Log out</a>
             </div>
             {% else %}
