@@ -13,7 +13,7 @@
 </div>
 {% for reply in replies %}
 <div class="reply-container">
-    <div>{{ reply.display_name}}</div>
+    <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - {{ reply.depth }} | {{ reply.display_name}}</div>
     <div>{{ reply.content }}</div>
 </div>
 {% endfor %}

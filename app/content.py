@@ -56,15 +56,44 @@ def get_thread(id: int):
     return thread.fetchone()
 
 def get_replies(thread_id: int):
-    sql = text("""SELECT r.user_id,
-                         r.parent_id,
-                         r.content, 
-                         u.display_name
-                    FROM replies AS r
-                    JOIN threads AS t
-                      ON t.id=r.thread_id
-                    JOIN users AS u
-                      ON u.id=r.user_id
-                   WHERE t.id=:thread_id""")
+    sql = text("""WITH RECURSIVE reply_tree(
+                        id,
+                        user_id, 
+                        parent_id,
+                        content, 
+                        created_at, 
+                        path) AS (
+                        SELECT r.id, 
+                               r.user_id, 
+                               r.parent_id, 
+                               r.content, 
+                               r.created_at, 
+                               ARRAY[r.id]
+                          FROM replies AS r
+                         WHERE r.parent_id IS NULL
+
+                         UNION ALL
+
+                        SELECT r.id, 
+                               r.user_id, 
+                               r.parent_id, 
+                               r.content, 
+                               r.created_at, 
+                               path || r.id
+                          FROM replies AS r
+                          JOIN reply_tree AS rt
+                            ON rt.id=r.parent_id)
+                
+                 SELECT rt.id, 
+                        rt.user_id, 
+                        rt.parent_id, 
+                        rt.content,
+                        u.display_name,
+                        array_length(path, 1)-1 AS depth
+                   FROM reply_tree AS rt
+                   JOIN users AS u
+                     ON rt.user_id=u.id
+                  ORDER BY created_at ASC, 
+                        path[1:array_length(path, 1)-1];""")
     replies = db.session.execute(sql, {"thread_id":thread_id})
     return replies.fetchall()
