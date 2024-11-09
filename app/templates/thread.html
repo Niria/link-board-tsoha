@@ -12,18 +12,10 @@
 </div>
 </div>
 {% for reply in replies %}
-<div class="reply-container" style="--reply-depth:{{ reply.depth }}">
-    {% if reply.depth > 0%}
-    <div class="reply-chain-container">
-        <div class="reply-chain" style="--reply-depth:{{ reply.depth }}">
-        </div>
-    </div>
-    {% endif %}
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
         <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - {{ reply.depth }} | {{ reply.display_name}}</div>
         <div>{{ reply.content }}</div>
     </div>
-</div>
 {% endfor %}
 
 

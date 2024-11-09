@@ -130,7 +130,7 @@ h1 {
 }
 
 .reply-content {
-    /* margin-left: calc(var(--reply-depth)*2rem); */
+    margin-left: calc(var(--reply-depth)*2rem);
     padding-inline: 1rem;
     padding-block: 1rem;
     border: solid;
@@ -140,34 +140,4 @@ h1 {
     background-color: floralwhite;
     margin-top: 1rem;
     z-index: 2;
-}
-
-.reply-container {
-    display: flex;
-    flex-direction: row;
-    /* margin-bottom: 1rem; */
-}
-
-.reply-chain {
-    margin-left: calc((2*var(--reply-depth) - 1)*1rem);
-    height: 2rem;
-    width: 1rem;
-    border-left: solid;
-    border-bottom: solid;
-    border-color: darkgray;
-    border-width: 0.125rem;
-}
-
-.reply-chain-container {
-    position: relative;
-}
-
-.reply-chain:before {
-    content: '';
-    position: absolute;
-    width: 0.125rem;
-    height: 6rem;
-    background-color: darkgray;
-    top: -6rem;
-    left: calc((2*var(--reply-depth) - 1)*1rem);
 }
