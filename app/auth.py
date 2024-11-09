@@ -12,7 +12,7 @@ def login():
     elif request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        sql = text("SELECT id, password FROM users WHERE username=:username")
+        sql = text("SELECT id, password, username, display_name FROM users WHERE username=:username")
         result = db.session.execute(sql, {"username":username})
         user = result.fetchone()
         if not user:
@@ -20,7 +20,9 @@ def login():
         else:
             hashed_pw = user.password
             if check_password_hash(hashed_pw, password):
-                session["username"] = username
+                session["username"] = user.username
+                session["display_name"] = user.display_name
+                session["user_id"] = user.id
             else:
                 return render_template("error.html", message="Invalid password"), 401
         return redirect(url_for("index"))

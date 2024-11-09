@@ -1,0 +1,11 @@
+<form class="comment-form" action="/p/{{ thread.id }}" method="POST">
+    <textarea name="content" rows="3" cols="80"></textarea>
+    <input type="hidden" name="thread_id" value="{{ thread.id }}" />
+    {% if reply %}
+    <input type="hidden" name="parent_id" value="{{ reply.id }}" />
+    {% else %}
+    <input type="hidden" name="parent_id" value="" />
+    {% endif %}
+    <input type="hidden" name="user_id" value="{{ session.user_id }}" />
+    <input class="btn" type="submit" value="Submit"/>
+</form>

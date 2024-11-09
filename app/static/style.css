@@ -139,5 +139,17 @@ h1 {
     border-radius: 0.375rem;
     background-color: floralwhite;
     margin-top: 1rem;
-    z-index: 2;
+}
+
+.comment-form {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.btn {
+    width: 4rem;
+    height: 2rem;
+    text-align: center;
 }

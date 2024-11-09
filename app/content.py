@@ -68,9 +68,10 @@ def get_replies(thread_id: int):
                                r.parent_id, 
                                r.content, 
                                r.created_at, 
-                               ARRAY[r.id]
+                               ARRAY[r.id, r.id]
                           FROM replies AS r
                          WHERE r.parent_id IS NULL
+                           AND r.thread_id=:thread_id
 
                          UNION ALL
 
@@ -83,6 +84,7 @@ def get_replies(thread_id: int):
                           FROM replies AS r
                           JOIN reply_tree AS rt
                             ON rt.id=r.parent_id
+                         WHERE r.thread_id=:thread_id
                        )
                 
                  SELECT rt.id, 
@@ -90,11 +92,19 @@ def get_replies(thread_id: int):
                         rt.parent_id, 
                         rt.content,
                         u.display_name,
-                        array_length(path, 1)-1 AS depth
+                        array_length(path, 1)-2 AS depth
                    FROM reply_tree AS rt
                    JOIN users AS u
                      ON rt.user_id=u.id
-                  ORDER BY created_at ASC, 
-                        path[1:array_length(path, 1)-1];""")
+                  ORDER BY path[1:array_length(path, 1)-1],
+                        created_at ASC;""")
     replies = db.session.execute(sql, {"thread_id":thread_id})
     return replies.fetchall()
+
+def add_reply(user_id, thread_id, parent_id, content):
+    sql = text("""INSERT INTO replies (user_id, thread_id, 
+                         parent_id, content) 
+                  VALUES (:user_id, :thread_id, :parent_id, :content)""") 
+    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id,
+                             "parent_id":parent_id, "content":content})
+    db.session.commit()
