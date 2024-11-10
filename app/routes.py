@@ -6,10 +6,13 @@ from .utils import login_required
 from . import users
 
 
+
 @app.route("/")
 @login_required
 def index():
     threads = get_threads(None)
+    if not threads:
+        return render_template("error.html", message="Invalid category")
     return render_template("index.html", 
                             category="all", 
                             threads=threads)
@@ -19,6 +22,8 @@ def index():
 @login_required
 def category_page(category: str):
     threads = get_threads(category)
+    if not threads:
+        return redirect("/")
     return render_template("category.html", 
                            category=category, 
                            threads=threads)
@@ -28,6 +33,8 @@ def category_page(category: str):
 def thread_page(thread_id: int):
     if request.method == "GET":
         thread = get_thread(thread_id)
+        if not thread:
+            return redirect("/")
         replies = get_replies(thread_id)
         return render_template("thread.html", thread=thread, replies=replies)
     elif request.method == "POST":
@@ -39,3 +46,11 @@ def thread_page(thread_id: int):
 
         add_reply(user_id, thread_id, parent_id, content)
         return redirect(f"/p/{thread_id}")
+
+
+# Catches invalid paths
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template("error.html", message='Nothing to be found here')
+

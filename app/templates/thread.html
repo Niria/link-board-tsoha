@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="thread-container">
-    <a href="/p/{{ thread.link_url }}">
+    <a href="{{ thread.link_url }}">
         <div class="thread-link"></div>
     </a>
     <div>
         <div>{{ thread.title }}</div>
         <div>{{ thread.content }}</div>
-        <span><a href="/c/{{ thread.category }}">{{ thread.link_url }}</a></span>
-        <span>- <a href="/c/{{ thread.category }}">{{ thread.category }}</a></span>
-    
+        <span>{% include "thread_details.html" %}</span>
         <button onclick="toggleCommentForm(event)" value="thread">Reply</button>
         {% with reply=None %}
             {% include "comment_form.html" %}
@@ -19,7 +17,7 @@
 {% for reply in replies %}
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
         <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
-        <div><a href="/u/{{ reply.username }}">{{ reply.display_name}}</a></div>
+        <div><a href="">{{ reply.display_name}}</a></div>
         <div>{{ reply.content }}</div>
         <button onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}

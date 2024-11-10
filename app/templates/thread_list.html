@@ -1,24 +1,12 @@
 {% for thread in threads %}
 <div class="listview-thread-container">
-    <a href="/p/{{ thread.id }}">
+    <a href="{{ thread.link_url }}">
         <div class="thread-link"></div>
     </a>
     <div>
-        <a href="/p/{{ thread.id }}">{{ thread.title }}</a>
+        <a href="{{ url_for('thread_page', thread_id=thread.id) }}">{{ thread.title }}</a>
         <div class="listview-thread-details">
-            <div>posted 
-                {% if not thread.age %}
-                    {{ " just now" }}
-                {% elif thread.age.split()[0] | int > 1 %}
-                    {{ thread.age }}s ago
-                {% else %}
-                    {{ thread.age }} ago
-                {% endif %}
-                by {{ thread.display_name }}
-            </div>
-            <span>{{thread.likes }} likes</span>
-            <span>{{ thread.comments }} comments</span>
-            <span><a href="/c/{{ thread.category }}">{{ thread.category }}</a></span>
+        {% include "thread_details.html"%}
         </div>
     </div>
 </div>

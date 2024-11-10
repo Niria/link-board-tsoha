@@ -9,25 +9,28 @@ def get_category_list():
     categories = db.session.execute(sql, {"public":True})
     return categories.fetchall()
 
-                        #  date_trunc('second', CURRENT_TIMESTAMP-t.created_at) AS age, 
 def get_threads(category: str):
+    if category:
+        sql = text("SELECT 1 FROM categories WHERE name=:category")
+        category_exists = db.session.execute(sql, {"category":category})
+        if not category_exists:
+            return None
     sql = text("""SELECT t.id, t.title, t.content, t.link_url, t.likes,
-                         u.display_name, count(r.id) AS comments, 
-                         time_ago(t.created_at) AS age,
+                         count(r.id) AS comments, time_ago(t.created_at) AS age,
+                         u.display_name, u.id AS user_id,
                          c.name AS category
                     FROM threads AS t 
                     JOIN categories AS c 
                       ON c.id=t.category_id 
                     JOIN users AS u
                       ON t.user_id=u.id
-                    LEFT JOIN replies AS r
-                      ON r.thread_id=t.id
+                         LEFT JOIN replies AS r
+                         ON r.thread_id=t.id
                    WHERE c.is_public=:public
                      AND (:category IS NULL OR c.name=:category)
                      AND t.visible=:visible
-                   GROUP BY t.id, u.display_name, c.name
+                   GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
-    
     threads = db.session.execute(sql, {"public":True, 
                                        "visible":True, 
                                        "category":category})
@@ -37,24 +40,30 @@ def get_thread(id: int):
     sql = text("""SELECT t.id,
                          t.title, 
                          t.content, 
-                         t.link_url, 
-                         c.name AS category,
+                         t.link_url,
+                         t.likes,
                          u.display_name,
-                         u.id AS user_id
+                         u.id AS user_id,
+                         count(r.id) AS comments,
+                         time_ago(t.created_at) AS age, 
+                         c.name AS category
                     FROM threads AS t
                     JOIN categories AS c
                       ON c.id=t.category_id
                     JOIN users AS u
                       ON t.user_id=u.id
+                         LEFT JOIN replies AS r
+                         ON r.thread_id=t.id
                    WHERE t.visible=:visible
                      AND c.is_public=:public
-                     AND t.id=:id""")
-    thread = db.session.execute(sql, {"visible":True, 
-                                      "public":True, 
+                     AND t.id=:id
+                   GROUP BY t.id, u.id, u.display_name, c.name""")
+    thread = db.session.execute(sql, {"public":True, 
+                                      "visible":True,
                                       "id":id})
     return thread.fetchone()
 
-def get_replies(thread_id: int, order=""):
+def get_replies(thread_id: int):
     sql = text("""WITH RECURSIVE reply_tree(
                        id,
                        user_id, 
