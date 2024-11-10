@@ -2,7 +2,8 @@ from app import app
 from flask import render_template, redirect, request, session, url_for
 from sqlalchemy.sql import text
 from .db import db
-from werkzeug.security import check_password_hash, generate_password_hash
+from . import users
+from werkzeug.security import generate_password_hash
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -12,21 +13,10 @@ def login():
     elif request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        sql = text("SELECT id, password, username, display_name FROM users WHERE username=:username")
-        result = db.session.execute(sql, {"username":username})
-        user = result.fetchone()
-        if not user:
-            return render_template("error.html", message="Invalid username"), 401
-        else:
-            hashed_pw = user.password
-            if check_password_hash(hashed_pw, password):
-                session["username"] = user.username
-                session["display_name"] = user.display_name
-                session["user_id"] = user.id
-                if request.form.get("next"):
-                    return redirect(request.form["next"])
-            else:
-                return render_template("error.html", message="Invalid password"), 401
+        if not users.login(username, password):
+            return render_template("error.html", message="Wrong username or password."), 401
+        if request.form.get("next"):
+            return redirect(request.form["next"])
         return redirect(url_for("index"))
 
 @app.route("/logout")
@@ -36,6 +26,7 @@ def logout():
     del session["user_id"]
     return redirect(url_for("login"))
 
+# TODO: move register db requests to users module
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":

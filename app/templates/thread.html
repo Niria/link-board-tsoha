@@ -18,7 +18,8 @@
 </div>
 {% for reply in replies %}
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
-        <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} | {{ reply.display_name}}</div>
+        <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
+        <div><a href="/u/{{ reply.username }}">{{ reply.display_name}}</a></div>
         <div>{{ reply.content }}</div>
         <button onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}

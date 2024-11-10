@@ -55,7 +55,7 @@ def get_thread(id: int):
                                       "id":id})
     return thread.fetchone()
 
-def get_replies(thread_id: int):
+def get_replies(thread_id: int, order=""):
     sql = text("""WITH RECURSIVE reply_tree(
                        id,
                        user_id, 
@@ -68,7 +68,7 @@ def get_replies(thread_id: int):
                                r.parent_id, 
                                r.content, 
                                r.created_at, 
-                               ARRAY[r.id, r.id]
+                               ARRAY[r.id]
                           FROM replies AS r
                          WHERE r.parent_id IS NULL
                            AND r.thread_id=:thread_id
@@ -91,13 +91,14 @@ def get_replies(thread_id: int):
                         rt.user_id, 
                         rt.parent_id, 
                         rt.content,
+                        u.username,
                         u.display_name,
-                        array_length(path, 1)-2 AS depth
+                        array_length(rt.path, 1)-1 AS depth,
+                        rt.path
                    FROM reply_tree AS rt
                    JOIN users AS u
                      ON rt.user_id=u.id
-                  ORDER BY path[1:array_length(path, 1)-1],
-                        created_at ASC;""")
+                  ORDER BY path;""")
     replies = db.session.execute(sql, {"thread_id":thread_id})
     return replies.fetchall()
 

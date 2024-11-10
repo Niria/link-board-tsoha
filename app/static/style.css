@@ -161,3 +161,7 @@ h1 {
 [id^="toggle-comment-form-"] {
     display: none;
 }
+
+.comment-form > textarea {
+    resize: none;
+}
