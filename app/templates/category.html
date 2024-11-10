@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ category[0] }}{% endblock %}
 {% block content %}
-<h1>{{ category.capitalize() }}</h1>
+<div class="category-title-container">
+    <h1>{{ category.capitalize() }}</h1>
+        <a href="{{ url_for('new_thread', category=category)}}">
+            <div class="btn btn-submit-link btn-big">Submit link</div>
+        </a>
+</div>
 {% include "thread_list.html" %}
 {% endblock %}

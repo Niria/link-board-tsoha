@@ -5,10 +5,7 @@ body {
 
 h1 {
     color: darkslategray;
-    padding-bottom: 0.5rem;
-    border-bottom: solid;
-    border-width: 0.25rem;
-    border-color: gray;
+    margin-bottom: 0rem;
 }
 
 .navbar-container {
@@ -45,6 +42,23 @@ h1 {
 .navbar-container a {
     text-decoration: none;
     color: darkred;
+}
+
+.category-title-container {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+    border-bottom: solid;
+    border-width: 0.25rem;
+    border-color: gray;
+}
+
+.btn-submit-link {
+    margin-bottom: 0.5rem;
+    font-size: small;
+    text-align: center;
 }
 
 .content-container {
@@ -153,9 +167,38 @@ h1 {
 }
 
 .btn {
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+.btn:hover {
+    filter: saturate(2);
+}
+
+.btn:active {
+    filter: brightness(80%);
+}
+
+.btn-small {
     width: 4rem;
-    height: 2rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
     text-align: center;
+    background-color: powderblue;
+}
+
+.btn-big {
+    width: 6rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    background-color: powderblue;
+}
+
+a:has( > .btn) {
+    text-decoration: none;
+    color: black;
 }
 
 [id^="toggle-comment-form-"] {

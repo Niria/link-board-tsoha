@@ -47,6 +47,11 @@ def thread_page(thread_id: int):
         add_reply(user_id, thread_id, parent_id, content)
         return redirect(f"/p/{thread_id}")
 
+@app.route("/c/<string:category>/new", methods=["GET", "POST"])
+@login_required
+def new_thread(category: str):
+    if request.method == "GET":
+        return render_template("new_thread.html")
 
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})
