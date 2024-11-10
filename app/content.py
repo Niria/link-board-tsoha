@@ -9,29 +9,28 @@ def get_category_list():
     categories = db.session.execute(sql, {"public":True})
     return categories.fetchall()
 
-def get_all_threads():
-    sql = text("""SELECT t.id, t.title, t.content, t.link_url, c.name AS category
+                        #  date_trunc('second', CURRENT_TIMESTAMP-t.created_at) AS age, 
+def get_threads(category: str):
+    sql = text("""SELECT t.id, t.title, t.content, t.link_url, t.likes,
+                         u.display_name, count(r.id) AS comments, 
+                         time_ago(t.created_at) AS age,
+                         c.name AS category
                     FROM threads AS t 
                     JOIN categories AS c 
                       ON c.id=t.category_id 
+                    JOIN users AS u
+                      ON t.user_id=u.id
+                    LEFT JOIN replies AS r
+                      ON r.thread_id=t.id
                    WHERE c.is_public=:public
-                     AND t.visible=:visible""")
-    
-    threads = db.session.execute(sql, {"public":True, "visible":True})
-    return threads.fetchall()
-
-def get_category_threads(category):
-    sql = text("""SELECT t.id, t.title, t.content, t.link_url, c.name AS category
-                    FROM threads AS t 
-                    JOIN categories AS c 
-                      ON c.id=t.category_id 
-                   WHERE c.is_public=:public
-                     AND c.name=:category
-                     AND t.visible=:visible""")
+                     AND (:category IS NULL OR c.name=:category)
+                     AND t.visible=:visible
+                   GROUP BY t.id, u.display_name, c.name
+                   ORDER BY t.created_at DESC""")
     
     threads = db.session.execute(sql, {"public":True, 
-                                       "category":category, 
-                                       "visible":True})
+                                       "visible":True, 
+                                       "category":category})
     return threads.fetchall()
 
 def get_thread(id: int):

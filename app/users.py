@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash
 import secrets
 
 
+# Add error handling?
 def check_csrf():
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)

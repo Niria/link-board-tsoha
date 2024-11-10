@@ -6,9 +6,19 @@
     <div>
         <a href="/p/{{ thread.id }}">{{ thread.title }}</a>
         <div class="listview-thread-details">
-            <div>{{ thread.content }}</div>
-            <span><a href="/c/{{ thread.category }}">{{ thread.link_url }}</a></span>
-            <span>- <a href="/c/{{ thread.category }}">{{ thread.category }}</a></span>
+            <div>posted 
+                {% if not thread.age %}
+                    {{ " just now" }}
+                {% elif thread.age.split()[0] | int > 1 %}
+                    {{ thread.age }}s ago
+                {% else %}
+                    {{ thread.age }} ago
+                {% endif %}
+                by {{ thread.display_name }}
+            </div>
+            <span>{{thread.likes }} likes</span>
+            <span>{{ thread.comments }} comments</span>
+            <span><a href="/c/{{ thread.category }}">{{ thread.category }}</a></span>
         </div>
     </div>
 </div>

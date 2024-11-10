@@ -22,8 +22,9 @@ CREATE TABLE threads (
     title TEXT NOT NULL,
     content TEXT,
     link_url TEXT NOT NULL,
+    likes INTEGER DEFAULT 0,
     visible BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE replies (
@@ -32,7 +33,8 @@ CREATE TABLE replies (
     thread_id INTEGER REFERENCES threads NOT NULL,
     parent_id INTEGER REFERENCES replies,
     content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    likes INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE permissions (
@@ -44,3 +46,24 @@ CREATE TABLE permissions (
 );
 
 COMMIT;
+
+CREATE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+  ago TEXT;
+BEGIN
+WITH t(diff) AS (
+  select CURRENT_TIMESTAMP - since
+)
+-- 
+SELECT COALESCE(NULLIF(EXTRACT(day FROM diff), 0)||' day',
+                NULLIF(EXTRACT(hour FROM diff), 0)||' hour',
+                NULLIF(EXTRACT(minute FROM diff), 0)||' minute')
+INTO ago
+FROM t;
+RETURN ago;
+END;
+$$;

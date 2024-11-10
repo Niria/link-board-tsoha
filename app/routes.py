@@ -1,6 +1,6 @@
 from app import app
 from flask import redirect, render_template, request, session
-from .content import add_reply, get_category_threads, get_all_threads, \
+from .content import add_reply, get_threads, \
     get_thread, get_replies
 from .utils import login_required
 from . import users
@@ -9,7 +9,7 @@ from . import users
 @app.route("/")
 @login_required
 def index():
-    threads = get_all_threads()
+    threads = get_threads(None)
     return render_template("index.html", 
                             category="all", 
                             threads=threads)
@@ -18,7 +18,7 @@ def index():
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
-    threads = get_category_threads(category)
+    threads = get_threads(category)
     return render_template("category.html", 
                            category=category, 
                            threads=threads)
