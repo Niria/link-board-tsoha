@@ -1,7 +1,8 @@
 from app import app
 from flask import redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
-    get_replies, add_reply, add_thread
+    get_replies, add_reply, add_thread, add_thread_like, remove_thread_like, \
+    add_reply_like, remove_reply_like
 from .utils import login_required
 from . import users
 
@@ -35,6 +36,7 @@ def thread_page(thread_id: int):
         thread = get_thread(thread_id)
         if not thread:
             return redirect("/")
+        print(thread)
         replies = get_replies(thread_id)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
@@ -51,7 +53,7 @@ def thread_page(thread_id: int):
 @login_required
 def new_thread(category: str):
     if request.method == "GET":
-        return render_template("new_thread.html")
+        return render_template("new_thread.html", category=category)
     if request.method == "POST":
         users.check_csrf()
         category_id = get_category_id(category)
@@ -65,6 +67,24 @@ def new_thread(category: str):
 
         add_thread(user_id, category_id, link_url, title, content)
         return redirect("/")
+
+@app.route("/p/<int:thread_id>/like", methods=["POST"])
+@login_required
+def like_thread(thread_id: int):
+    if request.method == "POST":
+        users.check_csrf()
+        user_id = session["user_id"]
+        add_thread_like(user_id, thread_id)
+        return redirect(url_for('thread_page', thread_id=thread_id))
+
+@app.route("/p/<int:thread_id>/<int:reply_id>/like", methods=["POST"])
+@login_required
+def like_reply(thread_id: int, reply_id: int):
+    if request.method == "POST":
+        users.check_csrf()
+        user_id = session["user_id"]
+        add_reply_like(user_id, reply_id)
+        return redirect(url_for('thread_page', thread_id=thread_id))
 
 
 # Catches invalid paths

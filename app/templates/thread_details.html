@@ -6,5 +6,5 @@
         by {{ thread.display_name }}
         to <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
     </div>
-    <div>{{thread.likes }} likes {{ thread.comments }} comments</div>
+    <div>{{ thread.comments }} comments {{thread.likes }} likes</div>
 </div>

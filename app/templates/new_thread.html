@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Submit link{% endblock %}
 {% block content %}
-<form action="" method="POST">
-    <p>Url:</p>
-    <input type="text" name="link_url" />
-    <p>Title:</p>
-    <input type="text" name="title" />
-    <p>Message:</p>
-    <textarea name="content" rows="3" cols="80"></textarea>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+<form action="{{ url_for('new_thread', category=category)}}" method="POST">
+    <div class="form-input">
+        <p>Url:</p>
+        <input type="text" name="link_url" />
+    </div>
+    <div class="form-input">
+        <p>Title:</p>
+        <input type="text" name="title" />
+    </div>
+    <div class="form-input">
+        <p>Message:</p>
+        <textarea name="content" rows="3" cols="80"></textarea>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     <input class="btn btn-big" type="submit" value="Submit link"/>
 </form>
 {% endblock %}

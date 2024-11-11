@@ -20,7 +20,7 @@ h3 {
     justify-content: center;
     padding-inline: 1rem;
 }
-
+    
 .navbar {
     height: 4rem;
     padding-inline: 1rem;
@@ -37,7 +37,6 @@ h3 {
     align-items: center;
     font-size: smaller;
     text-align: right;
-
 }
 
 .navbar a:hover {
@@ -233,4 +232,5 @@ a:has(> .thread-link):hover {
 
 .thread-details {
     margin-block: 0.125rem;
+    font-size: small;
 }

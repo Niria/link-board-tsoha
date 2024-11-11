@@ -20,8 +20,13 @@ def get_threads(category: str):
         category_exists = db.session.execute(sql, {"category":category})
         if not category_exists:
             return None
-    sql = text("""SELECT t.id, t.title, t.content, t.link_url, t.likes,
-                         count(r.id) AS comments, time_ago(t.created_at) AS age,
+    sql = text("""SELECT t.id, 
+                         t.title, 
+                         t.content, 
+                         t.link_url,
+                         count(tl.user_id) AS likes,
+                         count(r.id) AS comments, 
+                         time_ago(t.created_at) AS age,
                          u.display_name, u.id AS user_id,
                          c.name AS category
                     FROM threads AS t 
@@ -31,6 +36,8 @@ def get_threads(category: str):
                       ON t.user_id=u.id
                          LEFT JOIN replies AS r
                          ON r.thread_id=t.id
+                         LEFT JOIN thread_likes AS tl
+                         ON tl.thread_id=t.id
                    WHERE c.is_public=:public
                      AND (:category IS NULL OR c.name=:category)
                      AND t.visible=:visible
@@ -41,12 +48,13 @@ def get_threads(category: str):
                                        "category":category})
     return threads.fetchall()
 
+# TODO: combine getting all and single threads into one function?
 def get_thread(id: int):
     sql = text("""SELECT t.id,
                          t.title, 
                          t.content, 
                          t.link_url,
-                         t.likes,
+                         count(tl.user_id) AS likes,
                          u.display_name,
                          u.id AS user_id,
                          count(r.id) AS comments,
@@ -59,6 +67,8 @@ def get_thread(id: int):
                       ON t.user_id=u.id
                          LEFT JOIN replies AS r
                          ON r.thread_id=t.id
+                         LEFT JOIN thread_likes AS tl
+                         ON tl.thread_id=t.id
                    WHERE t.visible=:visible
                      AND c.is_public=:public
                      AND t.id=:id
@@ -107,6 +117,9 @@ def get_replies(thread_id: int):
                         u.username,
                         u.display_name,
                         time_ago(rt.created_at) AS age,
+                        (SELECT count(*) 
+                           FROM reply_likes AS rl
+                          WHERE rl.reply_id=rt.id) AS likes,
                         array_length(rt.path, 1)-1 AS depth,
                         rt.path
                    FROM reply_tree AS rt
@@ -130,4 +143,28 @@ def add_thread(user_id, category_id, link_url, title, content):
                   VALUES (:user_id, :category_id, :link_url, :title, :content)""")
     db.session.execute(sql, {"user_id":user_id, "category_id":category_id,
                              "link_url":link_url, "title":title, "content":content})
+    db.session.commit()
+
+def add_thread_like(user_id: int, thread_id: int):
+    sql = text("""INSERT INTO thread_likes (user_id, thread_id) 
+                  VALUES (:user_id, :thread_id)
+                         ON CONFLICT DO NOTHING""")
+    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+    db.session.commit()
+
+def remove_thread_like(user_id: int, thread_id: int):
+    sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
+    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+    db.session.commit()
+
+def add_reply_like(user_id: int, reply_id: int):
+    sql = text("""INSERT INTO reply_likes (user_id, reply_id) 
+                  VALUES (:user_id, :reply_id)
+                         ON CONFLICT DO NOTHING""")
+    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
+    db.session.commit()
+
+def remove_reply_like(user_id: int, reply_id: int):
+    sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
+    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
     db.session.commit()

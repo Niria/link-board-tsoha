@@ -37,6 +37,20 @@ CREATE TABLE replies (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE thread_likes (
+    user_id INTEGER REFERENCES users NOT NULL,
+    thread_id INTEGER REFERENCES threads NOT NULL,
+    PRIMARY KEY (user_id, thread_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reply_likes (
+    user_id INTEGER REFERENCES users NOT NULL,
+    reply_id INTEGER REFERENCES replies NOT NULL,
+    PRIMARY KEY (user_id, reply_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE permissions (
     user_id INTEGER REFERENCES users NOT NULL,
     category_id INTEGER REFERENCES categories NOT NULL,

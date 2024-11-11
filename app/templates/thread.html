@@ -8,6 +8,11 @@
         <h3>{{ thread.title }}</h3>
         <div>{{ thread.content }}</div>
         <span>{% include "thread_details.html" %}</span>
+        <form action="{{ url_for('like_thread', thread_id=thread.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input type="submit" value="Like"/>
+        </form>
+        <button class="btn btn-small" onclick="" value="{{ thread.id }}">Like</button>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="thread">Reply</button>
         {% with reply=None %}
             {% include "comment_form.html" %}
@@ -18,20 +23,20 @@
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
         <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
         <div>
-            <a href="">{{ reply.display_name}}</a>
+            <a href="">{{ reply.display_name }}</a>
             {% with age=reply.age %}
                 {% include "age_info.html" %}
             {% endwith %}
         </div>
+        likes {{ reply.likes }}
         <div>{{ reply.content }}</div>
+                <form action="{{ url_for('like_reply', thread_id=thread.id, reply_id=reply.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input type="submit" value="Like"/>
+        </form>
+        <button class="btn btn-small" onclick="" value="{{ reply.id }}">Like</button>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}
     </div>
 {% endfor %}
-
-
-
-
-
-
 {% endblock %}
