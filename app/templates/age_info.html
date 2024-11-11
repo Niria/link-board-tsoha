@@ -1,0 +1,7 @@
+    {% if not age %}
+        {{ " just now" }}
+    {% elif age.split()[0] | int > 1 %}
+        {{ age }}s ago
+    {% else %}
+        {{ age }} ago
+    {% endif %}

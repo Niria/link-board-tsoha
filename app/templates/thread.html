@@ -5,7 +5,7 @@
         <div class="thread-link"></div>
     </a>
     <div>
-        <div>{{ thread.title }}</div>
+        <h3>{{ thread.title }}</h3>
         <div>{{ thread.content }}</div>
         <span>{% include "thread_details.html" %}</span>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="thread">Reply</button>
@@ -16,8 +16,13 @@
 </div>
 {% for reply in replies %}
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
-        <div>id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
-        <div><a href="">{{ reply.display_name}}</a></div>
+        <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
+        <div>
+            <a href="">{{ reply.display_name}}</a>
+            {% with age=reply.age %}
+                {% include "age_info.html" %}
+            {% endwith %}
+        </div>
         <div>{{ reply.content }}</div>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}

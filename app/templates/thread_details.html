@@ -1,12 +1,10 @@
-<div>posted 
-    {% if not thread.age %}
-        {{ " just now" }}
-    {% elif thread.age.split()[0] | int > 1 %}
-        {{ thread.age }}s ago
-    {% else %}
-        {{ thread.age }} ago
-    {% endif %}
-    by {{ thread.display_name }}
-    to <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
+<div class="thread-details">
+    <div>posted
+        {% with age=thread.age%}
+            {% include "age_info.html" %}
+        {% endwith %}
+        by {{ thread.display_name }}
+        to <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
+    </div>
+    <div>{{thread.likes }} likes {{ thread.comments }} comments</div>
 </div>
-<div>{{thread.likes }} likes {{ thread.comments }} comments</div>

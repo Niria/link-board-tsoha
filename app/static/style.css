@@ -8,6 +8,11 @@ h1 {
     margin-bottom: 0rem;
 }
 
+h3 { 
+    color: darkslategray;
+    margin-block: 0;
+}
+
 .navbar-container {
     display: flex;
     flex-direction: column;
@@ -196,9 +201,22 @@ h1 {
     background-color: powderblue;
 }
 
-a:has( > .btn) {
+a:has(> .btn) {
     text-decoration: none;
     color: black;
+}
+
+a:has(> h3) {
+    text-decoration: none;
+}
+
+a:has(> h3):hover {
+    text-decoration: underline;
+    color: darkslategray;
+}
+
+a:has(> .thread-link):hover {
+    filter:brightness(80%)
 }
 
 [id^="toggle-comment-form-"] {
@@ -207,4 +225,12 @@ a:has( > .btn) {
 
 .comment-form > textarea {
     resize: none;
+}
+
+.debug {
+    font-size: x-small;
+}
+
+.thread-details {
+    margin-block: 0.125rem;
 }

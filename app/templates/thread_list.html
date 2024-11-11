@@ -4,7 +4,7 @@
         <div class="thread-link"></div>
     </a>
     <div>
-        <a href="{{ url_for('thread_page', thread_id=thread.id) }}">{{ thread.title }}</a>
+        <a href="{{ url_for('thread_page', thread_id=thread.id) }}"><h3>{{ thread.title }}</h3></a>
         <div class="listview-thread-details">
         {% include "thread_details.html"%}
         </div>

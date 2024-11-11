@@ -106,6 +106,7 @@ def get_replies(thread_id: int):
                         rt.content,
                         u.username,
                         u.display_name,
+                        time_ago(rt.created_at) AS age,
                         array_length(rt.path, 1)-1 AS depth,
                         rt.path
                    FROM reply_tree AS rt
