@@ -9,6 +9,11 @@ def get_category_list():
     categories = db.session.execute(sql, {"public":True})
     return categories.fetchall()
 
+def get_category_id(category: str):
+    sql = text("""SELECT id FROM categories WHERE name=:category""")
+    category_id = db.session.execute(sql, {"category":category})
+    return category_id.fetchone()
+
 def get_threads(category: str):
     if category:
         sql = text("SELECT 1 FROM categories WHERE name=:category")
@@ -116,4 +121,12 @@ def add_reply(user_id, thread_id, parent_id, content):
                   VALUES (:user_id, :thread_id, :parent_id, :content)""") 
     db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id,
                              "parent_id":parent_id, "content":content})
+    db.session.commit()
+
+def add_thread(user_id, category_id, link_url, title, content):
+    sql = text("""INSERT INTO threads (user_id, category_id, 
+                         link_url, title, content)
+                  VALUES (:user_id, :category_id, :link_url, :title, :content)""")
+    db.session.execute(sql, {"user_id":user_id, "category_id":category_id,
+                             "link_url":link_url, "title":title, "content":content})
     db.session.commit()

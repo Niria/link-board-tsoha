@@ -3,11 +3,12 @@
 {% block content %}
 <form action="" method="POST">
     <p>Url:</p>
-    <input type="text" name="url" />
+    <input type="text" name="link_url" />
     <p>Title:</p>
     <input type="text" name="title" />
-    <p>Message</p>
+    <p>Message:</p>
     <textarea name="content" rows="3" cols="80"></textarea>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Submit link"/>
 </form>
 {% endblock %}
