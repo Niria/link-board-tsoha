@@ -14,6 +14,7 @@ def get_category_id(category: str):
     category_id = db.session.execute(sql, {"category":category})
     return category_id.fetchone()
 
+# TODO: Count queries should be cleaned
 def get_threads(category: str):
     if category:
         sql = text("SELECT 1 FROM categories WHERE name=:category")
@@ -24,7 +25,9 @@ def get_threads(category: str):
                          t.title, 
                          t.content, 
                          t.link_url,
-                         count(tl.user_id) AS likes,
+                         (SELECT count(*)
+                            FROM thread_likes AS tl
+                           WHERE tl.thread_id=t.id) AS likes,
                          count(r.id) AS comments, 
                          time_ago(t.created_at) AS age,
                          u.display_name, u.id AS user_id,
@@ -49,12 +52,15 @@ def get_threads(category: str):
     return threads.fetchall()
 
 # TODO: combine getting all and single threads into one function?
+# TODO: Count queries should be cleaned
 def get_thread(id: int):
     sql = text("""SELECT t.id,
                          t.title, 
                          t.content, 
                          t.link_url,
-                         count(tl.user_id) AS likes,
+                         (SELECT count(*)
+                            FROM thread_likes AS tl
+                           WHERE tl.thread_id=t.id) AS likes,
                          u.display_name,
                          u.id AS user_id,
                          count(r.id) AS comments,
@@ -68,7 +74,7 @@ def get_thread(id: int):
                          LEFT JOIN replies AS r
                          ON r.thread_id=t.id
                          LEFT JOIN thread_likes AS tl
-                         ON tl.thread_id=t.id
+                         ON t.id=tl.thread_id
                    WHERE t.visible=:visible
                      AND c.is_public=:public
                      AND t.id=:id
@@ -151,6 +157,9 @@ def add_thread_like(user_id: int, thread_id: int):
                          ON CONFLICT DO NOTHING""")
     db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
     db.session.commit()
+    sql = text("""SELECT count(*) FROM thread_likes WHERE thread_id=:thread_id""")
+    likes = db.session.execute(sql, {"thread_id":thread_id})
+    return likes.fetchone()
 
 def remove_thread_like(user_id: int, thread_id: int):
     sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
@@ -163,6 +172,9 @@ def add_reply_like(user_id: int, reply_id: int):
                          ON CONFLICT DO NOTHING""")
     db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
     db.session.commit()
+    sql = text("""SELECT count(*) FROM reply_likes WHERE reply_id=:reply_id""")
+    likes = db.session.execute(sql, {"reply_id":reply_id})
+    return likes.fetchone()
 
 def remove_reply_like(user_id: int, reply_id: int):
     sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")

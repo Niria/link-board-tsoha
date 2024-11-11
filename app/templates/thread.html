@@ -8,11 +8,13 @@
         <h3>{{ thread.title }}</h3>
         <div>{{ thread.content }}</div>
         <span>{% include "thread_details.html" %}</span>
-        <form action="{{ url_for('like_thread', thread_id=thread.id) }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-            <input type="submit" value="Like"/>
-        </form>
-        <button class="btn btn-small" onclick="" value="{{ thread.id }}">Like</button>
+        <button id="like-thread" 
+                class="btn btn-small" 
+                onclick="likeThread()" 
+                data-url='{{ url_for("like_thread", thread_id=thread.id) }}'
+                data-csrf='{{ session.csrf_token|tojson }}'>
+                Like
+        </button>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="thread">Reply</button>
         {% with reply=None %}
             {% include "comment_form.html" %}
@@ -28,13 +30,16 @@
                 {% include "age_info.html" %}
             {% endwith %}
         </div>
-        likes {{ reply.likes }}
+        <div id="reply-likes-{{ reply.id }}">{{ reply.likes }} likes</div>
         <div>{{ reply.content }}</div>
-                <form action="{{ url_for('like_reply', thread_id=thread.id, reply_id=reply.id) }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-            <input type="submit" value="Like"/>
-        </form>
-        <button class="btn btn-small" onclick="" value="{{ reply.id }}">Like</button>
+        <button id="like-reply-{{ reply.id }}" 
+                class="btn btn-small" 
+                onclick="likeReply({{ reply.id }})" 
+                data-url='{{ url_for("like_reply", thread_id=thread.id, reply_id=reply.id) }}'
+                data-id='{{ reply.id|tojson }}'
+                data-csrf='{{ session.csrf_token|tojson }}'>
+                Like
+        </button>
         <button class="btn btn-small" onclick="toggleCommentForm(event)" value="{{ reply.id }}">Reply</button>
         {% include "comment_form.html" %}
     </div>
