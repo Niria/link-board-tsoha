@@ -1,15 +1,28 @@
+:root {     
+    --bg-color-1: floralwhite; 
+    --bg-color-2: ghostwhite; 
+    --bg-color-3: antiquewhite;
+    --bg-color-4: steelblue; 
+    --text-color-1: darkslategray;
+    --text-color-2: darkcyan;
+    --text-color-3: darkred;
+    --btn-color-primary: powderblue;
+    --btn-color-secondary: lightsteelblue;
+}
+
+
 body {
-    background-color: steelblue;
+    background-color: var(--bg-color-4);
     margin: 0px;
 }
 
 h1 {
-    color: darkslategray;
+    color: rgb(148, 185, 185);
     margin-bottom: 0rem;
 }
 
 h3 { 
-    color: darkslategray;
+    color: var(--text-color-1);
     margin-block: 0;
 }
 
@@ -24,9 +37,9 @@ h3 {
 .navbar {
     height: 4rem;
     padding: 0 1rem;
-    background-color: antiquewhite;
-    color: darkcyan;
-    border-bottom: solid 0.25rem gray;
+    background-color: var(--bg-color-3);
+    color: var(--text-color-2);
+    border-bottom: solid 0.25rem var(--bg-color-4);
     max-width: 80rem;
     width: 100%;
     display: flex;
@@ -38,12 +51,12 @@ h3 {
 }
 
 .navbar a:hover {
-    background-color: aquamarine;
+    background-color: var(--bg-color-1);
 }
 
 .navbar-container a {
     text-decoration: none;
-    color: darkred;
+    color: var(--text-color-3);
 }
 
 .category-title-container {
@@ -72,7 +85,7 @@ h3 {
     max-width: 80rem;
     width: 100%;
     padding: 0 1rem 2rem 1rem;
-    background-color: whitesmoke;
+    background-color: var(--bg-color-1);
 }
 
 .thread-link {
@@ -89,7 +102,7 @@ h3 {
     flex-direction: row;
     align-items: center;
     gap: 0.75rem;
-    background-color: beige;
+    background-color: var(--bg-color-2);
     border: solid 0.25rem lightgray;
     border-radius: 0.25rem;
 }
@@ -101,24 +114,24 @@ h3 {
 .app-title {
     font-size: larger;
     font-weight: 600;
-    color: darkcyan;
+    color: var(--text-color-1);
 }
 
 .category-link {
     padding: 0.25rem;
     text-decoration: none;
-    color: darkcyan;
+    color: var(--text-color-1);
 }
 
 .category-link:hover {
-    background-color: bisque;
+    background-color: var(--bg-color-1);
 }
 
 .category-nav-container {
     padding: 0.25rem 1rem;
     max-width: 80rem;
     width: 100%;
-    background-color: lightgray;
+    background-color: var(--bg-color-1);
 }
 
 .category-nav-container > span:not(:last-child)::after {
@@ -133,7 +146,7 @@ h3 {
     padding: 1rem;
     border: solid 0.25rem gray;
     border-radius: 0.25rem;
-    background-color: beige;
+    background-color: var(--bg-color-2);
 }
 
 .reply-content {
@@ -142,7 +155,7 @@ h3 {
     padding: 1rem;
     border: solid 0.125rem gray;
     border-radius: 0.375rem;
-    background-color: floralwhite;
+    background-color: var(--bg-color-2);
     margin-top: 1rem;
 }
 
@@ -157,6 +170,7 @@ h3 {
 	border: none;
 	padding: 0;
 	cursor: pointer;
+    background-color: var(--btn-color-primary);
 }
 
 .btn:hover {
@@ -172,7 +186,6 @@ h3 {
     height: 1.5rem;
     line-height: 1.5rem;
     text-align: center;
-    background-color: powderblue;
 }
 
 .btn-big {
@@ -180,12 +193,11 @@ h3 {
     height: 1.5rem;
     line-height: 1.5rem;
     text-align: center;
-    background-color: powderblue;
 }
 
 a:has(> .btn) {
     text-decoration: none;
-    color: black;
+    color: var(--text-color-1);
 }
 
 a:has(> h3) {
@@ -194,7 +206,7 @@ a:has(> h3) {
 
 a:has(> h3):hover {
     text-decoration: underline;
-    color: darkslategray;
+    color: var(--text-color-1);
 }
 
 a:has(> .thread-link):hover {
