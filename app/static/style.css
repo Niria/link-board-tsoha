@@ -17,7 +17,7 @@ body {
 }
 
 h1 {
-    color: rgb(148, 185, 185);
+    color: var(--text-color-1);
     margin-bottom: 0rem;
 }
 
@@ -149,6 +149,12 @@ h3 {
     background-color: var(--bg-color-2);
 }
 
+.like-reply-buttons-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
 .reply-content {
     margin-left: calc(var(--reply-depth)*2rem + 1rem);
     margin-right: 1rem;
@@ -171,6 +177,7 @@ h3 {
 	padding: 0;
 	cursor: pointer;
     background-color: var(--btn-color-primary);
+    user-select: none;
 }
 
 .btn:hover {
@@ -184,6 +191,7 @@ h3 {
 .btn-small {
     width: 4rem;
     height: 1.5rem;
+    font-size: small;
     line-height: 1.5rem;
     text-align: center;
 }
@@ -228,4 +236,14 @@ a:has(> .thread-link):hover {
 .thread-details {
     margin: 0.125rem 0;
     font-size: small;
+}
+
+[id^="thumb"] {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}
+
+[id^="thumb"]:hover {
+    color:  lightgreen !important;
 }

@@ -33,11 +33,12 @@ def category_page(category: str):
 @login_required
 def thread_page(thread_id: int):
     if request.method == "GET":
-        thread = get_thread(thread_id)
+        thread = get_thread(thread_id, session["user_id"])
         if not thread:
             return redirect("/")
-        print(thread)
-        replies = get_replies(thread_id)
+        replies = get_replies(thread_id, session["user_id"])
+        for r in replies:
+            print(r._mapping)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
         users.check_csrf()

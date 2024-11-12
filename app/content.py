@@ -53,7 +53,7 @@ def get_threads(category: str):
 
 # TODO: combine getting all and single threads into one function?
 # TODO: Count queries should be cleaned
-def get_thread(id: int):
+def get_thread(thread_id: int, user_id: int):
     sql = text("""SELECT t.id,
                          t.title, 
                          t.content, 
@@ -65,7 +65,12 @@ def get_thread(id: int):
                          u.id AS user_id,
                          count(r.id) AS comments,
                          time_ago(t.created_at) AS age, 
-                         c.name AS category
+                         c.name AS category,
+                         (SELECT EXISTS (SELECT *
+                                           FROM thread_likes
+                                          WHERE user_id=:user_id
+                                            AND thread_id=:id)
+                         ) AS liked
                     FROM threads AS t
                     JOIN categories AS c
                       ON c.id=t.category_id
@@ -81,10 +86,11 @@ def get_thread(id: int):
                    GROUP BY t.id, u.id, u.display_name, c.name""")
     thread = db.session.execute(sql, {"public":True, 
                                       "visible":True,
-                                      "id":id})
+                                      "id":thread_id,
+                                      "user_id":user_id})
     return thread.fetchone()
 
-def get_replies(thread_id: int):
+def get_replies(thread_id: int, user_id: int):
     sql = text("""WITH RECURSIVE reply_tree(
                        id,
                        user_id, 
@@ -126,13 +132,18 @@ def get_replies(thread_id: int):
                         (SELECT count(*) 
                            FROM reply_likes AS rl
                           WHERE rl.reply_id=rt.id) AS likes,
+                        (SELECT EXISTS (SELECT *
+                           FROM reply_likes AS rl
+                          WHERE rl.user_id=:user_id
+                            AND rl.reply_id=rt.id)
+                        ) AS liked,
                         array_length(rt.path, 1)-1 AS depth,
                         rt.path
                    FROM reply_tree AS rt
                    JOIN users AS u
                      ON rt.user_id=u.id
                   ORDER BY path;""")
-    replies = db.session.execute(sql, {"thread_id":thread_id})
+    replies = db.session.execute(sql, {"thread_id":thread_id, "user_id":user_id})
     return replies.fetchall()
 
 def add_reply(user_id, thread_id, parent_id, content):
