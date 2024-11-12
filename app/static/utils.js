@@ -1,10 +1,10 @@
 function toggleCommentForm(event) {
-  const x = document.getElementById(`toggle-comment-form-${event.target.value}`);
-  if (x.style.display !== "block") {
-    x.style.display = "block";
+  const form = document.getElementById(`toggle-comment-form-${event.target.value}`);
+  if (form.style.display !== "block") {
+    form.style.display = "block";
     event.target.innerHTML = "Hide"
   } else {
-    x.style.display = "none";
+    form.style.display = "none";
     event.target.innerHTML = "Reply"
   }
 }
@@ -24,7 +24,6 @@ function likeThread() {
 }
 
 function likeReply(reply_id) {
-  console.log(`like-reply-${reply_id}`)
   const url = document.getElementById(`like-reply-${reply_id}`).dataset.url;
   const csrf_token = JSON.parse(document.getElementById(`like-reply-${reply_id}`).dataset.csrf);
   fetch(url, {
