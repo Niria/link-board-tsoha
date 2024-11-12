@@ -151,32 +151,36 @@ def add_thread(user_id, category_id, link_url, title, content):
                              "link_url":link_url, "title":title, "content":content})
     db.session.commit()
 
-def add_thread_like(user_id: int, thread_id: int):
-    sql = text("""INSERT INTO thread_likes (user_id, thread_id) 
-                  VALUES (:user_id, :thread_id)
-                         ON CONFLICT DO NOTHING""")
-    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
-    db.session.commit()
+def toggle_thread_like(user_id: int, thread_id: int):
+    sql = text("""SELECT 1 FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
+    like_exists = db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id}).fetchone()
+    if like_exists:
+        sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
+        db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+        db.session.commit()
+    else:
+        sql = text("""INSERT INTO thread_likes (user_id, thread_id) 
+                    VALUES (:user_id, :thread_id)
+                            ON CONFLICT DO NOTHING""")
+        db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+        db.session.commit()
     sql = text("""SELECT count(*) FROM thread_likes WHERE thread_id=:thread_id""")
     likes = db.session.execute(sql, {"thread_id":thread_id})
     return likes.fetchone()
 
-def remove_thread_like(user_id: int, thread_id: int):
-    sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
-    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
-    db.session.commit()
-
-def add_reply_like(user_id: int, reply_id: int):
-    sql = text("""INSERT INTO reply_likes (user_id, reply_id) 
-                  VALUES (:user_id, :reply_id)
-                         ON CONFLICT DO NOTHING""")
-    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
-    db.session.commit()
+def toggle_reply_like(user_id: int, reply_id: int):
+    sql = text("""SELECT 1 FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
+    like_exists = db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id}).fetchone()
+    if like_exists:
+        sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
+        db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
+        db.session.commit()
+    else:
+        sql = text("""INSERT INTO reply_likes (user_id, reply_id) 
+                    VALUES (:user_id, :reply_id)
+                            ON CONFLICT DO NOTHING""")
+        db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
+        db.session.commit()
     sql = text("""SELECT count(*) FROM reply_likes WHERE reply_id=:reply_id""")
     likes = db.session.execute(sql, {"reply_id":reply_id})
     return likes.fetchone()
-
-def remove_reply_like(user_id: int, reply_id: int):
-    sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
-    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
-    db.session.commit()

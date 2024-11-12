@@ -1,8 +1,8 @@
 from app import app
 from flask import jsonify, redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
-    get_replies, add_reply, add_thread, add_thread_like, remove_thread_like, \
-    add_reply_like, remove_reply_like
+    get_replies, add_reply, add_thread, toggle_thread_like, \
+    toggle_reply_like
 from .utils import login_required
 from . import users
 
@@ -75,7 +75,7 @@ def like_thread(thread_id: int):
     if request.method == "POST":
         users.check_csrf()
         user_id = session["user_id"]
-        like_count = add_thread_like(user_id, thread_id)
+        like_count = toggle_thread_like(user_id, thread_id)
         return jsonify({"likes":like_count[0]})
 
 @app.route("/p/<int:thread_id>/<int:reply_id>/like", methods=["POST"])
@@ -84,7 +84,7 @@ def like_reply(thread_id: int, reply_id: int):
     if request.method == "POST":
         users.check_csrf()
         user_id = session["user_id"]
-        like_count = add_reply_like(user_id, reply_id)
+        like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
 
 
