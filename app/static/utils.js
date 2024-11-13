@@ -1,12 +1,6 @@
 function toggleCommentForm(event) {
   const form = document.getElementById(`toggle-comment-form-${event.target.dataset.replyform}`);
-  if (form.style.display !== "block") {
-    form.style.display = "block";
-    event.target.innerHTML = "Hide"
-  } else {
-    form.style.display = "none";
-    event.target.innerHTML = "Reply"
-  }
+  form.classList.toggle('hidden')
 }
 
 function likeThread() {

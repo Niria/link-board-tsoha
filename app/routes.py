@@ -7,7 +7,6 @@ from .utils import login_required
 from . import users
 
 
-
 @app.route("/")
 @login_required
 def index():
@@ -17,7 +16,6 @@ def index():
     return render_template("index.html", 
                             category="all", 
                             threads=threads)
-
 
 @app.route("/c/<string:category>")
 @login_required
@@ -87,7 +85,6 @@ def like_reply(thread_id: int, reply_id: int):
         user_id = session["user_id"]
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
-
 
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})

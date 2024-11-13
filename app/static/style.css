@@ -1,15 +1,15 @@
 :root {     
-  --bg-color-1: floralwhite; 
+  --bg-color-1: seashell; 
   --bg-color-2: ghostwhite; 
   --bg-color-3: antiquewhite;
   --bg-color-4: steelblue; 
+  --bg-color-5: lavender;
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
   --text-color-3: darkred;
   --btn-color-primary: powderblue;
   --btn-color-secondary: lightsteelblue;
 }
-
 
 body {
   background-color: var(--bg-color-4);
@@ -131,7 +131,7 @@ h3 {
   padding: 0.25rem 1rem;
   max-width: 80rem;
   width: 100%;
-  background-color: var(--bg-color-1);
+  background-color: var(--bg-color-5);
 }
 
 .category-nav-container > span:not(:last-child)::after {
@@ -191,6 +191,7 @@ h3 {
 .btn-small {
   width: 4rem;
   height: 1.5rem;
+  border-radius: 0.375rem;
   font-size: small;
   line-height: 1.5rem;
   text-align: center;
@@ -199,6 +200,7 @@ h3 {
 .btn-big {
   width: 6rem;
   height: 1.5rem;
+  border-radius: 0.375rem;
   line-height: 1.5rem;
   text-align: center;
 }
@@ -221,10 +223,6 @@ a:has(> .thread-link):hover {
   filter:brightness(80%)
 }
 
-[id^="toggle-comment-form-"] {
-  display: none;
-}
-
 .comment-form > textarea {
   resize: none;
 }
@@ -239,8 +237,8 @@ a:has(> .thread-link):hover {
 }
 
 [id^="thumb"] {
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   cursor: pointer;
   color: lightgray;
 }
@@ -249,10 +247,10 @@ a:has(> .thread-link):hover {
   transform: scale(1.25, 1.25);
 }
 
-/* .thumbinactive {
-  color: lightgray;
-} */
-
 .thumbactive {
   color: green;
+}
+
+.hidden {
+  display: none;
 }
