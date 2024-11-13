@@ -2,7 +2,7 @@ from app import app
 from flask import jsonify, redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like
+    toggle_reply_like, get_profile
 from .utils import login_required
 from . import users
 
@@ -20,7 +20,7 @@ def index():
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
-    threads = get_threads(category)
+    threads = get_threads(category=category)
     if not threads:
         return redirect("/")
     return render_template("category.html", 
@@ -85,6 +85,13 @@ def like_reply(thread_id: int, reply_id: int):
         user_id = session["user_id"]
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
+
+@app.route("/u/<string:username>")
+@login_required
+def profile(username: str):
+    user = get_profile(username)
+    user_threads = get_threads(by_user=username)
+    return render_template("user_profile.html", user=user, threads=user_threads)
 
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})

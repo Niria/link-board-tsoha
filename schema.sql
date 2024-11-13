@@ -6,7 +6,8 @@ CREATE TABLE users (
     display_name TEXT,
     password TEXT NOT NULL,
     profile_public BOOLEAN DEFAULT TRUE,
-    user_role SMALLINT DEFAULT 0
+    user_role SMALLINT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE categories (

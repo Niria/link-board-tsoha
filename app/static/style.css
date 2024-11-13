@@ -1,13 +1,13 @@
 :root {     
-  --bg-color-1: seashell; 
-  --bg-color-2: ghostwhite; 
-  --bg-color-3: antiquewhite;
-  --bg-color-4: steelblue; 
-  --bg-color-5: lavender;
+  --bg-color-1: rgb(223, 236, 235); 
+  --bg-color-2: rgb(203, 222, 230); 
+  --bg-color-3: rgb(222, 230, 220);
+  --bg-color-4: rgb(38, 44, 80); 
+  --bg-color-5: rgb(190, 190, 190);
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
   --text-color-3: darkred;
-  --btn-color-primary: powderblue;
+  --btn-color-primary: rgb(120, 167, 173);
   --btn-color-secondary: lightsteelblue;
 }
 
@@ -89,7 +89,7 @@ h3 {
 }
 
 .thread-link {
-  background-color: steelblue;
+  background-color: var(--bg-color-3);
   width: 4rem;
   height: 4rem;
   border-radius: 0.75rem;
@@ -152,7 +152,7 @@ h3 {
 .like-reply-buttons-container {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .reply-content {
@@ -240,7 +240,7 @@ a:has(> .thread-link):hover {
   width: 1.5rem;
   height: 1.5rem;
   cursor: pointer;
-  color: lightgray;
+  color: gray;
 }
 
 [id^="thumb"]:hover {

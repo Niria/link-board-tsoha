@@ -15,7 +15,7 @@ def get_category_id(category: str):
     return category_id.fetchone()
 
 # TODO: Count queries should be cleaned
-def get_threads(category: str):
+def get_threads(category: str = None, by_user: str = None):
     if category:
         sql = text("SELECT 1 FROM categories WHERE name=:category")
         category_exists = db.session.execute(sql, {"category":category})
@@ -30,7 +30,9 @@ def get_threads(category: str):
                            WHERE tl.thread_id=t.id) AS likes,
                          count(r.id) AS comments, 
                          time_ago(t.created_at) AS age,
-                         u.display_name, u.id AS user_id,
+                         u.username,
+                         u.display_name, 
+                         u.id AS user_id,
                          c.name AS category
                     FROM threads AS t 
                     JOIN categories AS c 
@@ -43,12 +45,14 @@ def get_threads(category: str):
                          ON tl.thread_id=t.id
                    WHERE c.is_public=:public
                      AND (:category IS NULL OR c.name=:category)
+                     AND (:by_user IS NULL OR u.username=:by_user)
                      AND t.visible=:visible
                    GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
     threads = db.session.execute(sql, {"public":True, 
                                        "visible":True, 
-                                       "category":category})
+                                       "category":category,
+                                       "by_user":by_user})
     return threads.fetchall()
 
 # TODO: combine getting all and single threads into one function?
@@ -61,6 +65,7 @@ def get_thread(thread_id: int, user_id: int):
                          (SELECT count(*)
                             FROM thread_likes AS tl
                            WHERE tl.thread_id=t.id) AS likes,
+                         u.username,
                          u.display_name,
                          u.id AS user_id,
                          count(r.id) AS comments,
@@ -195,3 +200,13 @@ def toggle_reply_like(user_id: int, reply_id: int):
     sql = text("""SELECT count(*) FROM reply_likes WHERE reply_id=:reply_id""")
     likes = db.session.execute(sql, {"reply_id":reply_id})
     return likes.fetchone()
+
+def get_profile(username: str):
+    sql = text("""SELECT u.username, 
+                         u.display_name 
+                    FROM users AS u 
+                    JOIN threads AS t
+                      ON t.user_id=u.id
+                   WHERE username=:username""")
+    user = db.session.execute(sql, {"username":username})
+    return user.fetchone()
