@@ -25,7 +25,7 @@ function likeReply(reply_id) {
   const csrf_token = JSON.parse(document.getElementById(`like-reply-${reply_id}`).dataset.csrf);
   const image = document.getElementById(`thumb-${reply_id}`);
   image.classList.toggle('thumbactive');
-
+  console.log(reply_id, url, csrf_token, image)
   fetch(url, {
     method: "POST",
     headers: {

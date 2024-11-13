@@ -15,7 +15,7 @@ def get_category_id(category: str):
     return category_id.fetchone()
 
 # TODO: Count queries should be cleaned
-def get_threads(category: str = None, by_user: str = None):
+def get_threads(category: str = None, by_user: int = None):
     if category:
         sql = text("SELECT 1 FROM categories WHERE name=:category")
         category_exists = db.session.execute(sql, {"category":category})
@@ -45,7 +45,7 @@ def get_threads(category: str = None, by_user: str = None):
                          ON tl.thread_id=t.id
                    WHERE c.is_public=:public
                      AND (:category IS NULL OR c.name=:category)
-                     AND (:by_user IS NULL OR u.username=:by_user)
+                     AND (:by_user IS NULL OR u.id=:by_user)
                      AND t.visible=:visible
                    GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
@@ -202,11 +202,41 @@ def toggle_reply_like(user_id: int, reply_id: int):
     return likes.fetchone()
 
 def get_profile(username: str):
-    sql = text("""SELECT u.username, 
+    sql = text("""SELECT u.id,
+                         u.username, 
                          u.display_name 
                     FROM users AS u 
-                    JOIN threads AS t
-                      ON t.user_id=u.id
                    WHERE username=:username""")
     user = db.session.execute(sql, {"username":username})
     return user.fetchone()
+
+def get_user_replies(user_id: int):
+    sql = text("""SELECT r.id AS reply_id,
+                         r.content AS reply_content,
+                         count(rl.user_id) AS likes,
+                         time_ago(r.created_at) AS reply_age,
+                         (SELECT EXISTS (SELECT *
+                           FROM reply_likes AS rl
+                          WHERE rl.user_id=:user_id
+                            AND rl.reply_id=r.id)
+                         ) AS liked,
+                         t.id AS thread_id,
+                         t.title AS thread_title,
+                         u2.username AS thread_creator,
+                         u2.display_name AS thread_creator_dn,
+                         t.content AS thread_content,
+                         time_ago(t.created_at) AS thread_age
+                    FROM replies AS r
+                    JOIN threads AS t
+                      ON t.id=r.thread_id
+                    JOIN users AS u
+                      ON u.id=r.user_id
+                    JOIN users AS u2
+                      ON u2.id=t.user_id
+                         LEFT JOIN reply_likes AS rl
+                         ON rl.reply_id=r.id                
+                   WHERE u.id=:user_id
+                   GROUP BY r.id, t.id, u2.username, u2.display_name
+                   ORDER BY r.created_at DESC""")
+    replies = db.session.execute(sql, {"user_id":user_id})
+    return replies.fetchall()

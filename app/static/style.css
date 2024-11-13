@@ -89,7 +89,7 @@ h3 {
 }
 
 .thread-link {
-  background-color: var(--bg-color-3);
+  background-color: var(--bg-color-4);
   width: 4rem;
   height: 4rem;
   border-radius: 0.75rem;
@@ -253,4 +253,10 @@ a:has(> .thread-link):hover {
 
 .hidden {
   display: none;
+}
+
+.profile-nav-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }

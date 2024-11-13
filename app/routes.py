@@ -2,7 +2,7 @@ from app import app
 from flask import jsonify, redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like, get_profile
+    toggle_reply_like, get_profile, get_user_replies
 from .utils import login_required
 from . import users
 
@@ -86,12 +86,21 @@ def like_reply(thread_id: int, reply_id: int):
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
 
+@app.route("/u/<string:username>/<string:page>")
 @app.route("/u/<string:username>")
 @login_required
-def profile(username: str):
+def profile(username: str, page=None):
+    print(page)
     user = get_profile(username)
-    user_threads = get_threads(by_user=username)
-    return render_template("user_profile.html", user=user, threads=user_threads)
+    if page == "threads":
+        user_threads = get_threads(by_user=user.id)
+        return render_template("user_profile.html", page=page, user=user, threads=user_threads)
+    elif page == "replies":
+        user_replies = get_user_replies(user_id=user.id)
+        return render_template("user_profile.html", page=page, user=user, replies=user_replies)
+    elif page == "followers":
+        return render_template("user_profile.html", page=page, user=user, followers=None)
+    return render_template("user_profile.html", user=user)
 
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})

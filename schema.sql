@@ -23,7 +23,6 @@ CREATE TABLE threads (
     title TEXT NOT NULL,
     content TEXT,
     link_url TEXT NOT NULL,
-    likes INTEGER DEFAULT 0,
     visible BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,7 +33,6 @@ CREATE TABLE replies (
     thread_id INTEGER REFERENCES threads NOT NULL,
     parent_id INTEGER REFERENCES replies,
     content TEXT NOT NULL,
-    likes INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
