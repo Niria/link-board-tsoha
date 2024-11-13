@@ -6,15 +6,15 @@
 <a href="{{ url_for('logout') }}">Log out</a>
 {% else %}
 <form action="{{ url_for('register') }}" method="POST">
-    <p>Username:<br>
-    <input type="text" name="username"></p>
-    <p>Display name:<br>
-    <input type="text" name="displayname"></p>
-    <p>Password:<br>
-    <input type="password" name="password1"></p>
-    <p>Password again:<br>
-    <input type="password" name="password2"></p>
-    <input type="submit" value="Register">
+  <p>Username:<br>
+  <input type="text" name="username"></p>
+  <p>Display name:<br>
+  <input type="text" name="displayname"></p>
+  <p>Password:<br>
+  <input type="password" name="password1"></p>
+  <p>Password again:<br>
+  <input type="password" name="password2"></p>
+  <input type="submit" value="Register">
 </form>
 {% endif %}
 {% endblock %}

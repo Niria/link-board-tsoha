@@ -1,5 +1,4 @@
 function toggleCommentForm(event) {
-  console.log(event.target)
   const form = document.getElementById(`toggle-comment-form-${event.target.dataset.replyform}`);
   if (form.style.display !== "block") {
     form.style.display = "block";
@@ -14,12 +13,8 @@ function likeThread() {
   const url = document.getElementById('like-thread').dataset.url;
   const csrf_token = JSON.parse(document.getElementById('like-thread').dataset.csrf);
   const image = document.getElementById('thumb');
-  if (image.style.color === "lightgray") {
-    image.style.color = "green";
-  } else {
-    image.style.color = "lightgray";
-  }
-
+  image.classList.toggle('thumbactive');
+  
   fetch(url, {
     method: "POST",
     headers: {
@@ -35,11 +30,7 @@ function likeReply(reply_id) {
   const url = document.getElementById(`like-reply-${reply_id}`).dataset.url;
   const csrf_token = JSON.parse(document.getElementById(`like-reply-${reply_id}`).dataset.csrf);
   const image = document.getElementById(`thumb-${reply_id}`);
-  if (image.style.color === "lightgray") {
-    image.style.color = "green";
-  } else {
-    image.style.color = "lightgray";
-  }
+  image.classList.toggle('thumbactive');
 
   fetch(url, {
     method: "POST",

@@ -1,23 +1,25 @@
 <nav class="navbar-container">
-    <div class="navbar">
-        <a href="{{ url_for('index') }}"><div class="app-title">Link Board</div></a>
-        <div>
-            {% if session.username %}
-            <div>
-                <div>Logged in as {{ session.display_name or session.username }}</div>
-                <a href="{{ url_for('logout') }}">Log out</a>
-            </div>
-            {% else %}
-            <a href="{{ url_for('login') }}">Log in</a>
-            {% endif %}
-        </div>
+  <div class="navbar">
+    <a href="{{ url_for('index') }}"><div class="app-title">Link Board</div></a>
+    <div>
+      {% if session.username %}
+      <div>
+        <div>Logged in as {{ session.display_name or session.username }}</div>
+        <a href="{{ url_for('logout') }}">Log out</a>
+      </div>
+      {% else %}
+      <a href="{{ url_for('login') }}">Log in</a>
+      {% endif %}
     </div>
-    {% if session.user_id %}
-    <div class="category-nav-container">
-        <span><a class="category-link" href="{{ url_for('index') }}">all</a></span>
-        {% for category in category_list %}
-        <span><a class="category-link" href="{{ url_for('category_page', category=category.name.lower()) }}">{{ category.name }}</a></span>
-        {% endfor %}
-    </div>
-    {% endif %}
+  </div>
+  {% if session.user_id %}
+  <div class="category-nav-container">
+    <span><a class="category-link" href="{{ url_for('index') }}">all</a></span>
+    {% for category in category_list %}
+    <span>
+      <a class="category-link" href="{{ url_for('category_page', category=category.name.lower()) }}">{{ category.name }}</a>
+    </span>
+    {% endfor %}
+  </div>
+  {% endif %}
 </nav>
