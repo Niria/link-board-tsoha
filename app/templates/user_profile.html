@@ -11,23 +11,25 @@
 </div>
 
 {% if page == "threads" %}
+  <h3>{{ user.display_name }}'s submissions</h3>
   {% include "thread_list.html"%}
 {% elif page == "replies" %}
+  <h3>{{ user.display_name }}'s replies</h3>
   {% for reply in replies %}
   <div>
-    <div>
-    {{ reply.thread_id}}
+    <div class="profile-replies-thread-container">
+      <span>{{ reply.thread_title }}</span>
+      <span>submitted by <a href="{{ url_for('profile', username=reply.thread_creator) }}">{{ reply.thread_creator_dn }}</a></span>
+      <span> {% with age=reply.thread_age %}{% include "age_info.html" %}{% endwith %}</span>
     </div>
-    <div class="reply-content">
+    <div class="profile-reply-content">
       <div>
-        <a href="{{ url_for('profile', username=reply.username) }}">{{ reply.display_name }}</a>
+        <div>{{ reply.reply_content }}</div>
         {% with age=reply.reply_age %}
           {% include "age_info.html" %}
         {% endwith %}
       </div>
       <div id="reply-likes-{{ reply.reply_id }}">{{ reply.likes }} likes</div>
-      <div>{{ reply.reply_content }}</div>
-      {{reply.liked}}
       <div class="like-reply-buttons-container">
         <div id="like-reply-{{ reply.reply_id }}"
             onclick="likeReply({{ reply.reply_id }})"
@@ -46,10 +48,10 @@
   {% endfor %}
 
 {% elif page == "followers" %}
-Follower list
+<h3>Follower list</h3>
 
 {% else %}
-Profile stuff
+<h3>General profile info goes here</h3>
 
 {% endif%}
 
