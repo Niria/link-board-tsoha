@@ -225,7 +225,8 @@ def get_user_replies(user_id: int):
                          u2.username AS thread_creator,
                          u2.display_name AS thread_creator_dn,
                          t.content AS thread_content,
-                         time_ago(t.created_at) AS thread_age
+                         time_ago(t.created_at) AS thread_age,
+                         c.name AS thread_category
                     FROM replies AS r
                     JOIN threads AS t
                       ON t.id=r.thread_id
@@ -233,10 +234,12 @@ def get_user_replies(user_id: int):
                       ON u.id=r.user_id
                     JOIN users AS u2
                       ON u2.id=t.user_id
+                    JOIN categories AS c
+                      ON c.id=t.category_id
                          LEFT JOIN reply_likes AS rl
                          ON rl.reply_id=r.id                
                    WHERE u.id=:user_id
-                   GROUP BY r.id, t.id, u2.username, u2.display_name
+                   GROUP BY r.id, t.id, u2.username, u2.display_name, c.name
                    ORDER BY r.created_at DESC""")
     replies = db.session.execute(sql, {"user_id":user_id})
     return replies.fetchall()

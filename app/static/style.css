@@ -1,9 +1,9 @@
 :root {     
   --bg-color-1: rgb(223, 236, 235); 
   --bg-color-2: rgb(203, 222, 230); 
-  --bg-color-3: rgb(222, 230, 220);
+  --bg-color-3: rgb(157, 161, 168);
   --bg-color-4: rgb(38, 44, 80); 
-  --bg-color-5: rgb(190, 190, 190);
+  --bg-color-5: rgb(196, 221, 216);
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
   --text-color-3: darkred;
@@ -23,8 +23,7 @@ h1 {
 
 h3 { 
   color: var(--text-color-1);
-  margin-top: 0;
-  margin-bottom: 1rem;
+  margin-block: 0;
 }
 
 .navbar-container {
@@ -272,17 +271,37 @@ a:has(> .thread-link):hover {
   border: solid 0.125rem gray;
   border-radius: 0.375rem 0.375rem 0 0;
   background-color: var(--bg-color-5);
+  display: flex;
+  flex-direction: column;
 }
 
-.profile-reply-content {
-  padding: 1rem;
+.profile-replies-thread-container div {
+  font-size: small;
+}
+
+.profile-replies-thread-details {
+  display: flex;
+  flex-direction: row;
+}
+
+.profile-replies-reply-container {
+  padding: 0.5rem;
   border-inline: solid 0.125rem gray;
   border-bottom: solid 0.125rem gray;
   border-radius: 0 0 0.375rem 0.375rem;
   background-color: var(--bg-color-2);
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.profile-replies-thread-container span:not(:first-child) {
+.profile-replies-reply-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
   font-size: small;
+
 }
