@@ -1,4 +1,4 @@
-<div id="toggle-comment-form-{{ reply.id or 'thread' }}" class="hidden">
+<div class="toggle-comment-form hidden">
   <form class="comment-form" 
         action="{{ url_for('thread_page', thread_id=thread.id) }}" method="POST">
     <textarea name="content" rows="3" cols="80"></textarea>
