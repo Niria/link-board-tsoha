@@ -1,6 +1,6 @@
-function likeThread() {
-  const url = document.getElementById('like-thread').dataset.url;
-  const csrf_token = JSON.parse(document.getElementById('like-thread').dataset.csrf);
+function toggleThreadLike(event) {
+  const url = event.target.dataset.url;
+  const csrf_token = JSON.parse(event.target.dataset.csrf);
   const image = document.getElementById('thumb');
   image.classList.toggle('thumbactive');
   
@@ -12,10 +12,10 @@ function likeThread() {
     }
   })
     .then((response) => response.json())
-    .then((json) => document.getElementById('thread-likes').innerHTML = `${json.likes} likes`);
+    .then((json) => event.target.querySelector('#thread-likes').innerHTML = json.likes);
 }
 
-function likeReply(reply) {
+function toggleReplyLike(reply) {
   const url = reply.dataset.url;
   const csrf_token = JSON.parse(reply.dataset.csrf);
   const image = reply.querySelector('#thumb');
@@ -28,32 +28,32 @@ function likeReply(reply) {
     }
   })
     .then((response) => response.json())
-    .then((json) => reply.querySelector('#reply-likes').innerHTML = `${json.likes} likes`);
+    .then((json) => reply.querySelector('#reply-likes').innerHTML = json.likes);
 }
 
 function setEventHandlers() {
   // Initialize eventListener for thread clicks
-  const threadContent = document.querySelector('.thread-content')
-  if ( threadContent !== null) {
-    const threadComment = threadContent.querySelector('.toggle-comment-form')
+  const threadContent = document.querySelector('.thread-content');
+  if (threadContent !== null) {
+    const threadComment = threadContent.querySelector('.toggle-comment-form');
     threadContent.querySelector('.form-toggle').addEventListener('click', () => {
-      threadComment.classList.toggle('hidden')
+      threadComment.classList.toggle('hidden');
     })
-    threadContent.querySelector('#like-thread').addEventListener('click', likeThread)
+    threadContent.querySelector('#like-thread').addEventListener('click', (e) => toggleThreadLike(e));
   }
 
-  // Initialize eventlisteners for replies clicks
-  const replyContent = document.querySelectorAll('.reply-content')
+  // Initialize eventlisteners for reply clicks
+  const replyContent = document.querySelectorAll('.reply-content-container');
   if (replyContent !== null) {
     replyContent.forEach((reply) => {
       const replyComment = reply.querySelector('.toggle-comment-form');
       if (replyComment !== null) {
         reply.querySelector('.form-toggle').addEventListener('click', () => {
-          replyComment.classList.toggle('hidden')
+          replyComment.classList.toggle('hidden');
         })
       }
-      const replyLike = reply.querySelector('#like-reply')
-      replyLike.addEventListener('click', () => likeReply(reply))
+      const likeReply = reply.querySelector('#like-reply');
+      likeReply.addEventListener('click', () => toggleReplyLike(likeReply));
     })
   }
 }

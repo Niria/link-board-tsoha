@@ -1,13 +1,13 @@
 :root {     
   --bg-color-1: rgb(223, 236, 235); 
   --bg-color-2: rgb(203, 222, 230); 
-  --bg-color-3: rgb(157, 161, 168);
+  --bg-color-3: rgb(209, 213, 219);
   --bg-color-4: rgb(38, 44, 80); 
   --bg-color-5: rgb(196, 221, 216);
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
   --text-color-3: darkred;
-  --btn-color-primary: rgb(120, 167, 173);
+  --btn-color-primary: rgb(193, 209, 211);
   --btn-color-secondary: lightsteelblue;
 }
 
@@ -24,6 +24,14 @@ h1 {
 h3 { 
   color: var(--text-color-1);
   margin-block: 0;
+}
+
+button {
+  all: unset;
+}
+
+button:focus {
+  outline: revert;
 }
 
 .navbar-container {
@@ -89,21 +97,20 @@ h3 {
 }
 
 .thread-link {
-  background-color: var(--bg-color-4);
+  background-color: lightgray;
   width: 4rem;
   height: 4rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
 }
 
 .listview-thread-container {
   margin-bottom: 0.75rem;
-  padding: 0.25rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
   background-color: var(--bg-color-2);
-  border: solid 0.25rem lightgray;
   border-radius: 0.25rem;
 }
 
@@ -144,7 +151,6 @@ h3 {
   gap: 1rem;
   margin: 1rem;
   padding: 1rem;
-  border: solid 0.25rem gray;
   border-radius: 0.25rem;
   background-color: var(--bg-color-2);
 }
@@ -159,8 +165,7 @@ h3 {
   margin-left: calc(var(--reply-depth)*2rem + 1rem);
   margin-right: 1rem;
   padding: 1rem;
-  border: solid 0.125rem gray;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
   background-color: var(--bg-color-2);
   margin-top: 1rem;
 }
@@ -190,7 +195,7 @@ h3 {
 
 .btn-small {
   width: 4rem;
-  height: 1.5rem;
+  height: 2rem;
   border-radius: 0.375rem;
   font-size: small;
   line-height: 1.5rem;
@@ -199,7 +204,7 @@ h3 {
 
 .btn-big {
   width: 6rem;
-  height: 1.5rem;
+  height: 2rem;
   border-radius: 0.375rem;
   line-height: 1.5rem;
   text-align: center;
@@ -229,6 +234,7 @@ a:has(> .thread-link):hover {
 
 .debug {
   font-size: x-small;
+  display: none;
 }
 
 .thread-details {
@@ -241,10 +247,6 @@ a:has(> .thread-link):hover {
   height: 1.5rem;
   cursor: pointer;
   color: gray;
-}
-
-[id^="thumb"]:hover {
-  transform: scale(1.25, 1.25);
 }
 
 .btn:active {
@@ -268,7 +270,6 @@ a:has(> .thread-link):hover {
 .profile-replies-thread-container {
   margin: 0 0rem;
   padding: 0.5rem;
-  border: solid 0.125rem gray;
   border-radius: 0.375rem 0.375rem 0 0;
   background-color: var(--bg-color-5);
   display: flex;
@@ -286,8 +287,6 @@ a:has(> .thread-link):hover {
 
 .profile-replies-reply-container {
   padding: 0.5rem;
-  border-inline: solid 0.125rem gray;
-  border-bottom: solid 0.125rem gray;
   border-radius: 0 0 0.375rem 0.375rem;
   background-color: var(--bg-color-2);
   margin-bottom: 1rem;
@@ -303,5 +302,18 @@ a:has(> .thread-link):hover {
   align-items: center;
   gap: 1rem;
   font-size: small;
+
+}
+
+#like-thread, #like-reply {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#like-thread *, #like-reply * {
+  pointer-events: none;
 
 }
