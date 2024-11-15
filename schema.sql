@@ -13,7 +13,9 @@ CREATE TABLE users (
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    is_public BOOLEAN DEFAULT FALSE
+    is_public BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+
 );
 
 CREATE TABLE threads (
@@ -55,7 +57,15 @@ CREATE TABLE permissions (
     category_id INTEGER REFERENCES categories NOT NULL,
     PRIMARY KEY (user_id, category_id),
     can_read BOOLEAN DEFAULT TRUE,
-    can_write BOOLEAN DEFAULT TRUE
+    can_write BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_followers (
+    user_id INTEGER REFERENCES users NOT NULL,
+    follower_id INTEGER REFERENCES users NOT NULL,
+    PRIMARY KEY (user_id ,follower_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 COMMIT;

@@ -4,9 +4,7 @@
       {% include "age_info.html" %}
     {% endwith %}
     by <a href="{{ url_for('profile', username=thread.username) }}">{{ thread.display_name }}</a>
-    to <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
-  </div>
-  <div>
+    in <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
     <span>{{ thread.comments }} comments</span>
   </div>
 </div>

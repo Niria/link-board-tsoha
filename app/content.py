@@ -9,10 +9,12 @@ def get_category_list():
     categories = db.session.execute(sql, {"public":True})
     return categories.fetchall()
 
+
 def get_category_id(category: str):
     sql = text("""SELECT id FROM categories WHERE name=:category""")
     category_id = db.session.execute(sql, {"category":category})
     return category_id.fetchone()
+
 
 # TODO: Count queries should be cleaned
 def get_threads(category: str = None, by_user: int = None):
@@ -55,6 +57,7 @@ def get_threads(category: str = None, by_user: int = None):
                                        "by_user":by_user})
     return threads.fetchall()
 
+
 # TODO: combine getting all and single threads into one function?
 # TODO: Count queries should be cleaned
 def get_thread(thread_id: int, user_id: int):
@@ -94,6 +97,7 @@ def get_thread(thread_id: int, user_id: int):
                                       "id":thread_id,
                                       "user_id":user_id})
     return thread.fetchone()
+
 
 def get_replies(thread_id: int, user_id: int):
     sql = text("""WITH RECURSIVE reply_tree(
@@ -151,6 +155,7 @@ def get_replies(thread_id: int, user_id: int):
     replies = db.session.execute(sql, {"thread_id":thread_id, "user_id":user_id})
     return replies.fetchall()
 
+
 def add_reply(user_id, thread_id, parent_id, content):
     sql = text("""INSERT INTO replies (user_id, thread_id, 
                          parent_id, content) 
@@ -159,6 +164,7 @@ def add_reply(user_id, thread_id, parent_id, content):
                              "parent_id":parent_id, "content":content})
     db.session.commit()
 
+
 def add_thread(user_id, category_id, link_url, title, content):
     sql = text("""INSERT INTO threads (user_id, category_id, 
                          link_url, title, content)
@@ -166,6 +172,7 @@ def add_thread(user_id, category_id, link_url, title, content):
     db.session.execute(sql, {"user_id":user_id, "category_id":category_id,
                              "link_url":link_url, "title":title, "content":content})
     db.session.commit()
+
 
 def toggle_thread_like(user_id: int, thread_id: int):
     sql = text("""SELECT 1 FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
@@ -184,6 +191,7 @@ def toggle_thread_like(user_id: int, thread_id: int):
     likes = db.session.execute(sql, {"thread_id":thread_id})
     return likes.fetchone()
 
+
 def toggle_reply_like(user_id: int, reply_id: int):
     sql = text("""SELECT 1 FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
     like_exists = db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id}).fetchone()
@@ -201,6 +209,7 @@ def toggle_reply_like(user_id: int, reply_id: int):
     likes = db.session.execute(sql, {"reply_id":reply_id})
     return likes.fetchone()
 
+
 def get_profile(username: str):
     sql = text("""SELECT u.id,
                          u.username, 
@@ -209,6 +218,7 @@ def get_profile(username: str):
                    WHERE username=:username""")
     user = db.session.execute(sql, {"username":username})
     return user.fetchone()
+
 
 def get_user_replies(user_id: int):
     sql = text("""SELECT r.id AS reply_id,
@@ -243,3 +253,4 @@ def get_user_replies(user_id: int):
                    ORDER BY r.created_at DESC""")
     replies = db.session.execute(sql, {"user_id":user_id})
     return replies.fetchall()
+

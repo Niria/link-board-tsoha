@@ -62,7 +62,11 @@ def new_thread(category: str):
         category_id = category_id[0]
         user_id = session["user_id"]
         link_url = request.form["link_url"]
+        if not 3 <= len(link_url) <= 50:
+            return render_template("error.html", message="Url must be between 3 and 50 characters long.")
         title = request.form["title"]
+        if not 3 <= len(title) <= 50:
+            return render_template("error.html", message="Title must be between 3 and 50 characters long.")
         content = request.form["content"]
 
         add_thread(user_id, category_id, link_url, title, content)

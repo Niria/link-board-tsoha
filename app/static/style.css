@@ -159,6 +159,7 @@ button:focus {
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  margin-top: 1rem;
 }
 
 .reply-content {
@@ -315,5 +316,4 @@ a:has(> .thread-link):hover {
 
 #like-thread *, #like-reply * {
   pointer-events: none;
-
 }
