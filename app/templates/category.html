@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ category[0] }}{% endblock %}
+{% block title %}{{ category.capitalize() }}{% endblock %}
 {% block content %}
 <div class="category-title-container">
   <h1>{{ category.capitalize() }}</h1>

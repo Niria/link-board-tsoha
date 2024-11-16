@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<title>Link-board - {% block title %}{% endblock %}</title>
-<script type="text/javascript" src="{{ url_for('static', filename='utils.js')}}"></script>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<body>
-  {% include "navbar.html" %}
-  <div class="content-container">
-    <div class="content">
-      {% block content %}{% endblock %}
+<html>
+  <head>
+    <title>Link-board - {% block title %}{% endblock %}</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='utils.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    {% include "navbar.html" %}
+    <div class="content-container">
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
     </div>
-  </div>
-</body>
+  </body>
+</html>

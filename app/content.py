@@ -30,7 +30,7 @@ def get_threads(category: str = None, by_user: int = None):
                          (SELECT count(*)
                             FROM thread_likes AS tl
                            WHERE tl.thread_id=t.id) AS likes,
-                         count(r.id) AS comments, 
+                         (SELECT count(*) FROM replies WHERE thread_id=t.id) AS comments,
                          time_ago(t.created_at) AS age,
                          u.username,
                          u.display_name, 
@@ -71,7 +71,7 @@ def get_thread(thread_id: int, user_id: int):
                          u.username,
                          u.display_name,
                          u.id AS user_id,
-                         count(r.id) AS comments,
+                         (SELECT count(*) FROM replies WHERE thread_id=t.id) AS comments,
                          time_ago(t.created_at) AS age, 
                          c.name AS category,
                          (SELECT EXISTS (SELECT *
@@ -249,8 +249,10 @@ def get_user_replies(user_id: int):
                          LEFT JOIN reply_likes AS rl
                          ON rl.reply_id=r.id                
                    WHERE u.id=:user_id
+                     AND t.visible=:visible
+                     AND c.is_public=:is_public
                    GROUP BY r.id, t.id, u2.username, u2.display_name, c.name
                    ORDER BY r.created_at DESC""")
-    replies = db.session.execute(sql, {"user_id":user_id})
+    replies = db.session.execute(sql, {"user_id":user_id, "visible":True, "is_public":True})
     return replies.fetchall()
 

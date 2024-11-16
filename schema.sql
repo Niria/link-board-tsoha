@@ -2,9 +2,9 @@ BEGIN;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    display_name TEXT,
-    password TEXT NOT NULL,
+    username VARCHAR(64) UNIQUE NOT NULL,
+    display_name VARCHAR(64),
+    password VARCHAR(255) NOT NULL,
     profile_public BOOLEAN DEFAULT TRUE,
     user_role SMALLINT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -12,7 +12,7 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
+    name VARCHAR(64) UNIQUE NOT NULL,
     is_public BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 
@@ -20,11 +20,11 @@ CREATE TABLE categories (
 
 CREATE TABLE threads (
     id SERIAL PRIMARY KEY,
-    category_id INTEGER REFERENCES categories,
+    category_id INTEGER REFERENCES categories NOT NULL,
     user_id INTEGER REFERENCES users,
-    title TEXT NOT NULL,
+    title VARCHAR(64) NOT NULL,
     content TEXT,
-    link_url TEXT NOT NULL,
+    link_url VARCHAR(64) NOT NULL,
     visible BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

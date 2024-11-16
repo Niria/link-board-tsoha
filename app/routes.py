@@ -35,12 +35,11 @@ def thread_page(thread_id: int):
         if not thread:
             return redirect("/")
         replies = get_replies(thread_id, session["user_id"])
-        for r in replies:
-            print(r._mapping)
+        # for r in replies:
+        #     print(r._mapping)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
         users.check_csrf()
-        print("hello", request.headers)
         user_id = session["user_id"]
         thread_id = request.form["thread_id"]
         parent_id = request.form["parent_id"] or None
