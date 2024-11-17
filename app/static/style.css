@@ -56,6 +56,9 @@ button:focus {
   align-items: center;
   font-size: smaller;
   text-align: right;
+  & {
+    user-select: none;
+  }
 }
 
 .navbar a:hover {
@@ -143,6 +146,7 @@ button:focus {
   max-width: 80rem;
   width: 100%;
   background-color: var(--bg-color-5);
+  user-select: none;
 }
 
 .category-nav-container > span:not(:last-child)::after {

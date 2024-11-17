@@ -70,26 +70,6 @@ CREATE TABLE user_followers (
 
 COMMIT;
 
--- CREATE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
--- RETURNS TEXT
--- LANGUAGE plpgsql
--- AS
--- $$
--- DECLARE
---   ago TEXT;
--- BEGIN
--- WITH t(diff) AS (
---   select CURRENT_TIMESTAMP - since
--- )
--- -- 
--- SELECT COALESCE(NULLIF(EXTRACT(day FROM diff), 0)||' day',
---                 NULLIF(EXTRACT(hour FROM diff), 0)||' hour',
---                 NULLIF(EXTRACT(minute FROM diff), 0)||' minute')
--- INTO ago
--- FROM t;
--- RETURN ago;
--- END;
--- $$;
 
 CREATE OR REPLACE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
 RETURNS TEXT
