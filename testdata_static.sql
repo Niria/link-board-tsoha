@@ -32,27 +32,15 @@ INSERT INTO categories (name, is_public) VALUES ('Politics', 'false') RETURNING 
 
 -- Create users
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test', 'User', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
+VALUES ('user1', 'User 1', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test1', 'User1', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
+VALUES ('user2', 'User 2', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test2', 'User2', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
+VALUES ('user3', 'User 3', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test3', 'User3', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
+VALUES ('user4', 'User 4', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test4', 'User4', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test5', 'User5', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test6', 'User6', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test7', 'User7', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test8', 'User8', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test9', 'User9', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
-INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('test10', 'User10', 'scrypt:32768:8:1$vgJvUXYsw9RWqCwO$5f9b79f126dad4a873e873d3edf665e17c913e7ad7a464e848dbaaed68bf7e32270e0ca9f37579141b855efd99e2e10c69e83824e48119733e4bdb65d9aa1530', 0);
+VALUES ('user5', 'User 5', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 
 -- Create threads
 INSERT INTO threads (category_id, title, content, link_url, user_id) 
@@ -66,7 +54,7 @@ VALUES (4, 'Test sports article 1', loremshort, 'https://www.example.com', 4);
 INSERT INTO threads (category_id, title, content, link_url, user_id) 
 VALUES (5, 'Test programming article 1', loremshort, 'https://www.example.com', 5);
 INSERT INTO threads (category_id, title, content, link_url, user_id) 
-VALUES (6, 'Test political article 1', loremshort, 'https://www.example.com', 6);
+VALUES (6, 'Test political article 1', loremshort, 'https://www.example.com', 1);
 
 -- Loop users and create threads
 FOR u IN

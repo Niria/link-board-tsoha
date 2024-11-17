@@ -8,6 +8,8 @@ of these categories.
 
 ## Planned Features
 
+Features marked with - [x] have been implemented
+
 - [x] User can create an account, sign in and out
 - [ ] User can edit their profile
 - [ ] User profiles can be set to either public or private
@@ -90,3 +92,15 @@ You can now start the app with:
 ```
 $ flask run
 ```
+
+## Usage
+
+The testdata scripts include a few predefined users:
+
+| username | password |
+| -------- | -------- |
+| user1    | password |
+| user2    | password |
+| user3    | password |
+| user4    | password |
+| user5    | password |
