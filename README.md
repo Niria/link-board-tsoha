@@ -54,7 +54,7 @@ If postgres isn't already up and running, start it manually or run the following
 $ start-pg.sh
 ```
 
-Define the database schema either with the command:
+Define the database schema with the following commands:
 ```
 $ psql
 user=# CREATE DATABASE <new-db-name>;
