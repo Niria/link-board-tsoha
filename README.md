@@ -8,8 +8,6 @@ of these categories.
 
 ## Planned Features
 
-Features marked with - [x] have been implemented
-
 - [x] User can create an account, sign in and out
 - [ ] User can edit their profile
 - [ ] User profiles can be set to either public or private
@@ -27,7 +25,7 @@ Features marked with - [x] have been implemented
 - [ ] Admin can edit, hide and delete threads/messages submitted by users
 - [ ] Admin can revoke/grant users posting priviledges
 
-Check `TODO.md` for up to date tasklist
+Ticked features in the list above have been implemented. Check `TODO.md` for up to date tasklist.
 
 
 ## Installation
