@@ -12,21 +12,21 @@ def index():
     threads = get_threads(None)
     if not threads:
         return render_template("error.html", message="Invalid category")
-    print(threads[0]._mapping)
     return render_template("index.html", 
                             category="All", 
                             threads=threads)
+
 
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
     threads = get_threads(category=category)
-    print(threads[0]._mapping)
     if not threads:
         return redirect("/")
     return render_template("category.html", 
                            category=category, 
                            threads=threads)
+
 
 @app.route("/p/<int:thread_id>", methods=["GET", "POST"])
 @login_required
@@ -36,8 +36,6 @@ def thread_page(thread_id: int):
         if not thread:
             return redirect("/")
         replies = get_replies(thread_id, session["user_id"])
-        # for r in replies:
-        #     print(r._mapping)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
         check_csrf()
@@ -45,9 +43,10 @@ def thread_page(thread_id: int):
         thread_id = request.form["thread_id"]
         parent_id = request.form["parent_id"] or None
         content = request.form["content"]
-
+        # TODO: add validation
         add_reply(user_id, thread_id, parent_id, content)
         return redirect(url_for('thread_page', thread_id=thread_id))
+
 
 @app.route("/c/<string:category>/new", methods=["GET", "POST"])
 @login_required
@@ -72,6 +71,7 @@ def new_thread(category: str):
         add_thread(user_id, category_id, link_url, title, content)
         return redirect("/")
 
+
 @app.route("/p/<int:thread_id>/like", methods=["POST"])
 @login_required
 def like_thread(thread_id: int):
@@ -80,6 +80,7 @@ def like_thread(thread_id: int):
         user_id = session["user_id"]
         like_count = toggle_thread_like(user_id, thread_id)
         return jsonify({"likes":like_count[0]})
+
 
 # TODO: change route to not include thread_id?
 @app.route("/p/<int:thread_id>/<int:reply_id>/like", methods=["POST"])
@@ -91,11 +92,11 @@ def like_reply(thread_id: int, reply_id: int):
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
 
+
 @app.route("/u/<string:username>/<string:page>")
 @app.route("/u/<string:username>")
 @login_required
 def profile(username: str, page=None):
-    print(page)
     user = get_profile(username)
     if page == "threads":
         user_threads = get_threads(by_user=user.id)
@@ -106,6 +107,7 @@ def profile(username: str, page=None):
     elif page == "followers":
         return render_template("user_profile.html", page=page, user=user, followers=None)
     return render_template("user_profile.html", user=user)
+
 
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})

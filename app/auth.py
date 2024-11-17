@@ -19,6 +19,7 @@ def login():
             return redirect(request.form["next"])
         return redirect(url_for("index"))
 
+
 @app.route("/logout")
 def logout():
     del session["username"]
@@ -26,7 +27,8 @@ def logout():
     del session["user_id"]
     return redirect(url_for("login"))
 
-# TODO: move register db requests to another module
+
+# TODO: move db requests to another module/function
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
