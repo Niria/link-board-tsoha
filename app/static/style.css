@@ -6,9 +6,21 @@
   --bg-color-5: rgb(196, 221, 216);
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
-  --text-color-3: darkred;
   --btn-color-primary: rgb(193, 209, 211);
   --btn-color-secondary: lightsteelblue;
+  --link-color: darkslateblue;
+  --link-color-visited: rgb(107, 9, 41);
+}
+
+a {
+  text-decoration: none;
+  color: var(--link-color);
+}
+a:hover {
+  background-color: var(--bg-color-1);
+}
+a:visited {
+  color: var(--link-color-visited);
 }
 
 body {
@@ -22,8 +34,11 @@ h1 {
 }
 
 h3 { 
-  color: var(--text-color-1);
   margin-block: 0;
+}
+
+.thread-content h3 {
+  color: var(--text-color-1)
 }
 
 button {
@@ -67,7 +82,7 @@ button:focus {
 
 .navbar-container a {
   text-decoration: none;
-  color: var(--text-color-3);
+  color: var(--link-color);
   & h1 {
     font-size: x-large;
     margin: 0;
@@ -230,7 +245,7 @@ a:has(> h3) {
 
 a:has(> h3):hover {
   text-decoration: underline;
-  color: var(--text-color-1);
+  /* color: var(--text-color-1); */
 }
 
 a:has(> .thread-link):hover {
