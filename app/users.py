@@ -1,8 +1,9 @@
-from flask import session, request, abort
+from flask import session, request, abort, redirect, url_for
 from sqlalchemy.sql import text
 from .db import db
 from werkzeug.security import check_password_hash
 import secrets
+from functools import wraps
 
 
 # TODO: turn into a decorator?
@@ -11,6 +12,7 @@ def check_csrf():
     if session["csrf_token"] != request.headers.get('csrf-token') \
         and session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
+
 
 def login(username, password):
     sql = text("SELECT id, password, username, display_name FROM users WHERE username=:username")
@@ -26,3 +28,12 @@ def login(username, password):
     session["csrf_token"] = secrets.token_hex(16)
     return True
     
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("username") is None:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function        
+

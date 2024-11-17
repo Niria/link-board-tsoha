@@ -16,10 +16,9 @@ def get_category_id(category: str):
     return category_id.fetchone()
 
 
-# TODO: Count queries should be cleaned
 def get_threads(category: str = None, by_user: int = None):
     if category:
-        sql = text("SELECT 1 FROM categories WHERE name=:category")
+        sql = text("""SELECT 1 FROM categories WHERE name=:category""")
         category_exists = db.session.execute(sql, {"category":category})
         if not category_exists:
             return None
@@ -41,10 +40,6 @@ def get_threads(category: str = None, by_user: int = None):
                       ON c.id=t.category_id 
                     JOIN users AS u
                       ON t.user_id=u.id
-                         LEFT JOIN replies AS r
-                         ON r.thread_id=t.id
-                         LEFT JOIN thread_likes AS tl
-                         ON tl.thread_id=t.id
                    WHERE c.is_public=:public
                      AND (:category IS NULL OR c.name=:category)
                      AND (:by_user IS NULL OR u.id=:by_user)
@@ -58,8 +53,6 @@ def get_threads(category: str = None, by_user: int = None):
     return threads.fetchall()
 
 
-# TODO: combine getting all and single threads into one function?
-# TODO: Count queries should be cleaned
 def get_thread(thread_id: int, user_id: int):
     sql = text("""SELECT t.id,
                          t.title, 
@@ -84,10 +77,6 @@ def get_thread(thread_id: int, user_id: int):
                       ON c.id=t.category_id
                     JOIN users AS u
                       ON t.user_id=u.id
-                         LEFT JOIN replies AS r
-                         ON r.thread_id=t.id
-                         LEFT JOIN thread_likes AS tl
-                         ON t.id=tl.thread_id
                    WHERE t.visible=:visible
                      AND c.is_public=:public
                      AND t.id=:id

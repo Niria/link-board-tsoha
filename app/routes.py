@@ -3,8 +3,7 @@ from flask import jsonify, redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
     toggle_reply_like, get_profile, get_user_replies
-from .utils import login_required
-from . import users
+from .users import check_csrf, login_required
 
 
 @app.route("/")
@@ -13,14 +12,16 @@ def index():
     threads = get_threads(None)
     if not threads:
         return render_template("error.html", message="Invalid category")
+    print(threads[0]._mapping)
     return render_template("index.html", 
-                            category="all", 
+                            category="All", 
                             threads=threads)
 
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
     threads = get_threads(category=category)
+    print(threads[0]._mapping)
     if not threads:
         return redirect("/")
     return render_template("category.html", 
@@ -39,7 +40,7 @@ def thread_page(thread_id: int):
         #     print(r._mapping)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
-        users.check_csrf()
+        check_csrf()
         user_id = session["user_id"]
         thread_id = request.form["thread_id"]
         parent_id = request.form["parent_id"] or None
@@ -54,7 +55,7 @@ def new_thread(category: str):
     if request.method == "GET":
         return render_template("new_thread.html", category=category)
     if request.method == "POST":
-        users.check_csrf()
+        check_csrf()
         category_id = get_category_id(category)
         if not category_id:
             return render_template("error.html", message="Category does not exist")
@@ -75,16 +76,17 @@ def new_thread(category: str):
 @login_required
 def like_thread(thread_id: int):
     if request.method == "POST":
-        users.check_csrf()
+        check_csrf()
         user_id = session["user_id"]
         like_count = toggle_thread_like(user_id, thread_id)
         return jsonify({"likes":like_count[0]})
 
+# TODO: change route to not include thread_id?
 @app.route("/p/<int:thread_id>/<int:reply_id>/like", methods=["POST"])
 @login_required
 def like_reply(thread_id: int, reply_id: int):
     if request.method == "POST":
-        users.check_csrf()
+        check_csrf()
         user_id = session["user_id"]
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})

@@ -19,12 +19,12 @@ politics_id INTEGER;
 BEGIN
 
 -- Create 6 categories
-INSERT INTO categories (name, is_public) VALUES ('news', 'true') RETURNING id INTO news_id;
-INSERT INTO categories (name, is_public) VALUES ('science', 'true') RETURNING id INTO science_id;
-INSERT INTO categories (name, is_public) VALUES ('nature', 'true') RETURNING id INTO nature_id;
-INSERT INTO categories (name, is_public) VALUES ('sports', 'true') RETURNING id INTO sports_id;
-INSERT INTO categories (name, is_public) VALUES ('programming', 'true') RETURNING id INTO programming_id;
-INSERT INTO categories (name, is_public) VALUES ('politics', 'false') RETURNING id INTO politics_id;
+INSERT INTO categories (name, is_public) VALUES ('News', 'true') RETURNING id INTO news_id;
+INSERT INTO categories (name, is_public) VALUES ('Science', 'true') RETURNING id INTO science_id;
+INSERT INTO categories (name, is_public) VALUES ('Nature', 'true') RETURNING id INTO nature_id;
+INSERT INTO categories (name, is_public) VALUES ('Sports', 'true') RETURNING id INTO sports_id;
+INSERT INTO categories (name, is_public) VALUES ('Programming', 'true') RETURNING id INTO programming_id;
+INSERT INTO categories (name, is_public) VALUES ('Politics', 'false') RETURNING id INTO politics_id;
 
 
 -- Create 11 static test users

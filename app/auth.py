@@ -26,7 +26,7 @@ def logout():
     del session["user_id"]
     return redirect(url_for("login"))
 
-# TODO: move register db requests to users module
+# TODO: move register db requests to another module
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":

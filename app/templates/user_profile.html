@@ -21,9 +21,6 @@
         <a href="{{ url_for('thread_page', thread_id=reply.thread_id) }}"><h3>{{ reply.thread_title }}</h3></a>
         <div class="profile-replies-thread-details">
           <div>
-            {% with age=reply.thread_age %}
-              {% include "age_info.html" %}
-            {% endwith %}
             in <a href="{{ url_for('category_page', category=reply.thread_category) }}">{{ reply.thread_category }}</a>
           </div>
         </div>
@@ -32,9 +29,7 @@
         <div>{{ reply.reply_content }}</div>
         <div class="profile-replies-reply-details">
           {{ user.display_name }} replied 
-          {% with age=reply.reply_age %}
-            {% include "age_info.html" %}
-          {% endwith %}
+          {{ reply.reply_age }}
           <button type="button" 
                   id="like-reply"
                   class="btn btn-small"

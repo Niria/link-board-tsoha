@@ -1,8 +1,6 @@
 <div class="thread-details">
   <div>posted
-    {% with age=thread.age %}
-      {% include "age_info.html" %}
-    {% endwith %}
+    {{ thread. age }}
     by <a href="{{ url_for('profile', username=thread.username) }}">{{ thread.display_name }}</a>
     in <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
     <span>{{ thread.comments }} comments</span>

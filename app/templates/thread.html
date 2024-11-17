@@ -34,9 +34,7 @@
       <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
       <div>
         <a href="{{ url_for('profile', username=reply.username) }}">{{ reply.display_name }}</a>
-        {% with age=reply.age %}
-          {% include "age_info.html" %}
-        {% endwith %}
+        {{ reply.age }}
       </div>
       <div>{{ reply.content }}</div>
       <div class="like-reply-buttons-container">

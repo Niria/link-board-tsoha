@@ -16,10 +16,10 @@
   </div>
   {% if session.user_id %}
     <div class="category-nav-container">
-      <span><a class="category-link" href="{{ url_for('index') }}">all</a></span>
+      <span><a class="category-link" href="{{ url_for('index') }}">All</a></span>
       {% for category in category_list %}
         <span>
-          <a class="category-link" href="{{ url_for('category_page', category=category.name.lower()) }}">{{ category.name }}</a>
+          <a class="category-link" href="{{ url_for('category_page', category=category.name) }}">{{ category.name }}</a>
         </span>
       {% endfor %}
     </div>

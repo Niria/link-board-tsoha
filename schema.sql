@@ -51,7 +51,7 @@ CREATE TABLE reply_likes (
     PRIMARY KEY (user_id, reply_id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
+-- permissions not yet implemented
 CREATE TABLE permissions (
     user_id INTEGER REFERENCES users NOT NULL,
     category_id INTEGER REFERENCES categories NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE permissions (
     can_write BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
+-- followers not yet implemented
 CREATE TABLE user_followers (
     user_id INTEGER REFERENCES users NOT NULL,
     follower_id INTEGER REFERENCES users NOT NULL,
@@ -70,7 +70,28 @@ CREATE TABLE user_followers (
 
 COMMIT;
 
-CREATE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
+-- CREATE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
+-- RETURNS TEXT
+-- LANGUAGE plpgsql
+-- AS
+-- $$
+-- DECLARE
+--   ago TEXT;
+-- BEGIN
+-- WITH t(diff) AS (
+--   select CURRENT_TIMESTAMP - since
+-- )
+-- -- 
+-- SELECT COALESCE(NULLIF(EXTRACT(day FROM diff), 0)||' day',
+--                 NULLIF(EXTRACT(hour FROM diff), 0)||' hour',
+--                 NULLIF(EXTRACT(minute FROM diff), 0)||' minute')
+-- INTO ago
+-- FROM t;
+-- RETURN ago;
+-- END;
+-- $$;
+
+CREATE OR REPLACE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
 RETURNS TEXT
 LANGUAGE plpgsql
 AS
@@ -78,15 +99,22 @@ $$
 DECLARE
   ago TEXT;
 BEGIN
+
 WITH t(diff) AS (
   select CURRENT_TIMESTAMP - since
 )
--- 
 SELECT COALESCE(NULLIF(EXTRACT(day FROM diff), 0)||' day',
                 NULLIF(EXTRACT(hour FROM diff), 0)||' hour',
-                NULLIF(EXTRACT(minute FROM diff), 0)||' minute')
+                NULLIF(EXTRACT(minute FROM diff), 0)||' minute',
+                'just now')
 INTO ago
 FROM t;
+
+CASE WHEN ago ~ '^([2-9]|\d{2,})\s.*' THEN SELECT ago || 's ago' INTO ago; 
+     WHEN ago ~ '^1\s.*' THEN SELECT ago || ' ago' INTO ago; 
+     ELSE 
+END CASE;
+
 RETURN ago;
 END;
 $$;

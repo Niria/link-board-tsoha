@@ -6,5 +6,4 @@ venv
 
 testdata.sql
 testdata2.sql
-cleandb.sql
 TODO.md
