@@ -32,9 +32,9 @@
   <div class="reply-content-container">
     <div class="reply-content" style="--reply-depth:{{ reply.depth }}">
       <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} - path: {{ reply.path }}</div>
-      <div>
+      <div class="reply-user-container">
         <a href="{{ url_for('profile', username=reply.username) }}">{{ reply.display_name }}</a>
-        {{ reply.age }}
+        <span>{{ reply.age }}</span>
       </div>
       <div>{{ reply.content }}</div>
       <div class="like-reply-buttons-container">

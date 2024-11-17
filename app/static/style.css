@@ -248,6 +248,11 @@ a:has(> h3):hover {
   /* color: var(--text-color-1); */
 }
 
+a:has(> .thread-link) {
+  height: fit-content;
+  width: fit-content;
+}
+
 a:has(> .thread-link):hover {
   filter:brightness(80%)
 }
@@ -339,4 +344,12 @@ a:has(> .thread-link):hover {
 
 #like-thread *, #like-reply * {
   pointer-events: none;
+}
+
+.reply-user-container {
+  margin-bottom: 0.25rem;
+  & span {
+    margin-left: 0.5rem;
+    font-size: small;
+  }
 }
