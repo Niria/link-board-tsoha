@@ -1,4 +1,6 @@
-# Features
+# Tasklist
+
+## Features
 - Link thumbnails
 - User thread/reply edit
 - User permissions
@@ -18,7 +20,9 @@
 - Thread search
 
 
-# Technical
+## Technical
+- Form input validation
+- Better error handling via flash messages
 - Project file structure cleanup
 - DB indexing
 - Combine thread page queries (thread, replies) into one query
@@ -28,7 +32,7 @@
 - Display weeks/months instead of days for submission age?
 
 
-# Style
+## Style
 - Reply tree links/chains between parent-child
 - Go through css classes and combine them if possible
 - Transitions 
