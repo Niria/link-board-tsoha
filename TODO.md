@@ -21,6 +21,7 @@
 
 
 ## Technical
+- Make sure display_name is shown instead of username
 - Form input validation
 - Better error handling via flash messages
 - Project file structure cleanup

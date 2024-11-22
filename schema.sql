@@ -3,7 +3,7 @@ BEGIN;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(64) UNIQUE NOT NULL,
-    display_name VARCHAR(64),
+    display_name VARCHAR(64) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     profile_public BOOLEAN DEFAULT TRUE,
     user_role SMALLINT DEFAULT 0,

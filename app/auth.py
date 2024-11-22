@@ -35,6 +35,7 @@ def register():
         return render_template("register.html")
     if request.method == "POST":
         username = request.form["username"]
+        display_name = request.form["displayname"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         if password1 != password2:
@@ -42,6 +43,9 @@ def register():
         if len(username) < 3 or len(username) > 20:
             return render_template("error.html", 
                                    message="Username must be between 3 and 20 characters long.")
+        if len(display_name) < 3 or len(display_name) > 20:
+            return render_template("error.html", 
+                                   message="Display name must be between 3 and 20 characters long.")
         if len(password1) < 4 or len(password1) > 64:
             return render_template("error.html", 
                                    message="Password must be between 4 and 64 characters long.")
