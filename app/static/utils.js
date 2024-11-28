@@ -2,8 +2,8 @@ function toggleThreadLike(event) {
   const url = event.target.dataset.url;
   const csrf_token = JSON.parse(event.target.dataset.csrf);
   const image = document.getElementById('thumb');
-  image.classList.toggle('thumbactive');
-  
+  image.classList.toggle('thumb-active');
+
   fetch(url, {
     method: "POST",
     headers: {
@@ -11,15 +11,15 @@ function toggleThreadLike(event) {
       "csrf-token": csrf_token
     }
   })
-    .then((response) => response.json())
-    .then((json) => event.target.querySelector('#thread-likes').innerHTML = json.likes);
+      .then((response) => response.json())
+      .then((json) => event.target.querySelector('#thread-likes').innerHTML = json.likes);
 }
 
 function toggleReplyLike(reply) {
   const url = reply.dataset.url;
   const csrf_token = JSON.parse(reply.dataset.csrf);
   const image = reply.querySelector('#thumb');
-  image.classList.toggle('thumbactive');
+  image.classList.toggle('thumb-active');
   fetch(url, {
     method: "POST",
     headers: {
@@ -27,9 +27,26 @@ function toggleReplyLike(reply) {
       "csrf-token": csrf_token
     }
   })
-    .then((response) => response.json())
-    .then((json) => reply.querySelector('#reply-likes').innerHTML = json.likes);
+      .then((response) => response.json())
+      .then((json) => reply.querySelector('#reply-likes').innerHTML = json.likes);
 }
+
+function toggleUserFollow(follow) {
+  const url = follow.dataset.url;
+  const csrf_token = JSON.parse(follow.dataset.csrf);
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      "csrf-token": csrf_token
+    }
+  })
+      .then((response) => response.json())
+      .then((json) =>
+          follow.innerHTML = json.following ? 'Following' : 'Follow');
+          follow.classList.toggle('following');
+}
+
 
 function setEventHandlers() {
   // Initialize eventListener for thread clicks
@@ -55,6 +72,12 @@ function setEventHandlers() {
       const likeReply = reply.querySelector('#like-reply');
       likeReply.addEventListener('click', () => toggleReplyLike(likeReply));
     })
+  }
+
+  // Initialize eventListener for following user
+  const userFollow = document.querySelector('#user-follow');
+  if (userFollow !== null) {
+    userFollow.addEventListener('click', () => toggleUserFollow(userFollow));
   }
 }
 

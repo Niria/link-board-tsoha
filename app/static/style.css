@@ -96,6 +96,9 @@ button:focus {
   justify-content: space-between;
   align-items: end;
   border-bottom: solid 0.25rem gray;
+  & button {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .btn-submit-link {
@@ -282,7 +285,7 @@ a:has(> .thread-link):hover {
   transform: scale(1.05, 1.05);
 }
 
-.thumbactive {
+.thumb-active {
   color: green;
 }
 
@@ -352,4 +355,8 @@ a:has(> .thread-link):hover {
     margin-left: 0.5rem;
     font-size: small;
   }
+}
+
+.following {
+  background-color: lightgreen;
 }

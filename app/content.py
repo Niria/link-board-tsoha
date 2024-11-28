@@ -1,3 +1,5 @@
+from flask import session
+
 from .db import db
 from sqlalchemy.sql import text
 
@@ -46,8 +48,8 @@ def get_threads(category: str = None, by_user: int = None):
                      AND t.visible=:visible
                    GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
-    threads = db.session.execute(sql, {"public":True, 
-                                       "visible":True, 
+    threads = db.session.execute(sql, {"public":True,
+                                       "visible":True,
                                        "category":category,
                                        "by_user":by_user})
     return threads.fetchall()
@@ -81,7 +83,7 @@ def get_thread(thread_id: int, user_id: int):
                      AND c.is_public=:public
                      AND t.id=:id
                    GROUP BY t.id, u.id, u.display_name, c.name""")
-    thread = db.session.execute(sql, {"public":True, 
+    thread = db.session.execute(sql, {"public":True,
                                       "visible":True,
                                       "id":thread_id,
                                       "user_id":user_id})
@@ -148,7 +150,7 @@ def get_replies(thread_id: int, user_id: int):
 def add_reply(user_id, thread_id, parent_id, content):
     sql = text("""INSERT INTO replies (user_id, thread_id, 
                          parent_id, content) 
-                  VALUES (:user_id, :thread_id, :parent_id, :content)""") 
+                  VALUES (:user_id, :thread_id, :parent_id, :content)""")
     db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id,
                              "parent_id":parent_id, "content":content})
     db.session.commit()
@@ -168,14 +170,12 @@ def toggle_thread_like(user_id: int, thread_id: int):
     like_exists = db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id}).fetchone()
     if like_exists:
         sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
-        db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
-        db.session.commit()
     else:
         sql = text("""INSERT INTO thread_likes (user_id, thread_id) 
-                    VALUES (:user_id, :thread_id)
-                            ON CONFLICT DO NOTHING""")
-        db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
-        db.session.commit()
+                      VALUES (:user_id, :thread_id)
+                          ON CONFLICT DO NOTHING""")
+    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+    db.session.commit()
     sql = text("""SELECT count(*) FROM thread_likes WHERE thread_id=:thread_id""")
     likes = db.session.execute(sql, {"thread_id":thread_id})
     return likes.fetchone()
@@ -186,14 +186,12 @@ def toggle_reply_like(user_id: int, reply_id: int):
     like_exists = db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id}).fetchone()
     if like_exists:
         sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
-        db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
-        db.session.commit()
     else:
         sql = text("""INSERT INTO reply_likes (user_id, reply_id) 
-                    VALUES (:user_id, :reply_id)
-                            ON CONFLICT DO NOTHING""")
-        db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
-        db.session.commit()
+                      VALUES (:user_id, :reply_id)
+                          ON CONFLICT DO NOTHING""")
+    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
+    db.session.commit()
     sql = text("""SELECT count(*) FROM reply_likes WHERE reply_id=:reply_id""")
     likes = db.session.execute(sql, {"reply_id":reply_id})
     return likes.fetchone()
@@ -202,10 +200,14 @@ def toggle_reply_like(user_id: int, reply_id: int):
 def get_profile(username: str):
     sql = text("""SELECT u.id,
                          u.username, 
-                         u.display_name 
+                         u.display_name,
+                         (SELECT EXISTS (SELECT user_id 
+                                           FROM user_followers 
+                                          WHERE user_id=u.id
+                                            AND follower_id=:follower_id)) AS followed
                     FROM users AS u 
                    WHERE username=:username""")
-    user = db.session.execute(sql, {"username":username})
+    user = db.session.execute(sql, {"username":username, "follower_id": session["user_id"]})
     return user.fetchone()
 
 
@@ -245,3 +247,24 @@ def get_user_replies(user_id: int):
     replies = db.session.execute(sql, {"user_id":user_id, "visible":True, "is_public":True})
     return replies.fetchall()
 
+
+def toggle_user_follow(username: str, follower_id: int):
+    user_id = db.session.execute(text("""SELECT id 
+                                           FROM users 
+                                          WHERE username=:username"""), {"username":username}).fetchone()[0]
+    if not user_id:
+        raise ValueError("User not found")
+    sql = text("""SELECT 1 FROM user_followers WHERE user_id=:user_id AND follower_id=:follower_id""")
+    already_following = db.session.execute(sql, {"user_id":user_id, "follower_id":follower_id}).fetchone()
+    if already_following:
+        sql = text("""DELETE FROM user_followers 
+                       WHERE user_id=:user_id AND follower_id=:follower_id
+                   RETURNING false""")
+    else:
+        sql = text("""INSERT INTO user_followers (user_id, follower_id) 
+                      VALUES (:user_id, :follower_id)
+                          ON CONFLICT DO NOTHING
+                   RETURNING true""")
+    following = db.session.execute(sql, {"user_id":user_id, "follower_id":follower_id})
+    db.session.commit()
+    return following.fetchone()

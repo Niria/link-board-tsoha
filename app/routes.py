@@ -2,7 +2,7 @@ from app import app
 from flask import jsonify, redirect, render_template, request, session, url_for
 from .content import get_category_id, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like, get_profile, get_user_replies
+    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow
 from .users import check_csrf, login_required
 
 
@@ -107,6 +107,15 @@ def profile(username: str, page=None):
     elif page == "followers":
         return render_template("user_profile.html", page=page, user=user, followers=None)
     return render_template("user_profile.html", user=user)
+
+
+@app.route("/u/<string:username>/follow", methods=["POST"])
+@login_required
+def follow(username: str):
+    if request.method == "POST":
+        check_csrf()
+        following = toggle_user_follow(username, session["user_id"])
+        return jsonify({"following": following[0]})
 
 
 # Catches invalid paths
