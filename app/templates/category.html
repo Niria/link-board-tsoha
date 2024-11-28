@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ category }}{% endblock %}
 {% block content %}
-<div class="category-title-container">
-  <h1>{{ category }}</h1>
-  <a href="{{ url_for('new_thread', category=category)}}">
-    <button type="button" class="btn btn-submit-link btn-big">Submit link</button>
-  </a>
-</div>
-{% include "thread_list.html" %}
+    <div class="category-title-container">
+        <h1>{{ category }}</h1>
+        <a href="{{ url_for('new_thread', category=category) }}">
+            <button type="button" class="btn btn-submit-link btn-big">Submit link</button>
+        </a>
+    </div>
+    {% include "thread_list.html" %}
 {% endblock %}

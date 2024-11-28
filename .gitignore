@@ -3,6 +3,7 @@ __pycache__
 venv
 
 .vscode
+.idea
 
 testdata.sql
 testdata2.sql

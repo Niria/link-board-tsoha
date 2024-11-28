@@ -1,13 +1,13 @@
 {% for thread in threads %}
-<div class="listview-thread-container">
-  <a href="{{ thread.link_url }}">
-    <div class="thread-link"></div>
-  </a>
-  <div>
-    <a href="{{ url_for('thread_page', thread_id=thread.id) }}"><h3>{{ thread.title }}</h3></a>
-    <div class="listview-thread-details">
-    {% include "thread_details.html"%}
+    <div class="listview-thread-container">
+        <a href="{{ thread.link_url }}">
+            <div class="thread-link"></div>
+        </a>
+        <div>
+            <a href="{{ url_for('thread_page', thread_id=thread.id) }}"><h3>{{ thread.title }}</h3></a>
+            <div class="listview-thread-details">
+                {% include "thread_details.html" %}
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endfor %}

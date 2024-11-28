@@ -1,20 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-{% if session.username %}
-  <p>You are logged in as {{ session.username }}</p>
-  <a href="{{ url_for('logout') }}">Log out</a>
-{% else %}
-  <form action="{{ url_for('register') }}" method="POST">
-    <p>Username:<br>
-    <input type="text" name="username" required></p>
-    <p>Display name:<br>
-    <input type="text" name="displayname" required></p>
-    <p>Password:<br>
-    <input type="password" name="password1" required></p>
-    <p>Password again:<br>
-    <input type="password" name="password2" required></p>
-    <input type="submit" value="Register">
-  </form>
-{% endif %}
+    {% if session.username %}
+        <p>You are logged in as {{ session.username }}</p>
+        <a href="{{ url_for('logout') }}">Log out</a>
+    {% else %}
+        <form action="{{ url_for('register') }}" method="POST">
+            <p>Username:<br>
+                <label>
+                    <input type="text" name="username" required>
+                </label>
+            </p>
+            <p>Display name:<br>
+                <label>
+                    <input type="text" name="displayname" required>
+                </label>
+            </p>
+            <p>Password:<br>
+                <label>
+                    <input type="password" name="password1" required>
+                </label>
+            </p>
+            <p>Password again:<br>
+                <label>
+                    <input type="password" name="password2" required>
+                </label>
+            </p>
+            <input type="submit" value="Register">
+        </form>
+    {% endif %}
 {% endblock %}

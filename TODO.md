@@ -29,7 +29,7 @@
 - Combine thread page queries (thread, replies) into one query
 - Likes/comments db count with aggregate instead of subquery
 - Combine index and category templates?
-- Clean up reply_like route, thread_id seems so unecessary
+- Clean up reply_like route, thread_id seems so unnecessary
 - Display weeks/months instead of days for submission age?
 
 
