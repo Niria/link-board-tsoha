@@ -237,6 +237,11 @@ button:focus {
   text-align: center;
 }
 
+.btn-follow {
+  padding: 0 0.5rem;
+}
+
+
 a:has(> .btn) {
   text-decoration: none;
   color: var(--text-color-1);

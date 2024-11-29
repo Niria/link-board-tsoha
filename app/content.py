@@ -1,5 +1,3 @@
-from flask import session
-
 from .db import db
 from sqlalchemy.sql import text
 
@@ -197,7 +195,7 @@ def toggle_reply_like(user_id: int, reply_id: int):
     return likes.fetchone()
 
 
-def get_profile(username: str):
+def get_profile(username: str, session_user: int):
     sql = text("""SELECT u.id,
                          u.username, 
                          u.display_name,
@@ -207,18 +205,18 @@ def get_profile(username: str):
                                             AND follower_id=:follower_id)) AS followed
                     FROM users AS u 
                    WHERE username=:username""")
-    user = db.session.execute(sql, {"username":username, "follower_id": session["user_id"]})
+    user = db.session.execute(sql, {"username":username, "follower_id": session_user})
     return user.fetchone()
 
 
-def get_user_replies(user_id: int):
+def get_user_replies(user_id: int, session_user):
     sql = text("""SELECT r.id AS reply_id,
                          r.content AS reply_content,
                          count(rl.user_id) AS likes,
                          time_ago(r.created_at) AS reply_age,
                          (SELECT EXISTS (SELECT *
                            FROM reply_likes AS rl
-                          WHERE rl.user_id=:user_id
+                          WHERE rl.user_id=:session_user
                             AND rl.reply_id=r.id)
                          ) AS liked,
                          t.id AS thread_id,
@@ -244,7 +242,7 @@ def get_user_replies(user_id: int):
                      AND c.is_public=:is_public
                    GROUP BY r.id, t.id, u2.username, u2.display_name, c.name
                    ORDER BY r.created_at DESC""")
-    replies = db.session.execute(sql, {"user_id":user_id, "visible":True, "is_public":True})
+    replies = db.session.execute(sql, {"user_id":user_id, "visible":True, "is_public":True, "session_user":session_user})
     return replies.fetchall()
 
 
@@ -268,3 +266,14 @@ def toggle_user_follow(username: str, follower_id: int):
     following = db.session.execute(sql, {"user_id":user_id, "follower_id":follower_id})
     db.session.commit()
     return following.fetchone()
+
+
+def get_user_followers(user_id: int):
+    sql = text("""SELECT u.username,
+                         u.display_name
+                    FROM user_followers AS uf
+                    JOIN users AS u
+                      ON uf.follower_id=u.id
+                   WHERE uf.user_id=:user_id""")
+    followers = db.session.execute(sql, {"user_id":user_id})
+    return followers.fetchall()

@@ -32,12 +32,14 @@ function toggleReplyLike(reply) {
 }
 
 function toggleUserFollow(follow) {
+  const user_id = follow.dataset.user_id;
   const url = follow.dataset.url;
   const csrf_token = JSON.parse(follow.dataset.csrf);
   fetch(url, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
+      "user-id": user_id,
       "csrf-token": csrf_token
     }
   })
