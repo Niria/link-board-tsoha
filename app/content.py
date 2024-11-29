@@ -10,18 +10,25 @@ def get_category_list():
     return categories.fetchall()
 
 
-def get_category_id(category: str):
-    sql = text("""SELECT id FROM categories WHERE name=:category""")
-    category_id = db.session.execute(sql, {"category":category})
+def get_category(category: str, user_id: int):
+    sql = text("""SELECT id, 
+                         name,
+                         (SELECT EXISTS (SELECT 1 
+                                           FROM category_favourites
+                                          WHERE category_id=c.id
+                                            AND user_id=:user_id)) AS favourite
+                    FROM categories AS c 
+                   WHERE name=:category""")
+    category_id = db.session.execute(sql, {"category":category, "user_id":user_id})
     return category_id.fetchone()
 
 
-def get_threads(category: str = None, by_user: int = None):
-    if category:
-        sql = text("""SELECT 1 FROM categories WHERE name=:category""")
-        category_exists = db.session.execute(sql, {"category":category})
-        if not category_exists:
-            return None
+def get_threads(category_id: int = None, by_user: int = None, user_id: int = None):
+    # if category_id:
+    #     sql = text("""SELECT 1 FROM categories WHERE name=:category""")
+    #     category_exists = db.session.execute(sql, {"category":category})
+    #     if not category_exists:
+    #         return None
     sql = text("""SELECT t.id, 
                          t.title, 
                          t.content, 
@@ -41,15 +48,16 @@ def get_threads(category: str = None, by_user: int = None):
                     JOIN users AS u
                       ON t.user_id=u.id
                    WHERE c.is_public=:public
-                     AND (:category IS NULL OR c.name=:category)
+                     AND (:category_id IS NULL OR c.id=:category_id)
                      AND (:by_user IS NULL OR u.id=:by_user)
                      AND t.visible=:visible
                    GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
     threads = db.session.execute(sql, {"public":True,
                                        "visible":True,
-                                       "category":category,
-                                       "by_user":by_user})
+                                       "category_id":category_id,
+                                       "by_user":by_user,
+                                       "user_id":user_id})
     return threads.fetchall()
 
 
@@ -209,7 +217,7 @@ def get_profile(username: str, session_user: int):
     return user.fetchone()
 
 
-def get_user_replies(user_id: int, session_user):
+def get_user_replies(user_id: int, session_user: int):
     sql = text("""SELECT r.id AS reply_id,
                          r.content AS reply_content,
                          count(rl.user_id) AS likes,
@@ -277,3 +285,24 @@ def get_user_followers(user_id: int):
                    WHERE uf.user_id=:user_id""")
     followers = db.session.execute(sql, {"user_id":user_id})
     return followers.fetchall()
+
+
+def toggle_category_fav(category_name: str, user_id: int):
+    category = get_category(category_name, user_id)
+    if not category:
+        raise ValueError("Category not found")
+    sql = text("""SELECT 1 FROM category_favourites WHERE category_id=:category_id AND user_id=:user_id""")
+    already_favourite = db.session.execute(sql, {"category_id":category.id, "user_id":user_id}).fetchone()
+    if already_favourite:
+        sql = text("""DELETE FROM category_favourites
+                       WHERE category_id=:category_id 
+                         AND user_id=:user_id
+                   RETURNING false""")
+    else:
+        sql = text("""INSERT INTO category_favourites (category_id, user_id) 
+                      VALUES (:category_id, :user_id)
+                          ON CONFLICT DO NOTHING
+                   RETURNING true""")
+    favourite = db.session.execute(sql, {"category_id":category.id, "user_id":user_id})
+    db.session.commit()
+    return favourite.fetchone()

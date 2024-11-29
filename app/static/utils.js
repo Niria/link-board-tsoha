@@ -44,9 +44,29 @@ function toggleUserFollow(follow) {
     }
   })
       .then((response) => response.json())
-      .then((json) =>
-          follow.innerHTML = json.following ? 'Following' : 'Follow');
-          follow.classList.toggle('following');
+      .then((json) => {
+        follow.innerHTML = json.following ? 'Following' : 'Follow';
+        follow.classList.toggle('following');
+      })
+}
+
+function toggleCategoryFavourite(favourite) {
+  const url = favourite.dataset.url;
+  const csrf_token = JSON.parse(favourite.dataset.csrf);
+  const user_id = favourite.dataset.user_id;
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      "user-id": user_id,
+      "csrf-token": csrf_token
+    }
+  })
+      .then((response) => response.json())
+      .then((json) => {
+//        favourite.innerHTML = json.favourite ? 'Favourited' : 'Favourite';
+        favourite.style.fill = json.favourite ? 'gold' : 'none';
+      })
 }
 
 
@@ -80,6 +100,12 @@ function setEventHandlers() {
   const userFollow = document.querySelector('#user-follow');
   if (userFollow !== null) {
     userFollow.addEventListener('click', () => toggleUserFollow(userFollow));
+  }
+
+  // Initialize eventListener for favouriting category
+  const categoryFavourite = document.querySelector('#category-favourite');
+  if (categoryFavourite !== null) {
+    categoryFavourite.addEventListener('click', () => toggleCategoryFavourite(categoryFavourite));
   }
 }
 

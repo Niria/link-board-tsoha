@@ -1,15 +1,15 @@
 from app import app
 from flask import jsonify, redirect, render_template, request, session, url_for
-from .content import get_category_id, get_threads, get_thread, \
+from .content import get_category, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, get_user_followers
+    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, get_user_followers, toggle_category_fav
 from .users import check_csrf, login_required
 
 
 @app.route("/")
 @login_required
 def index():
-    threads = get_threads(None)
+    threads = get_threads()
     if not threads:
         return render_template("error.html", message="Invalid category")
     return render_template("index.html", 
@@ -20,13 +20,25 @@ def index():
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
-    threads = get_threads(category=category)
+    category = get_category(category, session["user_id"])
+    if not category:
+        return redirect(url_for("index"))
+    threads = get_threads(category_id=category.id, user_id=session["user_id"])
     if not threads:
-        return redirect("/")
-    return render_template("category.html", 
+        return redirect(url_for("index"))
+    return render_template("category.html",
                            category=category, 
                            threads=threads)
 
+
+@app.route("/c/<string:category>/favourite", methods=["POST"])
+@login_required
+def favourite_category(category: str):
+    if request.method == "POST":
+        check_csrf()
+        user_id = session["user_id"]
+        favourite = toggle_category_fav(category, user_id)
+        return jsonify({"favourite": favourite[0]})
 
 @app.route("/p/<int:thread_id>", methods=["GET", "POST"])
 @login_required
@@ -56,7 +68,7 @@ def new_thread(category: str):
         return render_template("new_thread.html", category=category)
     if request.method == "POST":
         check_csrf()
-        category_id = get_category_id(category)
+        category_id = get_category(category)
         if not category_id:
             return render_template("error.html", message="Category does not exist")
         category_id = category_id[0]

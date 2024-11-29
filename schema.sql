@@ -60,7 +60,7 @@ CREATE TABLE permissions (
     can_write BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
--- followers not yet implemented
+
 CREATE TABLE user_followers (
     user_id INTEGER REFERENCES users NOT NULL,
     follower_id INTEGER REFERENCES users NOT NULL,
@@ -68,6 +68,12 @@ CREATE TABLE user_followers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE category_favourites (
+    user_id INTEGER REFERENCES  users NOT NULL,
+    category_id INTEGER REFERENCES categories NOT NULL,
+    PRIMARY KEY (user_id, category_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE OR REPLACE FUNCTION time_ago (since TIMESTAMP WITH TIME ZONE)
 RETURNS TEXT

@@ -1,5 +1,6 @@
 BEGIN;
 
+DROP TABLE IF EXISTS category_favourites;
 DROP TABLE IF EXISTS user_followers;
 DROP TABLE IF EXISTS thread_likes;
 DROP TABLE IF EXISTS reply_likes;
