@@ -25,6 +25,7 @@ def logout():
     del session["username"]
     del session["display_name"]
     del session["user_id"]
+    del session["user_role"]
     return redirect(url_for("login"))
 
 

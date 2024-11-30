@@ -3,6 +3,13 @@
 {% block content %}
     <div class="category-title-container">
         <h1>{{ category }}</h1>
+        {% if session.user_role > 0 %}
+            <button type="button"
+                    class="btn btn-category btn-big"
+                    onclick="window.location.href='{{ url_for('new_category') }}';">
+                Create category
+            </button>
+        {% endif %}
     </div>
     {% include "thread_list.html" %}
 {% endblock %}

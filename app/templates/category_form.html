@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}New Category{% endblock %}
+{% block content %}
+    {% if session.user_role > 0 %}
+        <form action="{{ url_for('new_category') }}" method="POST">
+            <p>Category Name:</p>
+            <label>
+                <input type="text" name="category_name" placeholder="Category Name" required/>
+            </label>
+            <p>Public?</p>
+            <label>
+                Yes
+                <input type="radio" name="public" value="true" checked/>
+            </label>
+            <br>
+            <label>
+                No
+                <input type="radio" name="public" value="false"/>
+            </label>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <br>
+            <input type="submit" value="Create Category"/>
+
+
+        </form>
+
+    {% endif %}
+{% endblock %}

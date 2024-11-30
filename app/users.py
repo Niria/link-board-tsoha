@@ -1,22 +1,30 @@
-from flask import session, request, abort, redirect, url_for
-from sqlalchemy.sql import text
-from .db import db
-from werkzeug.security import check_password_hash
 import secrets
 from functools import wraps
+
+from flask import session, request, abort, redirect, url_for, render_template
+from sqlalchemy.sql import text
+from werkzeug.security import check_password_hash
+
+from .db import db
 
 
 # TODO: turn into a decorator?
 # TODO: move all csrf tokens to headers instead of using forms?
 def check_csrf():
     if session["csrf_token"] != request.headers.get('csrf-token') \
-        and session["csrf_token"] != request.form["csrf_token"]:
+            and session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
 
 
 def login(username, password):
-    sql = text("SELECT id, password, username, display_name FROM users WHERE username=:username")
-    result = db.session.execute(sql, {"username":username})
+    sql = text("""SELECT id, 
+                         password, 
+                         username, 
+                         display_name,
+                         user_role
+                    FROM users 
+                   WHERE username=:username""")
+    result = db.session.execute(sql, {"username": username})
     user = result.fetchone()
     if not user:
         return False
@@ -25,9 +33,10 @@ def login(username, password):
     session["username"] = user.username
     session["display_name"] = user.display_name
     session["user_id"] = user.id
+    session["user_role"] = user.user_role
     session["csrf_token"] = secrets.token_hex(16)
     return True
-    
+
 
 def login_required(f):
     @wraps(f)
@@ -35,5 +44,15 @@ def login_required(f):
         if session.get("username") is None:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
-    return decorated_function        
 
+    return decorated_function
+
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_role") < 1:
+            return render_template("error.html", message="Unauthorized.")
+        return f(*args, **kwargs)
+
+    return decorated_function

@@ -24,8 +24,8 @@ def category_page(category: str):
     if not category:
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
-    if not threads:
-        return redirect(url_for("index"))
+    # if not threads:
+    #     return redirect(url_for("index"))
     return render_template("category.html",
                            category=category, 
                            threads=threads)
@@ -68,7 +68,7 @@ def new_thread(category: str):
         return render_template("new_thread.html", category=category)
     if request.method == "POST":
         check_csrf()
-        category_id = get_category(category)
+        category_id = get_category(category, session["user_id"])
         if not category_id:
             return render_template("error.html", message="Category does not exist")
         category_id = category_id[0]

@@ -101,7 +101,7 @@ button:focus {
   }
 }
 
-.btn-submit-link {
+.btn-category {
   margin-bottom: 0.5rem;
   font-size: small;
   text-align: center;
@@ -230,7 +230,8 @@ button:focus {
 }
 
 .btn-big {
-  width: 6rem;
+  padding: 0 0.5rem;
+  width: fit-content;
   height: 2rem;
   border-radius: 0.375rem;
   line-height: 1.5rem;
@@ -389,4 +390,12 @@ a:has(> .thread-link):hover {
 .btn-favourite:active {
   transform: scale(0.9);
 }
+
+.category-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
 

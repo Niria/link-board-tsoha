@@ -15,7 +15,6 @@ CREATE TABLE categories (
     name VARCHAR(64) UNIQUE NOT NULL,
     is_public BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-
 );
 
 CREATE TABLE threads (
@@ -94,9 +93,9 @@ SELECT COALESCE(NULLIF(EXTRACT(day FROM diff), 0)||' day',
 INTO ago
 FROM t;
 
-CASE WHEN ago ~ '^([2-9]|\d{2,})\s.*' THEN SELECT ago || 's ago' INTO ago; 
-     WHEN ago ~ '^1\s.*' THEN SELECT ago || ' ago' INTO ago; 
-     ELSE 
+CASE WHEN ago ~ '^([2-9]|\d{2,})\s.*' THEN SELECT ago || 's ago' INTO ago;
+     WHEN ago ~ '^1\s.*' THEN SELECT ago || ' ago' INTO ago;
+     ELSE
 END CASE;
 
 RETURN ago;

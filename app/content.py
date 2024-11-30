@@ -306,3 +306,13 @@ def toggle_category_fav(category_name: str, user_id: int):
     favourite = db.session.execute(sql, {"category_id":category.id, "user_id":user_id})
     db.session.commit()
     return favourite.fetchone()
+
+def create_category(category_name: str, public: bool):
+    sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
+    category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
+    if category_exists:
+        raise(ValueError("Category already exists"))
+    sql = text("""INSERT INTO categories (name, is_public) 
+                  VALUES (:category_name, :public)""")
+    db.session.execute(sql, {"category_name":category_name, "public":public})
+    db.session.commit()

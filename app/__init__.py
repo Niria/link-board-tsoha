@@ -4,7 +4,7 @@ from os import getenv
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
-from app import routes, auth
+from app import routes, auth, admin
 from app.content import get_category_list
 
 

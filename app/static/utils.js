@@ -64,7 +64,6 @@ function toggleCategoryFavourite(favourite) {
   })
       .then((response) => response.json())
       .then((json) => {
-//        favourite.innerHTML = json.favourite ? 'Favourited' : 'Favourite';
         favourite.style.fill = json.favourite ? 'gold' : 'none';
       })
 }
