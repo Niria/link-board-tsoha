@@ -9,7 +9,7 @@ from .users import check_csrf, login_required
 @app.route("/")
 @login_required
 def index():
-    threads = get_threads()
+    threads = get_threads(user_id=session["user_id"])
     if not threads:
         return render_template("error.html", message="Invalid category")
     return render_template("index.html", 
@@ -21,7 +21,7 @@ def index():
 @login_required
 def category_page(category: str):
     category = get_category(category, session["user_id"])
-    if not category:
+    if not category or (not category.is_public and session["user_role"] < 1):
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
     # if not threads:

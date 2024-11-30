@@ -13,6 +13,7 @@ def get_category_list():
 def get_category(category: str, user_id: int):
     sql = text("""SELECT id, 
                          name,
+                         is_public,
                          (SELECT EXISTS (SELECT 1 
                                            FROM category_favourites
                                           WHERE category_id=c.id
@@ -47,7 +48,9 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                       ON c.id=t.category_id 
                     JOIN users AS u
                       ON t.user_id=u.id
-                   WHERE c.is_public=:public
+                   WHERE (c.is_public=:public OR (SELECT user_role > 0 
+                                                    FROM users 
+                                                   WHERE id=:user_id))
                      AND (:category_id IS NULL OR c.id=:category_id)
                      AND (:by_user IS NULL OR u.id=:by_user)
                      AND t.visible=:visible
@@ -86,7 +89,9 @@ def get_thread(thread_id: int, user_id: int):
                     JOIN users AS u
                       ON t.user_id=u.id
                    WHERE t.visible=:visible
-                     AND c.is_public=:public
+                     AND (c.is_public=:public OR (SELECT user_role > 0 
+                                                    FROM users 
+                                                   WHERE id=:user_id))
                      AND t.id=:id
                    GROUP BY t.id, u.id, u.display_name, c.name""")
     thread = db.session.execute(sql, {"public":True,
@@ -315,4 +320,18 @@ def create_category(category_name: str, public: bool):
     sql = text("""INSERT INTO categories (name, is_public) 
                   VALUES (:category_name, :public)""")
     db.session.execute(sql, {"category_name":category_name, "public":public})
+    db.session.commit()
+
+def update_category(category_name: str, new_category_name: str, public: bool):
+    sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
+    category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
+    if not category_exists:
+        raise(ValueError("Category not found"))
+    sql = text("""UPDATE categories 
+                     SET name=:new_category_name, 
+                         is_public=:public
+                   WHERE name=:category_name""")
+    db.session.execute(sql, {"category_name":category_name,
+                             "new_category_name":new_category_name,
+                             "public":public})
     db.session.commit()

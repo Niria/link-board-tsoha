@@ -1,7 +1,29 @@
 {% extends "base.html" %}
-{% block title %}New Category{% endblock %}
+{% block title %}Create or Edit Category{% endblock %}
 {% block content %}
     {% if session.user_role > 0 %}
+        {% if category %}
+            {{ category }}
+        <form action="{{ url_for('edit_category', category=category.name) }}" method="POST">
+            <p>Category Name:</p>
+            <label>
+                <input type="text" name="category_name" value="{{ category.name }}" required/>
+            </label>
+            <p>Public?</p>
+            <label>
+                Yes
+                <input type="radio" name="public" value="true" {{ 'checked' if category.is_public }}/>
+            </label>
+            <br>
+            <label>
+                No
+                <input type="radio" name="public" value="false" {{ 'checked' if not category.is_public }}/>
+            </label>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <br>
+            <input type="submit" value="Edit Category"/>
+        </form>
+        {% else %}
         <form action="{{ url_for('new_category') }}" method="POST">
             <p>Category Name:</p>
             <label>
@@ -20,9 +42,7 @@
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
             <br>
             <input type="submit" value="Create Category"/>
-
-
         </form>
-
+        {% endif %}
     {% endif %}
 {% endblock %}
