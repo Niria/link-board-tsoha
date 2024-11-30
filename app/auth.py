@@ -47,6 +47,8 @@ def register():
         if len(display_name) < 3 or len(display_name) > 20:
             return render_template("error.html", 
                                    message="Display name must be between 3 and 20 characters long.")
+        if " " in username or " " in display_name:
+            return render_template("error.html", message="Name cannot contain spaces.")
         if len(password1) < 4 or len(password1) > 64:
             return render_template("error.html", 
                                    message="Password must be between 4 and 64 characters long.")

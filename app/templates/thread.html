@@ -22,6 +22,11 @@
                     <div id="thread-likes"> {{ thread.likes }}</div>
                 </button>
                 <button type="button" class="form-toggle btn btn-small">Reply</button>
+                {% if session.user_id == thread.user_id or session.user_role > 0 %}
+                    <button type="button"
+                            class="btn btn-small"
+                            onclick="window.location.href='{{ url_for('edit_thread', thread_id=thread.id) }}';">Edit</button>
+                {% endif %}
             </div>
             {% with reply=None %}
                 {% include "comment_form.html" %}

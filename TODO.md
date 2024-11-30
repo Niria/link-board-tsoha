@@ -14,15 +14,14 @@
 - User profile page
     - Public/private and if profile private hide user from follower lists?
     - Profile tab (bio, like/follower count, registration date)
-    - Followers tab
-- User favourite categories
-- User followers/following
+    - Followers tab: list followers
+- List users favourite categories somewhere
 - Thread search
 
 
 ## Technical
 - Make sure display_name is shown instead of username
-- Form input validation
+- Form input validation, check for for whitespace
 - Better error handling via flash messages
 - Project file structure cleanup
 - DB indexing

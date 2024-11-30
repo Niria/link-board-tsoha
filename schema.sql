@@ -13,6 +13,7 @@ CREATE TABLE users (
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(64) UNIQUE NOT NULL,
+    description TEXT,
     is_public BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,6 +35,7 @@ CREATE TABLE replies (
     thread_id INTEGER REFERENCES threads NOT NULL,
     parent_id INTEGER REFERENCES replies,
     content TEXT NOT NULL,
+    visible BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

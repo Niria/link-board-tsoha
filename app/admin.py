@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, redirect, request, session, url_for
 from sqlalchemy.sql import text
 
-from .content import create_category, get_category, update_category
+from .content import create_category, get_category, update_category, get_thread, update_thread
 from .db import db
 from . import users
 from werkzeug.security import generate_password_hash
@@ -18,8 +18,11 @@ def new_category():
     if request.method == "POST":
         check_csrf()
         category_name = request.form["category_name"]
+        if len(category_name) < 3:
+            return render_template("error.html", message="Category name must be 3 characters or longer.")
+        description = request.form["description"]
         public = True if request.form["public"] == "true" else False
-        create_category(category_name, public)
+        create_category(category_name, description, public)
         return redirect(url_for("index"))
 
 
@@ -32,20 +35,40 @@ def edit_category(category):
     if request.method == "POST":
         check_csrf()
         new_category_name = request.form["category_name"]
+        if len(new_category_name) < 3:
+            return render_template("error.html", message="Category name must be 3 characters or longer.")
+        description = request.form["description"]
         public = True if request.form["public"] == "true" else False
-        update_category(category, new_category_name, public)
+        update_category(category, new_category_name, description, public)
         return redirect(url_for("index"))
 
 
-@app.route("/p/<int:thread_id>/edit", methods=["POST"])
-@admin_required
+@app.route("/p/<int:thread_id>/edit", methods=["GET", "POST"])
 def edit_thread(thread_id):
-    pass
+    thread = get_thread(thread_id, session["user_id"])
+    if session["user_id"] != thread.user_id and session["user_role"] < 1:
+        return render_template("error.html", message="You are not authorized to edit this thread.")
+    if request.method == "GET":
+        return render_template("thread_form.html", editing=True, thread=thread)
+    if request.method == "POST":
+        check_csrf()
+        link_url = request.form["link_url"]
+        if not 3 <= len(link_url) <= 50:
+            return render_template("error.html", message="Url must be between 3 and 50 characters long.")
+        title = request.form["title"]
+        if not 3 <= len(title) <= 50:
+            return render_template("error.html", message="Title must be between 3 and 50 characters long.")
+        content = request.form["content"]
+        visible = None
+        if 'visible' in request.form:
+            visible = True if request.form["visible"] == "true" else False
+        update_thread(thread_id, link_url, title, content, visible)
+
+        return redirect("/")
 
 
 
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
-@admin_required
 def edit_reply(thread_id, reply_id):
     pass
 

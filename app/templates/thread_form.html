@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Submit link{% endblock %}
+{% block content %}
+    {% if not editing %}
+        <form action="{{ url_for('new_thread', category=category) }}" method="POST">
+            <div class="form-input">
+                <p>Url:</p>
+                <label>
+                    <input type="text" name="link_url"/>
+                </label>
+            </div>
+            <div class="form-input">
+                <p>Title:</p>
+                <label>
+                    <input type="text" name="title"/>
+                </label>
+            </div>
+            <div class="form-input">
+                <p>Message:</p>
+                <label>
+                    <textarea name="content" rows="3" cols="80"></textarea>
+                </label>
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input class="btn btn-big" type="submit" value="Submit link"/>
+        </form>
+    {% else %}
+        <form action="{{ url_for('edit_thread', category=category, thread_id=thread.id) }}" method="POST">
+            <div class="form-input">
+                <p>Url:</p>
+                <label>
+                    <input type="text" name="link_url" value="{{ thread.link_url }}"/>
+                </label>
+            </div>
+            <div class="form-input">
+                <p>Title:</p>
+                <label>
+                    <input type="text" name="title" value="{{ thread.title }}"/>
+                </label>
+            </div>
+            <div class="form-input">
+                <p>Message:</p>
+                <label>
+                    <textarea name="content" rows="3" cols="80">{{ thread.content }}</textarea>
+                </label>
+            </div>
+            {% if session.user_role > 0 %}<p>Visibility:</p>
+                <label>
+                    Show
+                    <input type="radio" name="visible" value="true" {{ 'checked' if thread.visible }}/>
+                </label>
+                <br>
+                <label>
+                    Hide
+                    <input type="radio" name="visible" value="false" {{ 'checked' if not thread.visible }}/>
+                </label>
+                <br>
+            {% endif %}
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input class="btn btn-big" type="submit" value="Edit thread"/>
+        </form>
+
+    {% endif %}
+{% endblock %}

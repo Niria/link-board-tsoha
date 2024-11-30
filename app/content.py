@@ -13,6 +13,7 @@ def get_category_list():
 def get_category(category: str, user_id: int):
     sql = text("""SELECT id, 
                          name,
+                         description,
                          is_public,
                          (SELECT EXISTS (SELECT 1 
                                            FROM category_favourites
@@ -34,6 +35,7 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                          t.title, 
                          t.content, 
                          t.link_url,
+                         t.visible,
                          (SELECT count(*)
                             FROM thread_likes AS tl
                            WHERE tl.thread_id=t.id) AS likes,
@@ -53,7 +55,9 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                                                    WHERE id=:user_id))
                      AND (:category_id IS NULL OR c.id=:category_id)
                      AND (:by_user IS NULL OR u.id=:by_user)
-                     AND t.visible=:visible
+                     AND (t.visible=:visible OR (SELECT user_role > 0
+                                                   FROM users
+                                                  WHERE id=:user_id))
                    GROUP BY t.id, u.id, u.display_name, c.name
                    ORDER BY t.created_at DESC""")
     threads = db.session.execute(sql, {"public":True,
@@ -69,6 +73,7 @@ def get_thread(thread_id: int, user_id: int):
                          t.title, 
                          t.content, 
                          t.link_url,
+                         t.visible,
                          (SELECT count(*)
                             FROM thread_likes AS tl
                            WHERE tl.thread_id=t.id) AS likes,
@@ -88,7 +93,9 @@ def get_thread(thread_id: int, user_id: int):
                       ON c.id=t.category_id
                     JOIN users AS u
                       ON t.user_id=u.id
-                   WHERE t.visible=:visible
+                   WHERE (t.visible=:visible OR (SELECT user_role > 0 
+                                                    FROM users 
+                                                   WHERE id=:user_id))
                      AND (c.is_public=:public OR (SELECT user_role > 0 
                                                     FROM users 
                                                    WHERE id=:user_id))
@@ -312,26 +319,45 @@ def toggle_category_fav(category_name: str, user_id: int):
     db.session.commit()
     return favourite.fetchone()
 
-def create_category(category_name: str, public: bool):
+def create_category(category_name: str, description: str, public: bool):
     sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
     category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
     if category_exists:
         raise(ValueError("Category already exists"))
-    sql = text("""INSERT INTO categories (name, is_public) 
-                  VALUES (:category_name, :public)""")
-    db.session.execute(sql, {"category_name":category_name, "public":public})
+    sql = text("""INSERT INTO categories (name, description, is_public) 
+                  VALUES (:category_name, :description, :public)""")
+    db.session.execute(sql, {"category_name":category_name, "description":description, "public":public})
     db.session.commit()
 
-def update_category(category_name: str, new_category_name: str, public: bool):
+def update_category(category_name: str, new_category_name: str, description:str, public: bool):
     sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
     category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
     if not category_exists:
         raise(ValueError("Category not found"))
     sql = text("""UPDATE categories 
                      SET name=:new_category_name, 
+                         description=:description,
                          is_public=:public
                    WHERE name=:category_name""")
     db.session.execute(sql, {"category_name":category_name,
                              "new_category_name":new_category_name,
+                             "description":description,
                              "public":public})
+    db.session.commit()
+
+
+def update_thread(thread_id: int, link_url: str, title: str, content: str, visible: bool):
+    sql = text("""SELECT 1 FROM threads WHERE id=:thread_id""")
+    thread_exists = db.session.execute(sql, {"thread_id":thread_id}).fetchone()
+    if not thread_exists:
+        raise(ValueError("Thread not found"))
+    print(visible)
+    sql = text("""UPDATE threads 
+                     SET link_url=:link_url,
+                         title=:title, 
+                         content=:content,
+                         visible=(COALESCE(:visible, visible))
+                   WHERE id=:thread_id""")
+    db.session.execute(sql, {"thread_id":thread_id, "link_url":link_url, "title":title,
+                             "content":content, "visible":visible})
     db.session.commit()

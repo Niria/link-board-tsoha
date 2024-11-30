@@ -65,12 +65,12 @@ def thread_page(thread_id: int):
 @login_required
 def new_thread(category: str):
     if request.method == "GET":
-        return render_template("new_thread.html", category=category)
+        return render_template("thread_form.html", category=category, editing=False)
     if request.method == "POST":
         check_csrf()
         category_id = get_category(category, session["user_id"])
         if not category_id:
-            return render_template("error.html", message="Category does not exist")
+            return render_template("error.html", message="Cate§gory does not exist")
         category_id = category_id[0]
         user_id = session["user_id"]
         link_url = request.form["link_url"]

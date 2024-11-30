@@ -1,5 +1,5 @@
 {% for thread in threads %}
-    <div class="listview-thread-container">
+    <div class="listview-thread-container {{ 'thread-hidden' if not thread.visible else '' }}">
         <a href="{{ thread.link_url }}">
             <div class="thread-link"></div>
         </a>

@@ -398,4 +398,15 @@ a:has(> .thread-link):hover {
   align-items: center;
 }
 
+.thread-hidden {
+  filter: opacity(30%);
+  position: relative;
+}
 
+.thread-hidden:after {
+  content: "Hidden";
+  font-size: small;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+}
