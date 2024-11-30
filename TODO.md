@@ -5,9 +5,6 @@
 - User thread/reply edit
 - User permissions
 - Admin user
-    - Delete/hide threads
-    - Delete/hide replies
-    - Create/hide category
     - Change category permissions
     - Grant/revoke user access permissions
     - Grant/revoke user posting permissions
@@ -33,7 +30,6 @@
 
 
 ## Style
-- Reply tree links/chains between parent-child
 - Go through css classes and combine them if possible
 - Transitions 
 

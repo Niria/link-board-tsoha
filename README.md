@@ -18,12 +18,13 @@ of these categories.
 - [x] User can write messages in threads as a reply to another message or the main post
 - [x] User can post links and create new threads accompanying them
 - [x] User can like threads and replies
-- [ ] User can edit the title and content of their own threads
+- [x] User can edit the title and content of their own threads
+- [x] User can edit the content of their replies
 - [ ] User can search thread titles and messages using a keyword search function
-- [ ] Admin can create new public and private categories for links
+- [x] Admin can create new public and private categories for links
 - [ ] Admin can grant/revoke private category access permissions for users
-- [ ] Admin can edit, hide and delete threads/messages submitted by users
-- [ ] Admin can revoke/grant users posting priviledges
+- [x] Admin can edit and hide/soft delete threads/messages submitted by users
+- [ ] Admin can revoke/grant users posting privileges
 
 Ticked features in the list above have been implemented. Check `TODO.md` for up to date tasklist.
 

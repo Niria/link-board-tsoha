@@ -2,10 +2,8 @@ from app import app
 from flask import render_template, redirect, request, session, url_for
 from sqlalchemy.sql import text
 
-from .content import create_category, get_category, update_category, get_thread, update_thread
+from .content import create_category, get_category, update_category, get_thread, update_thread, update_reply
 from .db import db
-from . import users
-from werkzeug.security import generate_password_hash
 
 from .users import admin_required, check_csrf
 
@@ -70,7 +68,23 @@ def edit_thread(thread_id):
 
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
 def edit_reply(thread_id, reply_id):
-    pass
+    if request.method == "POST":
+        check_csrf()
+        reply = db.session.execute(text("""SELECT user_id 
+                                             FROM replies 
+                                            WHERE id=:reply_id"""),
+                                   {"reply_id": reply_id}).fetchone()
+        if session["user_id"] != reply.user_id and session["user_role"] < 1:
+            return render_template("error.html", message="Invalid user.")
+        content = request.form["content"]
+        visible = None
+        if 'visible' in request.form:
+            visible = True if request.form["visible"] == "true" else False
+        print(visible)
+        if not 1 <= len(content) <= 1000:
+            return render_template("error.html", message="Reply must be between 1 and 1000 characters long.")
+        update_reply(reply_id, content, visible)
+        return redirect(url_for('thread_page', thread_id=thread_id))
 
 
 @app.route("/u/<int:user_id>/edit", methods=["POST"])

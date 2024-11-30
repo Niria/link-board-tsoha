@@ -84,11 +84,27 @@ function setEventHandlers() {
   const replyContent = document.querySelectorAll('.reply-content-container');
   if (replyContent !== null) {
     replyContent.forEach((reply) => {
-      const replyComment = reply.querySelector('.toggle-comment-form');
+      const replyComment = reply.querySelectorAll('.toggle-comment-form');
       if (replyComment !== null) {
         reply.querySelector('.form-toggle').addEventListener('click', () => {
-          replyComment.classList.toggle('hidden');
+          //replyComment.querySelector('textarea').innerHTML = '';
+          replyComment[0].classList.toggle('hidden');
+          if (!replyComment[1].classList.contains('hidden')) {
+            replyComment[1].classList.toggle('hidden');
+          }
         })
+        const editReply = reply.querySelector('.form-toggle-edit')
+        if (editReply !== null) {
+          editReply.addEventListener('click', () => {
+            const existingComment = reply.querySelector('.reply-message');
+            replyComment[1].querySelector('textarea').innerHTML = existingComment.innerHTML;
+            replyComment[1].classList.toggle('hidden');
+            if (!replyComment[0].classList.contains('hidden')) {
+              replyComment[0].classList.toggle('hidden');
+            }
+        })
+        }
+
       }
       const likeReply = reply.querySelector('#like-reply');
       likeReply.addEventListener('click', () => toggleReplyLike(likeReply));

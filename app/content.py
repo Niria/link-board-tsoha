@@ -114,13 +114,15 @@ def get_replies(thread_id: int, user_id: int):
                        user_id, 
                        parent_id,
                        content, 
-                       created_at, 
+                       created_at,
+                       visible,
                        path) 
                     AS (SELECT r.id, 
                                r.user_id, 
                                r.parent_id, 
                                r.content, 
-                               r.created_at, 
+                               r.created_at,
+                               r.visible, 
                                ARRAY[r.id]
                           FROM replies AS r
                          WHERE r.parent_id IS NULL
@@ -132,7 +134,8 @@ def get_replies(thread_id: int, user_id: int):
                                r.user_id, 
                                r.parent_id, 
                                r.content, 
-                               r.created_at, 
+                               r.created_at,
+                               r.visible, 
                                path || r.id
                           FROM replies AS r
                           JOIN reply_tree AS rt
@@ -144,6 +147,7 @@ def get_replies(thread_id: int, user_id: int):
                         rt.user_id, 
                         rt.parent_id, 
                         rt.content,
+                        rt.visible,
                         u.username,
                         u.display_name,
                         time_ago(rt.created_at) AS age,
@@ -351,7 +355,6 @@ def update_thread(thread_id: int, link_url: str, title: str, content: str, visib
     thread_exists = db.session.execute(sql, {"thread_id":thread_id}).fetchone()
     if not thread_exists:
         raise(ValueError("Thread not found"))
-    print(visible)
     sql = text("""UPDATE threads 
                      SET link_url=:link_url,
                          title=:title, 
@@ -361,3 +364,20 @@ def update_thread(thread_id: int, link_url: str, title: str, content: str, visib
     db.session.execute(sql, {"thread_id":thread_id, "link_url":link_url, "title":title,
                              "content":content, "visible":visible})
     db.session.commit()
+
+
+def update_reply(reply_id: int, content: str, visible: bool):
+    sql = text("""SELECT 1 FROM replies WHERE id=:reply_id""")
+    reply_exists = db.session.execute(sql, {"reply_id":reply_id}).fetchone()
+    if not reply_exists:
+        raise ValueError("Reply not found")
+    sql = text("""UPDATE replies
+                     SET content=:content,
+                         visible=(COALESCE(:visible, visible))
+                   WHERE id=:reply_id""")
+    db.session.execute(sql, {"reply_id":reply_id, "content":content, "visible":visible})
+    db.session.commit()
+
+
+
+

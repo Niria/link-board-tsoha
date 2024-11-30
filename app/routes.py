@@ -48,6 +48,9 @@ def thread_page(thread_id: int):
         if not thread:
             return redirect("/")
         replies = get_replies(thread_id, session["user_id"])
+        print(len(replies))
+        for r in replies:
+            print(r.id, r.visible)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
         check_csrf()
