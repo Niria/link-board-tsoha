@@ -1,9 +1,10 @@
-from app import app
-from flask import render_template, redirect, request, session, url_for, flash, get_flashed_messages
+from flask import render_template, redirect, request, session, url_for, flash
 from sqlalchemy.sql import text
-from .db import db
-from . import users
 from werkzeug.security import generate_password_hash
+
+from app import app
+from . import users
+from .db import db
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -58,15 +59,17 @@ def register():
             redirect_user = True
         if redirect_user:
             return redirect(url_for("register"))
-        sql = text("SELECT id FROM users WHERE username=:username")
-        user = db.session.execute(sql, {"username":username}).fetchone()
+        sql = text("""SELECT id FROM users WHERE username=:username""")
+        user = db.session.execute(sql, {"username": username}).fetchone()
         if user:
             flash("Username already in use.", "error")
             return redirect(url_for("register"))
-        
+
         hashed_password = generate_password_hash(password1)
-        sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
-        db.session.execute(sql, {"username":username, "password":hashed_password})
+        sql = text("""INSERT INTO users (username, password) 
+                      VALUES (:username, :password)""")
+        db.session.execute(sql,
+                           {"username": username, "password": hashed_password})
         db.session.commit()
         flash("Registration successful.", "success")
         return redirect(url_for("login"))

@@ -1,8 +1,11 @@
 from app import app
-from flask import jsonify, redirect, render_template, request, session, url_for, flash
+from flask import (jsonify, redirect, render_template, request, session,
+                   url_for, \
+    flash)
 from .content import get_category, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, get_user_followers, toggle_category_fav
+    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, \
+    get_user_followers, toggle_category_fav
 from .users import check_csrf, login_required
 
 
@@ -25,7 +28,8 @@ def favourites():
 @login_required
 def category_page(category: str):
     category = get_category(category, session["user_id"])
-    if not category or (not category.is_public and session["user_role"] < 1 and not category.permission):
+    if not category or (not category.is_public and session["user_role"] < 1
+                        and not category.permission):
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
     return render_template("category.html",
@@ -68,7 +72,8 @@ def thread_page(thread_id: int):
 @login_required
 def new_thread(category: str):
     if request.method == "GET":
-        return render_template("thread_form.html", category=category, editing=False)
+        return render_template("thread_form.html", category=category,
+                               editing=False)
     if request.method == "POST":
         check_csrf()
         category_id = get_category(category, session["user_id"])
@@ -122,13 +127,17 @@ def profile(username: str, page=None):
     user = get_profile(username, session["user_id"])
     if page == "threads":
         user_threads = get_threads(by_user=user.id)
-        return render_template("user_profile.html", page=page, user=user, threads=user_threads)
+        return render_template("user_profile.html", page=page,
+                               user=user, threads=user_threads)
     elif page == "replies":
-        user_replies = get_user_replies(user_id=user.id, session_user=session["user_id"])
-        return render_template("user_profile.html", page=page, user=user, replies=user_replies)
+        user_replies = get_user_replies(user_id=user.id,
+                                        session_user=session["user_id"])
+        return render_template("user_profile.html", page=page,
+                               user=user, replies=user_replies)
     elif page == "followers":
         followers = get_user_followers(user_id=user.id)
-        return render_template("user_profile.html", page=page, user=user, followers=followers)
+        return render_template("user_profile.html", page=page,
+                               user=user, followers=followers)
     return render_template("user_profile.html", user=user)
 
 
@@ -145,5 +154,6 @@ def follow(username: str):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template("error.html", message="Nothing to be found here")
+    return render_template("error.html",
+                           message="Nothing to be found here")
 

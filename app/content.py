@@ -28,12 +28,8 @@ def get_category(category: str, user_id: int):
     return category_id.fetchone()
 
 
-def get_threads(category_id: int = None, by_user: int = None, user_id: int = None, favourites: bool = False):
-    # if category_id:
-    #     sql = text("""SELECT 1 FROM categories WHERE name=:category""")
-    #     category_exists = db.session.execute(sql, {"category":category})
-    #     if not category_exists:
-    #         return None
+def get_threads(category_id: int = None, by_user: int = None,
+                user_id: int = None, favourites: bool = False):
     sql = text("""SELECT t.id, 
                          t.title, 
                          t.content, 
@@ -42,7 +38,9 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                          (SELECT count(*)
                             FROM thread_likes AS tl
                            WHERE tl.thread_id=t.id) AS likes,
-                         (SELECT count(*) FROM replies WHERE thread_id=t.id) AS comments,
+                         (SELECT count(*) 
+                            FROM replies 
+                           WHERE thread_id=t.id) AS comments,
                          time_ago(t.created_at) AS age,
                          u.username,
                          u.display_name, 
@@ -202,34 +200,46 @@ def add_thread(user_id, category_id, link_url, title, content):
 
 
 def toggle_thread_like(user_id: int, thread_id: int):
-    sql = text("""SELECT 1 FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
-    like_exists = db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id}).fetchone()
+    sql = text(
+        """SELECT 1 FROM thread_likes WHERE user_id=:user_id AND 
+        thread_id=:thread_id""")
+    like_exists = db.session.execute(sql, {"user_id": user_id,
+                                           "thread_id": thread_id}).fetchone()
     if like_exists:
-        sql = text("""DELETE FROM thread_likes WHERE user_id=:user_id AND thread_id=:thread_id""")
+        sql = text(
+            """DELETE FROM thread_likes 
+                WHERE user_id=:user_id 
+                  AND thread_id=:thread_id""")
     else:
         sql = text("""INSERT INTO thread_likes (user_id, thread_id) 
                       VALUES (:user_id, :thread_id)
                           ON CONFLICT DO NOTHING""")
-    db.session.execute(sql, {"user_id":user_id, "thread_id":thread_id})
+    db.session.execute(sql, {"user_id": user_id, "thread_id": thread_id})
     db.session.commit()
-    sql = text("""SELECT count(*) FROM thread_likes WHERE thread_id=:thread_id""")
-    likes = db.session.execute(sql, {"thread_id":thread_id})
+    sql = text(
+        """SELECT count(*) FROM thread_likes WHERE thread_id=:thread_id""")
+    likes = db.session.execute(sql, {"thread_id": thread_id})
     return likes.fetchone()
 
 
 def toggle_reply_like(user_id: int, reply_id: int):
-    sql = text("""SELECT 1 FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
-    like_exists = db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id}).fetchone()
+    sql = text(
+        """SELECT 1 FROM reply_likes 
+           WHERE user_id=:user_id AND reply_id=:reply_id""")
+    like_exists = db.session.execute(sql, {"user_id": user_id,
+                                           "reply_id": reply_id}).fetchone()
     if like_exists:
-        sql = text("""DELETE FROM reply_likes WHERE user_id=:user_id AND reply_id=:reply_id""")
+        sql = text(
+            """DELETE FROM reply_likes 
+                WHERE user_id=:user_id AND reply_id=:reply_id""")
     else:
         sql = text("""INSERT INTO reply_likes (user_id, reply_id) 
                       VALUES (:user_id, :reply_id)
                           ON CONFLICT DO NOTHING""")
-    db.session.execute(sql, {"user_id":user_id, "reply_id":reply_id})
+    db.session.execute(sql, {"user_id": user_id, "reply_id": reply_id})
     db.session.commit()
     sql = text("""SELECT count(*) FROM reply_likes WHERE reply_id=:reply_id""")
-    likes = db.session.execute(sql, {"reply_id":reply_id})
+    likes = db.session.execute(sql, {"reply_id": reply_id})
     return likes.fetchone()
 
 
@@ -240,10 +250,12 @@ def get_profile(username: str, session_user: int):
                          (SELECT EXISTS (SELECT user_id 
                                            FROM user_followers 
                                           WHERE user_id=u.id
-                                            AND follower_id=:follower_id)) AS followed
+                                            AND follower_id=:follower_id)
+                         ) AS followed
                     FROM users AS u 
                    WHERE username=:username""")
-    user = db.session.execute(sql, {"username":username, "follower_id": session_user})
+    user = db.session.execute(sql, {"username":username,
+                                    "follower_id": session_user})
     return user.fetchone()
 
 
@@ -280,18 +292,24 @@ def get_user_replies(user_id: int, session_user: int):
                      AND c.is_public=:is_public
                    GROUP BY r.id, t.id, u2.username, u2.display_name, c.name
                    ORDER BY r.created_at DESC""")
-    replies = db.session.execute(sql, {"user_id":user_id, "visible":True, "is_public":True, "session_user":session_user})
+    replies = db.session.execute(sql, {"user_id": user_id, "visible": True,
+                                       "is_public": True,
+                                       "session_user": session_user})
     return replies.fetchall()
 
 
 def toggle_user_follow(username: str, follower_id: int):
     user_id = db.session.execute(text("""SELECT id 
                                            FROM users 
-                                          WHERE username=:username"""), {"username":username}).fetchone()[0]
+                                          WHERE username=:username"""),
+                                 {"username": username}).fetchone()[0]
     if not user_id:
         raise ValueError("User not found")
-    sql = text("""SELECT 1 FROM user_followers WHERE user_id=:user_id AND follower_id=:follower_id""")
-    already_following = db.session.execute(sql, {"user_id":user_id, "follower_id":follower_id}).fetchone()
+    sql = text("""SELECT 1 FROM user_followers 
+                   WHERE user_id=:user_id AND follower_id=:follower_id""")
+    already_following = db.session.execute(sql, {"user_id": user_id,
+                                                 "follower_id":
+                                                     follower_id}).fetchone()
     if already_following:
         sql = text("""DELETE FROM user_followers 
                        WHERE user_id=:user_id AND follower_id=:follower_id
@@ -301,7 +319,8 @@ def toggle_user_follow(username: str, follower_id: int):
                       VALUES (:user_id, :follower_id)
                           ON CONFLICT DO NOTHING
                    RETURNING true""")
-    following = db.session.execute(sql, {"user_id":user_id, "follower_id":follower_id})
+    following = db.session.execute(sql, {"user_id": user_id,
+                                         "follower_id": follower_id})
     db.session.commit()
     return following.fetchone()
 
@@ -321,8 +340,10 @@ def toggle_category_fav(category_name: str, user_id: int):
     category = get_category(category_name, user_id)
     if not category:
         raise ValueError("Category not found")
-    sql = text("""SELECT 1 FROM category_favourites WHERE category_id=:category_id AND user_id=:user_id""")
-    already_favourite = db.session.execute(sql, {"category_id":category.id, "user_id":user_id}).fetchone()
+    sql = text("""SELECT 1 FROM category_favourites 
+                   WHERE category_id=:category_id AND user_id=:user_id""")
+    already_favourite = db.session.execute(sql, {"category_id": category.id,
+                                                 "user_id": user_id}).fetchone()
     if already_favourite:
         sql = text("""DELETE FROM category_favourites
                        WHERE category_id=:category_id 
@@ -333,23 +354,29 @@ def toggle_category_fav(category_name: str, user_id: int):
                       VALUES (:category_id, :user_id)
                           ON CONFLICT DO NOTHING
                    RETURNING true""")
-    favourite = db.session.execute(sql, {"category_id":category.id, "user_id":user_id})
+    favourite = db.session.execute(sql, {"category_id": category.id,
+                                         "user_id": user_id})
     db.session.commit()
     return favourite.fetchone()
 
 def create_category(category_name: str, description: str, public: bool):
     sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
-    category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
+    category_exists = db.session.execute(sql, {
+        "category_name": category_name}).fetchone()
     if category_exists:
         raise(ValueError("Category already exists"))
     sql = text("""INSERT INTO categories (name, description, is_public) 
                   VALUES (:category_name, :description, :public)""")
-    db.session.execute(sql, {"category_name":category_name, "description":description, "public":public})
+    db.session.execute(sql, {"category_name": category_name,
+                             "description": description, "public": public})
     db.session.commit()
 
-def update_category(category_name: str, new_category_name: str, description:str, public: bool):
+
+def update_category(category_name: str, new_category_name: str,
+                    description: str, public: bool):
     sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
-    category_exists = db.session.execute(sql, {"category_name":category_name}).fetchone()
+    category_exists = db.session.execute(sql, {
+        "category_name": category_name}).fetchone()
     if not category_exists:
         raise(ValueError("Category not found"))
     sql = text("""UPDATE categories 
@@ -364,19 +391,21 @@ def update_category(category_name: str, new_category_name: str, description:str,
     db.session.commit()
 
 
-def update_thread(thread_id: int, link_url: str, title: str, content: str, visible: bool):
+def update_thread(thread_id: int, link_url: str, title: str, content: str,
+                  visible: bool):
     sql = text("""SELECT 1 FROM threads WHERE id=:thread_id""")
-    thread_exists = db.session.execute(sql, {"thread_id":thread_id}).fetchone()
+    thread_exists = db.session.execute(sql, {"thread_id": thread_id}).fetchone()
     if not thread_exists:
-        raise(ValueError("Thread not found"))
+        raise (ValueError("Thread not found"))
     sql = text("""UPDATE threads 
                      SET link_url=:link_url,
                          title=:title, 
                          content=:content,
                          visible=(COALESCE(:visible, visible))
                    WHERE id=:thread_id""")
-    db.session.execute(sql, {"thread_id":thread_id, "link_url":link_url, "title":title,
-                             "content":content, "visible":visible})
+    db.session.execute(sql, {"thread_id": thread_id, "link_url": link_url,
+                             "title": title,
+                             "content": content, "visible": visible})
     db.session.commit()
 
 
@@ -389,7 +418,8 @@ def update_reply(reply_id: int, content: str, visible: bool):
                      SET content=:content,
                          visible=(COALESCE(:visible, visible))
                    WHERE id=:reply_id""")
-    db.session.execute(sql, {"reply_id":reply_id, "content":content, "visible":visible})
+    db.session.execute(sql, {"reply_id": reply_id, "content": content,
+                             "visible": visible})
     db.session.commit()
 
 
@@ -421,15 +451,26 @@ def users_without_permissions(category_id: int):
 
 
 def toggle_permissions(user_id: int, category: str):
-    sql = text("""SELECT c.id FROM categories AS c, users AS u WHERE c.name=:category AND u.id=:user_id""")
-    category_id = db.session.execute(sql, {"user_id":user_id, "category":category}).fetchone()[0]
+    sql = text(
+        """SELECT c.id FROM categories AS c, users AS u 
+            WHERE c.name=:category AND u.id=:user_id""")
+    category_id = db.session.execute(sql, {"user_id": user_id,
+                                           "category": category}).fetchone()[0]
     if not category_id:
         raise ValueError("Category or user not found")
-    sql = text("""SELECT 1 FROM permissions WHERE user_id=:user_id AND category_id=:category_id""")
-    approved_user = db.session.execute(sql, {"user_id":user_id, "category_id":category_id}).fetchone()
+    sql = text(
+        """SELECT 1 FROM permissions 
+            WHERE user_id=:user_id AND category_id=:category_id""")
+    approved_user = db.session.execute(sql, {"user_id": user_id,
+                                             "category_id":
+                                                 category_id}).fetchone()
     if not approved_user:
-        sql = text("""INSERT INTO permissions (user_id, category_id) VALUES (:user_id, :category_id)""")
+        sql = text(
+            """INSERT INTO permissions (user_id, category_id) 
+               VALUES (:user_id, :category_id)""")
     else:
-        sql = text("""DELETE FROM permissions WHERE user_id=:user_id AND category_id=:category_id""")
-    db.session.execute(sql, {"user_id":user_id, "category_id":category_id})
+        sql = text(
+            """DELETE FROM permissions 
+                WHERE user_id=:user_id AND category_id=:category_id""")
+    db.session.execute(sql, {"user_id": user_id, "category_id": category_id})
     db.session.commit()

@@ -10,6 +10,7 @@
 
 
 ## Technical
+- Add error handling for failed DB requests
 - Unify code, single/double quotation marks etc
 - Double check that user can't access features when they lack permissions
 - Form input validation, check for whitespace

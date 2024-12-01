@@ -1,11 +1,12 @@
-from app import app
 from flask import render_template, redirect, request, session, url_for, flash
 from sqlalchemy.sql import text
 
-from .content import create_category, get_category, update_category, get_thread, update_thread, update_reply, \
-    users_without_permissions, users_with_permissions, toggle_permissions
+from app import app
+from .content import (create_category, get_category, update_category,
+                      get_thread, update_thread, update_reply, \
+                      users_without_permissions, users_with_permissions,
+                      toggle_permissions)
 from .db import db
-
 from .users import admin_required, check_csrf
 
 
@@ -48,7 +49,9 @@ def edit_category(category):
 def edit_thread(thread_id):
     thread = get_thread(thread_id, session["user_id"])
     if session["user_id"] != thread.user_id and session["user_role"] < 1:
-        return render_template("error.html", message="You are not authorized to edit this thread.")
+        return render_template("error.html",
+                               message="You are not authorized to edit this "
+                                       "thread.")
     if request.method == "GET":
         return render_template("thread_form.html", editing=True, thread=thread)
     if request.method == "POST":
@@ -73,7 +76,6 @@ def edit_thread(thread_id):
         return redirect("/")
 
 
-
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
 def edit_reply(thread_id, reply_id):
     if request.method == "POST":
@@ -90,7 +92,8 @@ def edit_reply(thread_id, reply_id):
         if 'visible' in request.form:
             visible = True if request.form["visible"] == "true" else False
         if not 1 <= len(content) <= 1000:
-            flash("Reply content must be between 1 and 1000 characters.", "error")
+            flash("Reply content must be between 1 and 1000 characters.",
+                  "error")
             return redirect(url_for("thread_page", thread_id=thread_id))
         update_reply(reply_id, content, visible)
         return redirect(url_for('thread_page', thread_id=thread_id))
@@ -100,6 +103,7 @@ def edit_reply(thread_id, reply_id):
 @admin_required
 def edit_user(user_id):
     pass
+
 
 @app.route("/c/<string:category>/permissions", methods=["GET", "POST"])
 @admin_required
@@ -112,13 +116,11 @@ def edit_permissions(category: str):
         unapproved_users = users_without_permissions(category.id)
         approved_users = users_with_permissions(category.id)
         return render_template("category_permissions.html", category=category,
-                               unapproved_users=unapproved_users, approved_users=approved_users)
+                               unapproved_users=unapproved_users,
+                               approved_users=approved_users)
 
     if request.method == "POST":
         check_csrf()
         user_id = request.form.get('user_id', type=int)
         toggle_permissions(user_id, category)
         return redirect(request.url)
-
-
-
