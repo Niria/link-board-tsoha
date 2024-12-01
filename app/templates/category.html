@@ -18,6 +18,11 @@
             {% if session.user_role > 0 %}
                 <button type="button"
                         class="btn btn-category btn-big"
+                        onclick="window.location.href='{{ url_for('edit_permissions', category=category.name) }}';">
+                    Permissions
+                </button>
+                <button type="button"
+                        class="btn btn-category btn-big"
                         onclick="window.location.href='{{ url_for('edit_category', category=category.name) }}';">
                     Edit category
                 </button>

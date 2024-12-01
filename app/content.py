@@ -9,7 +9,6 @@ def get_category_list():
     categories = db.session.execute(sql, {"public":True})
     return categories.fetchall()
 
-
 def get_category(category: str, user_id: int):
     sql = text("""SELECT id, 
                          name,
@@ -379,5 +378,44 @@ def update_reply(reply_id: int, content: str, visible: bool):
     db.session.commit()
 
 
+def users_with_permissions(category_id: int):
+    sql = text("""SELECT u.id,
+                         u.username,
+                         u.display_name
+                    FROM users AS u
+                    JOIN permissions AS p 
+                      ON p.user_id=u.id
+                   WHERE p.category_id=:category_id
+                   ORDER BY u.username""")
+    users = db.session.execute(sql, {"category_id":category_id}).fetchall()
+    return users
 
 
+def users_without_permissions(category_id: int):
+    sql = text("""SELECT u.id,
+                         u.username,
+                         u.display_name
+                    FROM users AS u 
+                   WHERE NOT EXISTS (SELECT null 
+                                       FROM permissions AS p 
+                                      WHERE p.user_id=u.id
+                                        AND p.category_id=:category_id)
+                   ORDER BY u.username""")
+    users = db.session.execute(sql, {"category_id":category_id}).fetchall()
+    return users
+
+
+def toggle_permissions(user_id: int, category: str):
+    print(user_id, category)
+    sql = text("""SELECT c.id FROM categories AS c, users AS u WHERE c.name=:category AND u.id=:user_id""")
+    category_id = db.session.execute(sql, {"user_id":user_id, "category":category}).fetchone()[0]
+    if not category_id:
+        raise ValueError("Category or user not found")
+    sql = text("""SELECT 1 FROM permissions WHERE user_id=:user_id AND category_id=:category_id""")
+    approved_user = db.session.execute(sql, {"user_id":user_id, "category_id":category_id}).fetchone()
+    if not approved_user:
+        sql = text("""INSERT INTO permissions (user_id, category_id) VALUES (:user_id, :category_id)""")
+    else:
+        sql = text("""DELETE FROM permissions WHERE user_id=:user_id AND category_id=:category_id""")
+    db.session.execute(sql, {"user_id":user_id, "category_id":category_id})
+    db.session.commit()

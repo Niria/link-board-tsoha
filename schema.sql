@@ -6,6 +6,7 @@ CREATE TABLE users (
     display_name VARCHAR(64) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     profile_public BOOLEAN DEFAULT TRUE,
+    description TEXT,
     user_role SMALLINT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

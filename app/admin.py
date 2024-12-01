@@ -2,7 +2,8 @@ from app import app
 from flask import render_template, redirect, request, session, url_for
 from sqlalchemy.sql import text
 
-from .content import create_category, get_category, update_category, get_thread, update_thread, update_reply
+from .content import create_category, get_category, update_category, get_thread, update_thread, update_reply, \
+    users_without_permissions, users_with_permissions, toggle_permissions
 from .db import db
 
 from .users import admin_required, check_csrf
@@ -92,7 +93,24 @@ def edit_reply(thread_id, reply_id):
 def edit_user(user_id):
     pass
 
-@app.route("/u/<int:user_id>/permissions", methods=["POST"])
+@app.route("/c/<string:category>/permissions", methods=["GET", "POST"])
 @admin_required
-def edit_permissions(user_id):
-    pass
+def edit_permissions(category: str):
+    if request.method == "GET":
+        category = get_category(category, session["user_id"])
+        if not category:
+            return render_template("error.html", message="Category not found.")
+        unapproved_users = users_without_permissions(category.id)
+        approved_users = users_with_permissions(category.id)
+        return render_template("category_permissions.html", category=category,
+                               unapproved_users=unapproved_users, approved_users=approved_users)
+
+    if request.method == "POST":
+        print(request.form)
+        check_csrf()
+        user_id = request.form.get('user_id', type=int)
+        toggle_permissions(user_id, category)
+        return redirect(request.url)
+
+
+
