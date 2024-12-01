@@ -16,6 +16,7 @@ def new_category():
     if request.method == "GET":
         return render_template("category_form.html")
     if request.method == "POST":
+        print(request.form.get('csrf_token'))
         check_csrf()
         category_name = request.form["category_name"]
         if len(category_name) < 3:

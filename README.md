@@ -21,6 +21,7 @@ of these categories.
 - [x] User can edit the title and content of their own threads
 - [x] User can edit the content of their replies
 - [x] User can choose favourite categories
+- [x] User can follow other users
 - [ ] User can search thread titles and messages using a keyword search function
 - [x] Admin can create new public and private categories for links
 - [x] Admin can grant/revoke private category access permissions for users

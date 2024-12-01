@@ -10,7 +10,7 @@ from .db import db
 
 def check_csrf():
     if session["csrf_token"] != request.headers.get("csrf-token") \
-            and session["csrf_token"] != request.form.get("csrf-token"):
+            and session["csrf_token"] != request.form.get("csrf_token"):
         abort(403)
 
 

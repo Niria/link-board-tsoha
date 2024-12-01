@@ -96,7 +96,7 @@ def new_thread(category: str):
         content = request.form["content"]
 
         add_thread(user_id, category_id, link_url, title, content)
-        return redirect("/")
+        return redirect(url_for("category_page", category=category))
 
 
 @app.route("/p/<int:thread_id>/like", methods=["POST"])

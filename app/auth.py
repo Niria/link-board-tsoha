@@ -66,10 +66,12 @@ def register():
             return redirect(url_for("register"))
 
         hashed_password = generate_password_hash(password1)
-        sql = text("""INSERT INTO users (username, password) 
-                      VALUES (:username, :password)""")
+        sql = text("""INSERT INTO users (username, display_name, password) 
+                      VALUES (:username, :display_name, :password)""")
         db.session.execute(sql,
-                           {"username": username, "password": hashed_password})
+                           {"username": username,
+                            "display_name": display_name,
+                            "password": hashed_password})
         db.session.commit()
         flash("Registration successful.", "success")
         return redirect(url_for("login"))
