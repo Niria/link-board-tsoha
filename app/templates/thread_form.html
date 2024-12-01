@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Submit link{% endblock %}
 {% block content %}
+    <div class="category-title-container">
+        <a href="{{ url_for('category_page', category=category) }}"><h1>{{ category }}</h1></a>
+    </div>
     {% if not editing %}
+        <h2>Submit link</h2>
         <form action="{{ url_for('new_thread', category=category) }}" method="POST">
             <div class="form-input">
                 <p>Url:</p>
@@ -25,6 +29,7 @@
             <input class="btn btn-big" type="submit" value="Submit link"/>
         </form>
     {% else %}
+        <h2>Edit thread</h2>
         <form action="{{ url_for('edit_thread', category=category, thread_id=thread.id) }}" method="POST">
             <div class="form-input">
                 <p>Url:</p>

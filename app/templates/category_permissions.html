@@ -2,7 +2,7 @@
 {% block title %}Permissions{% endblock %}
 {% block content %}
     <div class="category-title-container">
-        <h1>{{ category.name }}</h1>
+        <a href="{{ url_for('category_page', category=category.name) }}"><h1>{{ category.name }}</h1></a>
     </div>
     <h2>Permissions</h2>
     <h4>Add user</h4>

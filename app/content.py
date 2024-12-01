@@ -17,14 +17,18 @@ def get_category(category: str, user_id: int):
                          (SELECT EXISTS (SELECT 1 
                                            FROM category_favourites
                                           WHERE category_id=c.id
-                                            AND user_id=:user_id)) AS favourite
+                                            AND user_id=:user_id)) AS favourite,
+                        (SELECT EXISTS (SELECT 1 
+                                          FROM permissions
+                                         WHERE user_id=:user_id
+                                           AND category_id=c.id)) AS permission
                     FROM categories AS c 
                    WHERE name=:category""")
     category_id = db.session.execute(sql, {"category":category, "user_id":user_id})
     return category_id.fetchone()
 
 
-def get_threads(category_id: int = None, by_user: int = None, user_id: int = None):
+def get_threads(category_id: int = None, by_user: int = None, user_id: int = None, favourites: bool = False):
     # if category_id:
     #     sql = text("""SELECT 1 FROM categories WHERE name=:category""")
     #     category_exists = db.session.execute(sql, {"category":category})
@@ -51,8 +55,14 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                       ON t.user_id=u.id
                    WHERE (c.is_public=:public OR (SELECT user_role > 0 
                                                     FROM users 
-                                                   WHERE id=:user_id))
+                                                   WHERE id=:user_id)
+                                              OR c.id IN (SELECT p.category_id 
+                                                            FROM permissions AS p
+                                                           WHERE p.user_id=:user_id))
                      AND (:category_id IS NULL OR c.id=:category_id)
+                     AND (:favourites IS NOT TRUE OR c.id IN (SELECT cf.category_id
+                                                                FROM category_favourites AS cf
+                                                               WHERE cf.user_id=:user_id))
                      AND (:by_user IS NULL OR u.id=:by_user)
                      AND (t.visible=:visible OR (SELECT user_role > 0
                                                    FROM users
@@ -63,7 +73,8 @@ def get_threads(category_id: int = None, by_user: int = None, user_id: int = Non
                                        "visible":True,
                                        "category_id":category_id,
                                        "by_user":by_user,
-                                       "user_id":user_id})
+                                       "user_id":user_id,
+                                       "favourites":favourites})
     return threads.fetchall()
 
 
@@ -97,7 +108,11 @@ def get_thread(thread_id: int, user_id: int):
                                                    WHERE id=:user_id))
                      AND (c.is_public=:public OR (SELECT user_role > 0 
                                                     FROM users 
-                                                   WHERE id=:user_id))
+                                                   WHERE id=:user_id)
+                                              OR EXISTS (SELECT 1
+                                                           FROM permissions
+                                                          WHERE category_id=c.id
+                                                            AND user_id=:user_id))
                      AND t.id=:id
                    GROUP BY t.id, u.id, u.display_name, c.name""")
     thread = db.session.execute(sql, {"public":True,

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}{{ category }}{% endblock %}
 {% block content %}
     <div class="category-title-container">
         <h1>{{ category }}</h1>
-        {% if session.user_role > 0 %}
+        {% if session.user_role > 0 and category == "All" %}
             <button type="button"
                     class="btn btn-category btn-big"
                     onclick="window.location.href='{{ url_for('new_category') }}';">

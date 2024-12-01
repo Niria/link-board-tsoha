@@ -39,7 +39,7 @@ def edit_category(category):
         description = request.form["description"]
         public = True if request.form["public"] == "true" else False
         update_category(category, new_category_name, description, public)
-        return redirect(url_for("index"))
+        return redirect(url_for("category_page", category=new_category_name))
 
 
 @app.route("/p/<int:thread_id>/edit", methods=["GET", "POST"])

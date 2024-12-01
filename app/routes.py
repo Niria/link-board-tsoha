@@ -10,24 +10,30 @@ from .users import check_csrf, login_required
 @login_required
 def index():
     threads = get_threads(user_id=session["user_id"])
-    if not threads:
-        return render_template("error.html", message="Invalid category")
-    return render_template("index.html", 
-                            category="All", 
+    # if not threads:
+    #     return render_template("error.html", message="Invalid category")
+    return render_template("index.html",
+                            category="All",
                             threads=threads)
+@app.route("/favourites")
+@login_required
+def favourites():
+    threads = get_threads(user_id=session["user_id"], favourites=True)
+    return render_template("index.html", category="Favourites", threads=threads)
+
 
 
 @app.route("/c/<string:category>")
 @login_required
 def category_page(category: str):
     category = get_category(category, session["user_id"])
-    if not category or (not category.is_public and session["user_role"] < 1):
+    if not category or (not category.is_public and session["user_role"] < 1 and not category.permission):
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
     # if not threads:
     #     return redirect(url_for("index"))
     return render_template("category.html",
-                           category=category, 
+                           category=category,
                            threads=threads)
 
 

@@ -3,7 +3,10 @@
 {% block content %}
     {% if session.user_role > 0 %}
         {% if category %}
-            {{ category }}
+        <div class="category-title-container">
+            <a href="{{ url_for('category_page', category=category.name) }}"><h1>{{ category.name }}</h1></a>
+        </div>
+        <h2>Edit Category</h2>
         <form action="{{ url_for('edit_category', category=category.name) }}" method="POST">
             <p>Category Name:</p>
             <label>
@@ -11,7 +14,7 @@
             </label>
             <p>Description:</p>
             <label>
-                <textarea name="description" rows="5" cols="80">{{ category.description }}</textarea>
+                <textarea name="description" rows="5" cols="80">{{ category.description if category.description else '' }}</textarea>
             </label>
             <p>Public?</p>
             <label>
