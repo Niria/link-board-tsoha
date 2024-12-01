@@ -10,13 +10,13 @@
             <div class="form-input">
                 <p>Url:</p>
                 <label>
-                    <input type="text" name="link_url"/>
+                    <input type="text" name="link_url" minlength="3" maxlength="50" required/>
                 </label>
             </div>
             <div class="form-input">
                 <p>Title:</p>
                 <label>
-                    <input type="text" name="title"/>
+                    <input type="text" name="title" minlength="3" maxlength="50" required/>
                 </label>
             </div>
             <div class="form-input">
@@ -34,13 +34,13 @@
             <div class="form-input">
                 <p>Url:</p>
                 <label>
-                    <input type="text" name="link_url" value="{{ thread.link_url }}"/>
+                    <input type="text" name="link_url" value="{{ thread.link_url }}" minlength="3" maxlength="50" required/>
                 </label>
             </div>
             <div class="form-input">
                 <p>Title:</p>
                 <label>
-                    <input type="text" name="title" value="{{ thread.title }}"/>
+                    <input type="text" name="title" value="{{ thread.title }}" minlength="3" maxlength="50" required/>
                 </label>
             </div>
             <div class="form-input">

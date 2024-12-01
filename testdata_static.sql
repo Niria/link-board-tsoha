@@ -32,7 +32,7 @@ INSERT INTO categories (name, is_public) VALUES ('Politics', 'false') RETURNING 
 
 -- Create users
 INSERT INTO users (username, display_name, password, user_role) 
-VALUES ('user1', 'User 1', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
+VALUES ('user1', 'User 1', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 1);
 INSERT INTO users (username, display_name, password, user_role) 
 VALUES ('user2', 'User 2', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a79050279924dcb8eb4dc5b926bc36acea513b33a4e8bbd54a375ad6b6e205fa5db8b1c8c0615468de5b9eff91bc2098afa643308bf130f9bf367892c', 0);
 INSERT INTO users (username, display_name, password, user_role) 

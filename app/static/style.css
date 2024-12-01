@@ -1,5 +1,5 @@
-:root {     
-  --bg-color-1: rgb(223, 236, 235); 
+:root {
+  --bg-color-1: rgb(223, 236, 235);
   --bg-color-2: rgb(203, 222, 230); 
   --bg-color-3: rgb(209, 213, 219);
   --bg-color-4: rgb(38, 44, 80); 
@@ -26,6 +26,7 @@ a:visited {
 body {
   background-color: var(--bg-color-4);
   margin: 0;
+  font-family: Arial, sans-serif;
 }
 
 h1 {
@@ -59,6 +60,8 @@ button:focus {
 }
 
 .navbar-container {
+  margin: 0 auto;
+  max-width: 80rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -491,4 +494,28 @@ div:has(.profile-replies-thread-container) {
   text-align: center;
   color: white;
   background-color: #ef3d3d;
+}
+
+.messages {
+  list-style: none;
+  font-size: small;
+  margin: 0;
+  padding: 0 1rem;
+  width: 100%;
+  background-color: var(--bg-color-1);
+  & li {
+    width: 60%;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    margin: 0.25rem auto;
+  }
+  & .success-message {
+    background-color: lightgreen;
+  }
+  & .error-message {
+    background-color: lightcoral;
+  }
+  & .info-message {
+    background-color: lightblue;
+  }
 }

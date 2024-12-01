@@ -20,11 +20,11 @@ of these categories.
 - [x] User can like threads and replies
 - [x] User can edit the title and content of their own threads
 - [x] User can edit the content of their replies
+- [x] User can choose favourite categories
 - [ ] User can search thread titles and messages using a keyword search function
 - [x] Admin can create new public and private categories for links
-- [ ] Admin can grant/revoke private category access permissions for users
+- [x] Admin can grant/revoke private category access permissions for users
 - [x] Admin can edit and hide/soft delete threads/messages submitted by users
-- [ ] Admin can revoke/grant users posting privileges
 
 Ticked features in the list above have been implemented. Check `TODO.md` for up to date tasklist.
 
@@ -94,12 +94,12 @@ $ flask run
 
 ## Usage
 
-The testdata scripts include a few predefined users:
+The testdata scripts include one admin user and 4 normal users:
 
-| username | password |
-| -------- | -------- |
-| user1    | password |
-| user2    | password |
-| user3    | password |
-| user4    | password |
-| user5    | password |
+| username | password | role  |
+|----------|----------|-------|
+| user1    | password | admin | 
+| user2    | password | user  |
+| user3    | password | user  |
+| user4    | password | user  |
+| user5    | password | user  |

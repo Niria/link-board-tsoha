@@ -8,11 +8,9 @@ from werkzeug.security import check_password_hash
 from .db import db
 
 
-# TODO: turn into a decorator?
-# TODO: move all csrf tokens to headers instead of using forms?
 def check_csrf():
-    if session["csrf_token"] != request.headers.get('csrf-token') \
-            and session["csrf_token"] != request.form["csrf_token"]:
+    if session["csrf_token"] != request.headers.get("csrf-token") \
+            and session["csrf_token"] != request.form.get("csrf-token"):
         abort(403)
 
 

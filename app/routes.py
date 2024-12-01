@@ -1,5 +1,5 @@
 from app import app
-from flask import jsonify, redirect, render_template, request, session, url_for
+from flask import jsonify, redirect, render_template, request, session, url_for, flash
 from .content import get_category, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
     toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, get_user_followers, toggle_category_fav
@@ -10,8 +10,6 @@ from .users import check_csrf, login_required
 @login_required
 def index():
     threads = get_threads(user_id=session["user_id"])
-    # if not threads:
-    #     return render_template("error.html", message="Invalid category")
     return render_template("index.html",
                             category="All",
                             threads=threads)
@@ -30,8 +28,6 @@ def category_page(category: str):
     if not category or (not category.is_public and session["user_role"] < 1 and not category.permission):
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
-    # if not threads:
-    #     return redirect(url_for("index"))
     return render_template("category.html",
                            category=category,
                            threads=threads)
@@ -54,9 +50,6 @@ def thread_page(thread_id: int):
         if not thread:
             return redirect("/")
         replies = get_replies(thread_id, session["user_id"])
-        print(len(replies))
-        for r in replies:
-            print(r.id, r.visible)
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
         check_csrf()
@@ -65,7 +58,8 @@ def thread_page(thread_id: int):
         parent_id = request.form["parent_id"] or None
         content = request.form["content"]
         if not 1 <= len(content) <= 1000:
-            return render_template("error.html", message="Reply must be between 1 and 1000 characters long.")
+            flash("Reply must be between 1 and 1000 characters long.", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
         add_reply(user_id, thread_id, parent_id, content)
         return redirect(url_for('thread_page', thread_id=thread_id))
 
@@ -79,15 +73,21 @@ def new_thread(category: str):
         check_csrf()
         category_id = get_category(category, session["user_id"])
         if not category_id:
-            return render_template("error.html", message="Cate§gory does not exist")
+            flash("Category does not exist.", "error")
+            return redirect(url_for("category_page", category=category))
         category_id = category_id[0]
         user_id = session["user_id"]
         link_url = request.form["link_url"]
+        redirect_user = False
         if not 3 <= len(link_url) <= 50:
-            return render_template("error.html", message="Url must be between 3 and 50 characters long.")
+            flash("Link URL must be between 3 and 50 characters long.", "error")
+            redirect_user = True
         title = request.form["title"]
         if not 3 <= len(title) <= 50:
-            return render_template("error.html", message="Title must be between 3 and 50 characters long.")
+            flash("Title must be between 3 and 50 characters long.", "error")
+            redirect_user = True
+        if redirect_user:
+            return redirect(url_for("new_thread", category=category))
         content = request.form["content"]
 
         add_thread(user_id, category_id, link_url, title, content)

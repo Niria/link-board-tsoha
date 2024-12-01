@@ -421,7 +421,6 @@ def users_without_permissions(category_id: int):
 
 
 def toggle_permissions(user_id: int, category: str):
-    print(user_id, category)
     sql = text("""SELECT c.id FROM categories AS c, users AS u WHERE c.name=:category AND u.id=:user_id""")
     category_id = db.session.execute(sql, {"user_id":user_id, "category":category}).fetchone()[0]
     if not category_id:

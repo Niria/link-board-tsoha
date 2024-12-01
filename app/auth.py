@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, request, session, url_for
+from flask import render_template, redirect, request, session, url_for, flash, get_flashed_messages
 from sqlalchemy.sql import text
 from .db import db
 from . import users
@@ -14,7 +14,8 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         if not users.login(username, password):
-            return render_template("error.html", message="Wrong username or password."), 401
+            flash("Wrong username or password.", "error")
+            return redirect(url_for("login"))
         if request.form.get("next"):
             return redirect(request.form["next"])
         return redirect(url_for("index"))
@@ -39,27 +40,33 @@ def register():
         display_name = request.form["displayname"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
+        redirect_user = False
         if password1 != password2:
-            return render_template("error.html", message="Passwords don't match")
+            flash("Passwords don't match.", "error")
+            redirect_user = True
         if len(username) < 3 or len(username) > 20:
-            return render_template("error.html", 
-                                   message="Username must be between 3 and 20 characters long.")
+            flash("Username must be between 3 and 20 characters.", "error")
+            redirect_user = True
         if len(display_name) < 3 or len(display_name) > 20:
-            return render_template("error.html", 
-                                   message="Display name must be between 3 and 20 characters long.")
+            flash("Display name must be between 3 and 20 characters.", "error")
+            redirect_user = True
         if " " in username or " " in display_name:
-            return render_template("error.html", message="Name cannot contain spaces.")
+            flash("Names cannot contain spaces.", "error")
+            redirect_user = True
         if len(password1) < 4 or len(password1) > 64:
-            return render_template("error.html", 
-                                   message="Password must be between 4 and 64 characters long.")
-        
+            flash("Password must be between 8 and 64 characters.", "error")
+            redirect_user = True
+        if redirect_user:
+            return redirect(url_for("register"))
         sql = text("SELECT id FROM users WHERE username=:username")
         user = db.session.execute(sql, {"username":username}).fetchone()
         if user:
-            return render_template("error.html", message="Username already exists.")
+            flash("Username already in use.", "error")
+            return redirect(url_for("register"))
         
         hashed_password = generate_password_hash(password1)
         sql = text("INSERT INTO users (username, password) VALUES (:username, :password)")
         db.session.execute(sql, {"username":username, "password":hashed_password})
         db.session.commit()
-        return redirect(url_for("index"))
+        flash("Registration successful.", "success")
+        return redirect(url_for("login"))

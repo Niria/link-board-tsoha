@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, request, session, url_for
+from flask import render_template, redirect, request, session, url_for, flash
 from sqlalchemy.sql import text
 
 from .content import create_category, get_category, update_category, get_thread, update_thread, update_reply, \
@@ -18,7 +18,8 @@ def new_category():
         check_csrf()
         category_name = request.form["category_name"]
         if len(category_name) < 3:
-            return render_template("error.html", message="Category name must be 3 characters or longer.")
+            flash("Category name must be at least 3 characters.", "error")
+            return redirect(url_for("new_category"))
         description = request.form["description"]
         public = True if request.form["public"] == "true" else False
         create_category(category_name, description, public)
@@ -35,7 +36,8 @@ def edit_category(category):
         check_csrf()
         new_category_name = request.form["category_name"]
         if len(new_category_name) < 3:
-            return render_template("error.html", message="Category name must be 3 characters or longer.")
+            flash("Category name must be at least 3 characters.", "error")
+            return redirect(url_for("new_category"))
         description = request.form["description"]
         public = True if request.form["public"] == "true" else False
         update_category(category, new_category_name, description, public)
@@ -52,11 +54,16 @@ def edit_thread(thread_id):
     if request.method == "POST":
         check_csrf()
         link_url = request.form["link_url"]
+        redirect_user = False
         if not 3 <= len(link_url) <= 50:
-            return render_template("error.html", message="Url must be between 3 and 50 characters long.")
+            flash("Link URL must be between 3 and 50 characters.", "error")
+            redirect_user = True
         title = request.form["title"]
         if not 3 <= len(title) <= 50:
-            return render_template("error.html", message="Title must be between 3 and 50 characters long.")
+            flash("Title must be between 3 and 50 characters.", "error")
+            redirect_user = True
+        if redirect_user:
+            return redirect(url_for("edit_thread", thread_id=thread.id))
         content = request.form["content"]
         visible = None
         if 'visible' in request.form:
@@ -76,14 +83,15 @@ def edit_reply(thread_id, reply_id):
                                             WHERE id=:reply_id"""),
                                    {"reply_id": reply_id}).fetchone()
         if session["user_id"] != reply.user_id and session["user_role"] < 1:
-            return render_template("error.html", message="Invalid user.")
+            flash("You are not authorized to edit this reply.", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
         content = request.form["content"]
         visible = None
         if 'visible' in request.form:
             visible = True if request.form["visible"] == "true" else False
-        print(visible)
         if not 1 <= len(content) <= 1000:
-            return render_template("error.html", message="Reply must be between 1 and 1000 characters long.")
+            flash("Reply content must be between 1 and 1000 characters.", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
         update_reply(reply_id, content, visible)
         return redirect(url_for('thread_page', thread_id=thread_id))
 
@@ -99,14 +107,14 @@ def edit_permissions(category: str):
     if request.method == "GET":
         category = get_category(category, session["user_id"])
         if not category:
-            return render_template("error.html", message="Category not found.")
+            flash("Invalid category.", "error")
+            return redirect(url_for("edit_permissions", category=category))
         unapproved_users = users_without_permissions(category.id)
         approved_users = users_with_permissions(category.id)
         return render_template("category_permissions.html", category=category,
                                unapproved_users=unapproved_users, approved_users=approved_users)
 
     if request.method == "POST":
-        print(request.form)
         check_csrf()
         user_id = request.form.get('user_id', type=int)
         toggle_permissions(user_id, category)

@@ -87,7 +87,6 @@ function setEventHandlers() {
       const replyComment = reply.querySelectorAll('.toggle-comment-form');
       if (replyComment !== null) {
         reply.querySelector('.form-toggle').addEventListener('click', () => {
-          //replyComment.querySelector('textarea').innerHTML = '';
           replyComment[0].classList.toggle('hidden');
           if (!replyComment[1].classList.contains('hidden')) {
             replyComment[1].classList.toggle('hidden');
@@ -121,6 +120,12 @@ function setEventHandlers() {
   const categoryFavourite = document.querySelector('#category-favourite');
   if (categoryFavourite !== null) {
     categoryFavourite.addEventListener('click', () => toggleCategoryFavourite(categoryFavourite));
+  }
+
+  // Initialize eventListener for closing messages
+  const messages = document.querySelector('.messages');
+  if (messages !== null) {
+    messages.addEventListener('click', () => messages.remove())
   }
 }
 

@@ -58,8 +58,6 @@ CREATE TABLE permissions (
     user_id INTEGER REFERENCES users NOT NULL,
     category_id INTEGER REFERENCES categories NOT NULL,
     PRIMARY KEY (user_id, category_id),
-    can_read BOOLEAN DEFAULT TRUE,
-    can_write BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
