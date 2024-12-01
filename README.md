@@ -64,7 +64,7 @@ user=# \q
 $ psql -d <new-db-name> < schema.sql
 ```
 
-With the schema in place you can insert some data to the database using either `testdata_random.sql` or `testdata_static.sql`. The first one inserts a lot of random data and the second one adds a small amount of fairly static data to the DB. Do **not** use both of them at once:
+With the schema in place you can insert some data to the database using either `testdata_random.sql` or `testdata_static.sql`. The first one inserts a lot of random data and the second one adds a small amount of fairly static data to the DB. Do **not** use both of them at once. If you wish to do testing without predefined data you should probably update your users `user_role` from 0 to 1 to access admin features:
 ```
 $ psql -d <new-db-name> < testdata_random.sql
 ```

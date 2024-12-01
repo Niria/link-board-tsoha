@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from os import getenv
 
 
@@ -10,5 +10,9 @@ from app.content import get_category_list
 
 @app.context_processor
 def inject_nav():
-    category_list = get_category_list()
+    user_id = session.get("user_id")
+    if user_id:
+        category_list = get_category_list(user_id)
+    else:
+        category_list = get_category_list()
     return dict(category_list=category_list)

@@ -73,15 +73,17 @@
                     </div>
                 </div>
             </div>
+        {% else %}
+            <p>User has no replies yet.</p>
         {% endfor %}
     {% elif page == "followers" %}
         <h3>{{ user.display_name }}'s followers</h3>
         {% for follower in followers %}
             <a href="{{ url_for('profile', username=follower.username)  }}">{{ follower.display_name }}</a>
         {% else %}
-            <p>No followers</p>
+            <p>User has no followers.</p>
         {% endfor %}
     {% else %}
-        <h3>General profile info goes here</h3>
+        <h3>General profile info goes here (WIP)</h3>
     {% endif %}
 {% endblock %}

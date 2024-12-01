@@ -39,7 +39,6 @@ function toggleUserFollow(follow) {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "user-id": user_id,
       "csrf-token": csrf_token
     }
   })
@@ -58,7 +57,6 @@ function toggleCategoryFavourite(favourite) {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "user-id": user_id,
       "csrf-token": csrf_token
     }
   })

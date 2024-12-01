@@ -13,7 +13,7 @@
 - Add error handling for failed DB requests
 - Unify code, single/double quotation marks etc
 - Double check that user can't access features when they lack permissions
-- Form input validation, check for whitespace
+- Form input validation, check for whitespace, maybe pick up WTForms
 - Project file structure cleanup
 - DB indexing
 - Possibly change reply_like route, thread_id seems so unnecessary

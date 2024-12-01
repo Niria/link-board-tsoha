@@ -2,11 +2,18 @@ from .db import db
 from sqlalchemy.sql import text
 
 
-def get_category_list():
+def get_category_list(user_id: int = None):
     sql = text("""SELECT c.name
                     FROM categories AS c
-                   WHERE c.is_public=:public""")
-    categories = db.session.execute(sql, {"public":True})
+                   WHERE (c.is_public=:public 
+                      OR (SELECT user_role > 0 
+                            FROM users 
+                           WHERE id=:user_id)
+                      OR c.id IN (SELECT p.category_id 
+                                    FROM permissions AS p
+                                   WHERE p.user_id=:user_id))
+                   ORDER BY c.name""")
+    categories = db.session.execute(sql, {"public":True, "user_id":user_id})
     return categories.fetchall()
 
 def get_category(category: str, user_id: int):
