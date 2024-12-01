@@ -20,6 +20,7 @@
 - Display weeks/months instead of days for submission age?
 
 ## Style
+- Modify style of forms
 - Go through css classes and combine them if possible
 - Flash message style adjustment
 - Transitions 

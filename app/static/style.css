@@ -419,6 +419,15 @@ div:has(.profile-replies-thread-container) {
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+  & span {
+    margin-bottom: 0.5rem;
+  }
+  & .private {
+    color: rgba(255, 0, 0, 0.5);
+  }
+  & .public {
+    color: rgba(0, 128, 0, 0.5);
+  }
 }
 
 .thread-hidden {

@@ -4,6 +4,11 @@
     <div class="category-title-container">
         <h1>{{ category.name }}</h1>
         <span class="category-buttons">
+            {% if not category.is_public %}
+                <span class="private">Private</span>
+            {% else %}
+                <span class="public">Public</span>
+            {% endif %}
             <button id="category-favourite"
                     class="btn-favourite"
                     data-url='{{ url_for('favourite_category', category=category.name) }}'
