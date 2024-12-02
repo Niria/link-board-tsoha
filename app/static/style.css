@@ -327,10 +327,6 @@ a:has(> .thread-link):hover {
   }
 }
 
-div:has(.profile-replies-thread-container) {
-  box-shadow: 0 0.125rem 0.75rem -0.25rem dimgray;
-}
-
 .profile-replies-thread-container {
   margin: 0 0;
   padding: 0.5rem;
