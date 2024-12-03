@@ -38,47 +38,47 @@ def get_category(category: str, user_id: int):
 def get_threads(category_id: int = None, by_user: int = None,
                 user_id: int = None, favourites: bool = False):
     sql = text("""WITH curr_user(role) AS (
-        SELECT user_role FROM users WHERE id=:user_id
-    )
-    SELECT t.id,
-                 t.title,
-                 t.content,
-                 t.link_url,
-                 t.visible,
-                 COALESCE(likes, 0) AS likes,
-                 COALESCE(comments, 0) AS comments,
-                 time_ago(t.created_at) AS age,
-                 u.username,
-                 u.display_name,
-                 u.id AS user_id,
-                 c.name AS category
-            FROM threads AS t
-            JOIN categories AS c
-              ON c.id=t.category_id
-            JOIN users AS u
-              ON t.user_id=u.id
-            LEFT JOIN (SELECT thread_id, count(*) AS likes
-                         FROM thread_likes
-                        GROUP BY thread_id
-                      ) AS tl
-              ON tl.thread_id=t.id
-            LEFT JOIN (SELECT thread_id, count(*) AS comments
-                         FROM replies
-                        GROUP BY thread_id
-                      ) AS r
-              ON r.thread_id=t.id
-            LEFT JOIN permissions AS p
-              ON p.category_id=c.id AND p.user_id=:user_id
-            LEFT JOIN category_favourites AS cf
-              ON cf.category_id=c.id AND cf.user_id=:user_id
-           WHERE (c.is_public=:public
-                  OR (SELECT role FROM curr_user) > 0
-                  OR p.user_id IS NOT NULL)
-             AND (:category_id IS NULL OR c.id=:category_id)
-             AND (:favourites IS NOT TRUE OR cf.user_id IS NOT NULL)
-             AND (:by_user IS NULL OR u.id=:by_user)
-             AND (t.visible=:visible OR (SELECT role FROM curr_user) > 0)
-           ORDER BY t.created_at DESC;""")
+                       SELECT user_role FROM users WHERE id=:user_id
+                  )
+                  SELECT t.id,
+                         t.title,
+                         t.content,
+                         t.link_url,
+                         t.visible,
+                         COALESCE(likes, 0) AS likes,
+                         COALESCE(comments, 0) AS comments,
+                         time_ago(t.created_at) AS age,
+                         u.username,
+                         u.display_name,
+                         u.id AS user_id,
+                         c.name AS category
+                    FROM threads AS t
+                    JOIN categories AS c
+                      ON c.id=t.category_id
+                    JOIN users AS u
+                      ON t.user_id=u.id
+                    LEFT JOIN (SELECT thread_id, count(*) AS likes
+                                 FROM thread_likes
+                                GROUP BY thread_id
+                              ) AS tl
+                      ON tl.thread_id=t.id
+                    LEFT JOIN (SELECT thread_id, count(*) AS comments
+                                 FROM replies
+                                GROUP BY thread_id
+                              ) AS r
+                      ON r.thread_id=t.id
+                    LEFT JOIN permissions AS p
+                      ON p.category_id=c.id AND p.user_id=:user_id
+                    LEFT JOIN category_favourites AS cf
+                      ON cf.category_id=c.id AND cf.user_id=:user_id
+                   WHERE (c.is_public=:public
+                          OR (SELECT role FROM curr_user) > 0
+                          OR p.user_id IS NOT NULL)
+                     AND (:category_id IS NULL OR c.id=:category_id)
+                     AND (:favourites IS NOT TRUE OR cf.user_id IS NOT NULL)
+                     AND (:by_user IS NULL OR u.id=:by_user)
+                     AND (t.visible=:visible OR (SELECT role FROM curr_user) > 0)
+                   ORDER BY t.created_at DESC;""")
     threads = db.session.execute(sql, {"public":True,
                                        "visible":True,
                                        "category_id":category_id,
@@ -175,19 +175,22 @@ def get_replies(thread_id: int, user_id: int):
                         u.username,
                         u.display_name,
                         time_ago(rt.created_at) AS age,
-                        (SELECT count(*) 
-                           FROM reply_likes AS rl
-                          WHERE rl.reply_id=rt.id) AS likes,
-                        (SELECT EXISTS (SELECT *
-                           FROM reply_likes AS rl
-                          WHERE rl.user_id=:user_id
-                            AND rl.reply_id=rt.id)
-                        ) AS liked,
+                        COALESCE(likes, 0) AS likes,
+                        (CASE WHEN rl.user_id IS NULL 
+                              THEN false 
+                              ELSE true END) AS liked,
                         array_length(rt.path, 1)-1 AS depth,
                         rt.path
                    FROM reply_tree AS rt
                    JOIN users AS u
                      ON rt.user_id=u.id
+                        LEFT JOIN (SELECT reply_id, count(*) AS likes 
+                                     FROM reply_likes 
+                                    GROUP BY reply_id) AS all_likes 
+                          ON all_likes.reply_id=rt.id
+                        LEFT JOIN reply_likes AS rl 
+                          ON rl.reply_id=rt.id 
+                         AND rl.user_id=:user_id
                   ORDER BY path;""")
     replies = db.session.execute(sql, {"thread_id":thread_id, "user_id":user_id})
     return replies.fetchall()
