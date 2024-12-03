@@ -74,7 +74,7 @@ def edit_thread(thread_id):
             visible = True if request.form["visible"] == "true" else False
         update_thread(thread_id, link_url, title, content, visible)
 
-        return redirect("/")
+        return redirect(url_for("thread_page", thread_id=thread_id))
 
 
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])

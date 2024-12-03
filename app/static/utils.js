@@ -83,7 +83,7 @@ function setEventHandlers() {
   if (replyContent !== null) {
     replyContent.forEach((reply) => {
       const replyComment = reply.querySelectorAll('.toggle-comment-form');
-      if (replyComment !== null) {
+      if (replyComment.length > 0) {
         reply.querySelector('.form-toggle').addEventListener('click', () => {
           replyComment[0].classList.toggle('hidden');
           if (!replyComment[1].classList.contains('hidden')) {

@@ -40,12 +40,17 @@
                 <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} -
                     path: {{ reply.path }}</div>
                 <div class="reply-user-container">
-                    {% if reply.visible %}
-                        <a href="{{ url_for('profile', username=reply.username) }}">{{ reply.display_name }}</a>
-                    {% else %}
-                        <span>[------------]</span>
-                    {% endif %}
-                    <span>{{ reply.age }}</span>
+                    <span>
+                        {% if reply.visible %}
+                            <a href="{{ url_for('profile', username=reply.username) }}">{{ reply.display_name }}</a>
+                        {% else %}
+                            <span>[------------]</span>
+                        {% endif %}
+                    </span>
+                    <span class="tooltip" style="--tooltip-data: '{{ reply.created_at }}';">{{ reply.age }}</span>
+                        {% if reply.edited %}
+                            <span class="tooltip" style="--tooltip-data: '{{ reply.updated_at }}';">(edited {{ reply.edited }})</span>
+                        {% endif %}
                 </div>
                 {% if reply.visible or session.user_role > 0 %}
                     <div class="reply-message">{{ reply.content }}</div>

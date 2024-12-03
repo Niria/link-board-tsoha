@@ -107,4 +107,39 @@ RETURN ago;
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION edit_date() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        NEW.updated_at := NULL;
+    ELSIF TG_OP = 'UPDATE' THEN
+        NEW.updated_at := now();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER user_edit_date
+    BEFORE INSERT OR UPDATE
+    ON users
+    FOR EACH ROW
+    EXECUTE PROCEDURE edit_date();
+
+CREATE TRIGGER category_edit_date
+    BEFORE INSERT OR UPDATE
+    ON categories
+    FOR EACH ROW
+    EXECUTE PROCEDURE edit_date();
+
+CREATE TRIGGER thread_edit_date
+    BEFORE INSERT OR UPDATE
+    ON threads
+    FOR EACH ROW
+    EXECUTE PROCEDURE edit_date();
+
+CREATE TRIGGER reply_edit_date
+    BEFORE INSERT OR UPDATE
+    ON replies
+    FOR EACH ROW
+    EXECUTE PROCEDURE edit_date();
+
 COMMIT;

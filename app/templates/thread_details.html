@@ -1,6 +1,9 @@
 <div class="thread-details">
     <div>posted
-        {{ thread. age }}
+        <span class="tooltip" style="--tooltip-data: '{{ thread.created_at }}';">{{ thread.age }}</span>
+        {% if thread.edited %}
+            <span class="tooltip" style="--tooltip-data: '{{ thread.updated_at }}';">(edited {{ thread.edited }})</span>
+        {% endif %}
         by <a href="{{ url_for('profile', username=thread.username) }}">{{ thread.display_name }}</a>
         in <a href="{{ url_for('category_page', category=thread.category) }}">{{ thread.category }}</a>
         <span>{{ thread.comments }} comments</span>

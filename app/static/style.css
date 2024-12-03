@@ -10,6 +10,7 @@
   --btn-color-secondary: lightsteelblue;
   --link-color: darkslateblue;
   --link-color-visited: rgb(107, 9, 41);
+  --tooltip-data: '';
 }
 
 a {
@@ -379,8 +380,10 @@ a:has(> .thread-link):hover {
 
 .reply-user-container {
   margin-bottom: 0.25rem;
-  & span {
-    margin-left: 0.5rem;
+  & span:first-child {
+    margin-right: 0.5rem;
+  }
+  & span:not(:first-child) {
     font-size: small;
   }
 }
@@ -525,4 +528,31 @@ a:has(> .thread-link):hover {
   & .info-message {
     background-color: lightblue;
   }
+}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip:hover {
+  cursor: default;
+  background-color: var(--bg-color-1);
+}
+
+.tooltip:after {
+  position: absolute;
+  padding: 0.125rem;
+  width: 8rem;
+  top: -2.5rem;
+  left: -2.25rem;
+  display: none;
+  color: white;
+  text-align: center;
+  background-color: var(--bg-color-4);
+  border-radius: 0.375rem;
+  content: var(--tooltip-data);
+}
+
+.tooltip:hover:after {
+  display: block;
 }

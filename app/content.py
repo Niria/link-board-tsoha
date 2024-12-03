@@ -4,16 +4,16 @@ from sqlalchemy.sql import text
 
 def get_category_list(user_id: int = None):
     sql = text("""
-SELECT c.name
-  FROM categories AS c
-       LEFT JOIN permissions AS p
-         ON p.category_id=c.id AND p.user_id=:user_id
- WHERE (c.is_public=:public 
-       OR (SELECT user_role > 0 
-            FROM users 
-           WHERE id=:user_id)
-       OR p.user_id IS NOT NULL)
- ORDER BY c.name;""")
+        SELECT c.name
+          FROM categories AS c
+               LEFT JOIN permissions AS p
+                 ON p.category_id=c.id AND p.user_id=:user_id
+         WHERE (c.is_public=:public 
+               OR (SELECT user_role > 0 
+                    FROM users 
+                   WHERE id=:user_id)
+               OR p.user_id IS NOT NULL)
+         ORDER BY c.name;""")
     categories = db.session.execute(sql, {"public":True, "user_id":user_id})
     return categories.fetchall()
 
@@ -50,6 +50,10 @@ def get_threads(category_id: int = None, by_user: int = None,
                COALESCE(likes, 0) AS likes,
                COALESCE(comments, 0) AS comments,
                time_ago(t.created_at) AS age,
+               (CASE WHEN t.updated_at IS NULL 
+                THEN null 
+                ELSE time_ago(t.updated_at) END
+               ) AS edited,
                u.username,
                u.display_name,
                u.id AS user_id,
@@ -106,7 +110,13 @@ def get_thread(thread_id: int, user_id: int):
                u.display_name,
                u.id AS user_id,
                (SELECT count(*) FROM replies WHERE thread_id=:id) AS comments,
+               to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(t.created_at) AS age,
+               to_char(t.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
+               (CASE WHEN t.updated_at IS NULL 
+                THEN null 
+                ELSE time_ago(t.updated_at) END
+               ) AS edited,
                c.name AS category,
                (CASE WHEN tl.user_id IS NULL THEN false ELSE true END) AS liked
           FROM threads AS t
@@ -143,6 +153,7 @@ def get_replies(thread_id: int, user_id: int):
              parent_id,
              content, 
              created_at,
+             updated_at,
              visible,
              path) 
           AS (SELECT r.id, 
@@ -150,6 +161,7 @@ def get_replies(thread_id: int, user_id: int):
                      r.parent_id, 
                      r.content, 
                      r.created_at,
+                     r.updated_at,
                      r.visible, 
                      ARRAY[r.id]
                 FROM replies AS r
@@ -163,6 +175,7 @@ def get_replies(thread_id: int, user_id: int):
                      r.parent_id, 
                      r.content, 
                      r.created_at,
+                     r.updated_at,
                      r.visible, 
                      path || r.id
                 FROM replies AS r
@@ -178,7 +191,13 @@ def get_replies(thread_id: int, user_id: int):
                rt.visible,
                u.username,
                u.display_name,
+               to_char(rt.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(rt.created_at) AS age,
+               to_char(rt.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
+               (CASE WHEN rt.updated_at IS NULL 
+                THEN null 
+                ELSE time_ago(rt.updated_at) END
+               ) AS edited,
                COALESCE(likes, 0) AS likes,
                (CASE WHEN rl.user_id IS NULL 
                     THEN false 
@@ -220,8 +239,8 @@ def add_thread(user_id, category_id, link_url, title, content):
 
 def toggle_thread_like(user_id: int, thread_id: int):
     sql = text(
-        """SELECT 1 FROM thread_likes WHERE user_id=:user_id AND 
-        thread_id=:thread_id""")
+        """SELECT 1 FROM thread_likes 
+            WHERE user_id=:user_id AND thread_id=:thread_id""")
     like_exists = db.session.execute(sql, {"user_id": user_id,
                                            "thread_id": thread_id}).fetchone()
     if like_exists:
