@@ -49,7 +49,9 @@ def get_threads(category_id: int = None, by_user: int = None,
                t.visible,
                COALESCE(likes, 0) AS likes,
                COALESCE(comments, 0) AS comments,
+               to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(t.created_at) AS age,
+               to_char(t.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
                (CASE WHEN t.updated_at IS NULL 
                 THEN null 
                 ELSE time_ago(t.updated_at) END
