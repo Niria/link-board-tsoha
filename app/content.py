@@ -37,10 +37,9 @@ def get_category(category: str, user_id: int):
 
 def get_threads(category_id: int = None, by_user: int = None,
                 user_id: int = None, favourites: bool = False):
-    sql = text("""WITH user_role AS (
+    sql = text("""WITH curr_user(role) AS (
         SELECT user_role FROM users WHERE id=:user_id
     )
-
     SELECT t.id,
                  t.title,
                  t.content,
@@ -58,26 +57,27 @@ def get_threads(category_id: int = None, by_user: int = None,
               ON c.id=t.category_id
             JOIN users AS u
               ON t.user_id=u.id
-            LEFT JOIN ( SELECT thread_id, count(*) AS likes
-                          FROM thread_likes
-                         GROUP BY thread_id
+            LEFT JOIN (SELECT thread_id, count(*) AS likes
+                         FROM thread_likes
+                        GROUP BY thread_id
                       ) AS tl
               ON tl.thread_id=t.id
-            LEFT JOIN ( SELECT thread_id, count(*) AS comments
-                          FROM replies
-                         GROUP BY thread_id
+            LEFT JOIN (SELECT thread_id, count(*) AS comments
+                         FROM replies
+                        GROUP BY thread_id
                       ) AS r
               ON r.thread_id=t.id
             LEFT JOIN permissions AS p
               ON p.category_id=c.id AND p.user_id=:user_id
             LEFT JOIN category_favourites AS cf
               ON cf.category_id=c.id AND cf.user_id=:user_id
-           WHERE (c.is_public=:public OR user_role > 0
-                                      OR p.user_id IS NOT NULL)
+           WHERE (c.is_public=:public
+                  OR (SELECT role FROM curr_user) > 0
+                  OR p.user_id IS NOT NULL)
              AND (:category_id IS NULL OR c.id=:category_id)
              AND (:favourites IS NOT TRUE OR cf.user_id IS NOT NULL)
              AND (:by_user IS NULL OR u.id=:by_user)
-             AND (t.visible=true OR user_role > 0)
+             AND (t.visible=:visible OR (SELECT role FROM curr_user) > 0)
            ORDER BY t.created_at DESC;""")
     threads = db.session.execute(sql, {"public":True,
                                        "visible":True,
