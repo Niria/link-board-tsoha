@@ -47,9 +47,9 @@
                             <span>[------------]</span>
                         {% endif %}
                     </span>
-                    <span class="tooltip" style="--tooltip-data: '{{ reply.created_at }}';">{{ reply.age }}</span>
+                    <span class="tooltip" data-tooltip="{{ reply.created_at }}">{{ reply.age }}</span>
                         {% if reply.edited %}
-                            <span class="tooltip" style="--tooltip-data: '{{ reply.updated_at }}';">(edited {{ reply.edited }})</span>
+                            <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
                         {% endif %}
                 </div>
                 {% if reply.visible or session.user_role > 0 %}

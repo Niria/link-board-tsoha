@@ -41,7 +41,7 @@
     {% elif page == "replies" %}
         <h3>{{ user.display_name }}'s comments</h3>
         {% for reply in replies %}
-            <div class="reply-content-container">
+            <div class="reply-content-container profile-reply-container">
                 <div class="profile-replies-thread-container">
                     <a href="{{ url_for('thread_page', thread_id=reply.thread_id) }}"><h3>{{ reply.thread_title }}</h3>
                     </a>
@@ -55,8 +55,11 @@
                 <div class="profile-replies-reply-container">
                     <div>{{ reply.reply_content }}</div>
                     <div class="profile-replies-reply-details">
-                        {{ user.display_name }} replied
-                        {{ reply.reply_age }}
+                        <span>{{ user.display_name }} replied</span>
+                        <span class="tooltip" data-tooltip="{{ reply.created_at }}">{{ reply.reply_age }}</span>
+                        {% if reply.edited %}
+                            <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
+                        {% endif %}
                         <button type="button"
                                 id="like-reply"
                                 class="btn btn-small"

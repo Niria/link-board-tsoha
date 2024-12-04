@@ -1,3 +1,5 @@
+from sqlalchemy import text
+
 from app import app
 from flask import (jsonify, redirect, render_template, request, session,
                    url_for, \
@@ -5,7 +7,8 @@ from flask import (jsonify, redirect, render_template, request, session,
 from .content import get_category, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
     toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, \
-    get_user_followers, toggle_category_fav
+    get_user_followers, toggle_category_fav, update_thread, update_reply
+from .db import db
 from .users import check_csrf, login_required
 
 
@@ -157,3 +160,56 @@ def catch_all(path):
     return render_template("error.html",
                            message="Nothing to be found here")
 
+
+@app.route("/p/<int:thread_id>/edit", methods=["GET", "POST"])
+def edit_thread(thread_id):
+    thread = get_thread(thread_id, session["user_id"])
+    if session["user_id"] != thread.user_id and session["user_role"] < 1:
+        return render_template("error.html",
+                               message="You are not authorized to edit this "
+                                       "thread.")
+    if request.method == "GET":
+        return render_template("thread_form.html", editing=True, thread=thread)
+    if request.method == "POST":
+        check_csrf()
+        link_url = request.form["link_url"]
+        redirect_user = False
+        if not 3 <= len(link_url) <= 50:
+            flash("Link URL must be between 3 and 50 characters.", "error")
+            redirect_user = True
+        title = request.form["title"]
+        if not 3 <= len(title) <= 50:
+            flash("Title must be between 3 and 50 characters.", "error")
+            redirect_user = True
+        if redirect_user:
+            return redirect(url_for("edit_thread", thread_id=thread.id))
+        content = request.form["content"]
+        visible = None
+        if 'visible' in request.form:
+            visible = True if request.form["visible"] == "true" else False
+        update_thread(thread_id, link_url, title, content, visible)
+
+        return redirect(url_for("thread_page", thread_id=thread_id))
+
+
+@app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
+def edit_reply(thread_id, reply_id):
+    if request.method == "POST":
+        check_csrf()
+        reply = db.session.execute(text("""SELECT user_id 
+                                             FROM replies 
+                                            WHERE id=:reply_id"""),
+                                   {"reply_id": reply_id}).fetchone()
+        if session["user_id"] != reply.user_id and session["user_role"] < 1:
+            flash("You are not authorized to edit this reply.", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
+        content = request.form["content"]
+        visible = None
+        if 'visible' in request.form:
+            visible = True if request.form["visible"] == "true" else False
+        if not 1 <= len(content) <= 1000:
+            flash("Reply content must be between 1 and 1000 characters.",
+                  "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
+        update_reply(reply_id, content, visible)
+        return redirect(url_for('thread_page', thread_id=thread_id))

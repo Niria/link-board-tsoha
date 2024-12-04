@@ -304,6 +304,12 @@ def get_user_replies(user_id: int, session_user: int):
                          r.content AS reply_content,
                          count(rl.user_id) AS likes,
                          time_ago(r.created_at) AS reply_age,
+                         to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
+                         (CASE WHEN r.updated_at IS NULL 
+                          THEN null 
+                          ELSE time_ago(r.updated_at) END
+                         ) AS edited,
+                         to_char(r.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
                          (SELECT EXISTS (SELECT *
                            FROM reply_likes AS rl
                           WHERE rl.user_id=:session_user
