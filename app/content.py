@@ -47,6 +47,7 @@ def get_threads(category_id: int = None, by_user: int = None,
                t.content,
                t.link_url,
                t.visible,
+               t.thumbnail,
                COALESCE(likes, 0) AS likes,
                COALESCE(comments, 0) AS comments,
                to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
@@ -120,7 +121,8 @@ def get_thread(thread_id: int, user_id: int):
                 ELSE time_ago(t.updated_at) END
                ) AS edited,
                c.name AS category,
-               (CASE WHEN tl.user_id IS NULL THEN false ELSE true END) AS liked
+               (CASE WHEN tl.user_id IS NULL THEN false ELSE true END) AS liked,
+               thumbnail
           FROM threads AS t
           JOIN categories AS c
             ON c.id=t.category_id
@@ -230,12 +232,13 @@ def add_reply(user_id, thread_id, parent_id, content):
     db.session.commit()
 
 
-def add_thread(user_id, category_id, link_url, title, content):
+def add_thread(user_id, category_id, link_url, title, content, thumbnail):
     sql = text("""INSERT INTO threads (user_id, category_id, 
-                         link_url, title, content)
-                  VALUES (:user_id, :category_id, :link_url, :title, :content)""")
+                         link_url, title, content, thumbnail) 
+                  VALUES (:user_id, :category_id, :link_url, :title, :content, :thumbnail)""")
     db.session.execute(sql, {"user_id":user_id, "category_id":category_id,
-                             "link_url":link_url, "title":title, "content":content})
+                             "link_url":link_url, "title":title,
+                             "content":content, "thumbnail":thumbnail})
     db.session.commit()
 
 
@@ -438,7 +441,7 @@ def update_category(category_name: str, new_category_name: str,
 
 
 def update_thread(thread_id: int, link_url: str, title: str, content: str,
-                  visible: bool):
+                  visible: bool, thumbnail: bytearray, update_thumbnail: bool):
     sql = text("""SELECT 1 FROM threads WHERE id=:thread_id""")
     thread_exists = db.session.execute(sql, {"thread_id": thread_id}).fetchone()
     if not thread_exists:
@@ -447,11 +450,13 @@ def update_thread(thread_id: int, link_url: str, title: str, content: str,
                      SET link_url=:link_url,
                          title=:title, 
                          content=:content,
-                         visible=(COALESCE(:visible, visible))
+                         visible=(COALESCE(:visible, visible)),
+                         thumbnail = CASE WHEN :update_thumbnail THEN :thumbnail ELSE thumbnail END
                    WHERE id=:thread_id""")
     db.session.execute(sql, {"thread_id": thread_id, "link_url": link_url,
                              "title": title,
-                             "content": content, "visible": visible})
+                             "content": content, "visible": visible,
+                             "thumbnail": thumbnail, "update_thumbnail": update_thumbnail})
     db.session.commit()
 
 

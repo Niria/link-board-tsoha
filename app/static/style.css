@@ -138,10 +138,16 @@ button:focus {
 }
 
 .thread-link {
-  background-color: lightgray;
+  background-color: var(--bg-color-4);
+  display: flex;
+  align-items: center;
   width: 4rem;
   height: 4rem;
-  border-radius: 0.5rem;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+.thread-link:hover {
+  filter: brightness(0.8);
 }
 
 .listview-thread-container {
@@ -281,10 +287,6 @@ a:has(> h3):hover {
 a:has(> .thread-link) {
   height: fit-content;
   width: fit-content;
-}
-
-a:has(> .thread-link):hover {
-  filter:brightness(80%)
 }
 
 .comment-form > textarea {

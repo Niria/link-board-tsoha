@@ -3,7 +3,11 @@
 {% block content %}
     <div class="thread-container">
         <a href="{{ thread.link_url }}">
-            <div class="thread-link"></div>
+            <div class="thread-link">
+                {% if thread.thumbnail %}
+                    <img src="data:;base64, {{ thread.thumbnail|b64encode }}" alt="Thumbnail of {{ thread.title }}"/>
+                {% endif %}
+            </div>
         </a>
         <div class="thread-content">
             <h3>{{ thread.title }}</h3>

@@ -1,7 +1,11 @@
 {% for thread in threads %}
     <div class="listview-thread-container {{ 'thread-hidden' if not thread.visible else '' }}">
         <a href="{{ thread.link_url }}">
-            <div class="thread-link"></div>
+            <div class="thread-link">
+                {% if thread.thumbnail %}
+                    <img src="data:;base64, {{ thread.thumbnail|b64encode }}" alt="Thumbnail of {{ thread.title }}" />
+                {% endif %}
+            </div>
         </a>
         <div>
             <a href="{{ url_for('thread_page', thread_id=thread.id) }}"><h3>{{ thread.title }}</h3></a>

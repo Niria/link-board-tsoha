@@ -25,6 +25,19 @@
                     <textarea name="content" rows="3" cols="80"></textarea>
                 </label>
             </div>
+            <div class="form-input">
+                <p>Fetch thumbnail?</p>
+                <label>
+                    Yes
+                    <input type="radio" name="fetch-img" value="true" checked/>
+                </label>
+                <br>
+                <label>
+                    No
+                    <input type="radio" name="fetch-img" value="false"/>
+                </label>
+                <br>
+            </div>
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
             <input class="btn btn-big" type="submit" value="Submit link"/>
         </form>
@@ -61,6 +74,24 @@
                 </label>
                 <br>
             {% endif %}
+            <div class="form-input">
+                <p>Thumbnail:</p>
+                <label>
+                    Refresh
+                    <input type="radio" name="fetch-img" value="true" />
+                </label>
+                <br>
+                <label>
+                    Keep
+                    <input type="radio" name="fetch-img" value="false" checked/>
+                </label>
+                <br>
+                <label>
+                    Delete
+                    <input type="radio" name="fetch-img" value="delete" />
+                </label>
+                <br>
+            </div>
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
             <input class="btn btn-big" type="submit" value="Edit thread"/>
         </form>

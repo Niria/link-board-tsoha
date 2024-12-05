@@ -1,9 +1,6 @@
 # Tasklist
 
 ## Features
-- Display edit time for threads/replies
-- Add timestamp tooltip on hover over submit/edit timer
-- Link thumbnails
 - User profile page
     - Public/private and if profile private hide user from follower lists?
     - Profile tab (bio, like/follower count, registration date)
@@ -16,9 +13,7 @@
 - Installation
     - Look into psycopg2 install issue
 - Database
-    - Optimisation
     - Indexes
-    - Remove hacky subqueries and actually write usable SQL
     - Check that composite primary keys actually make sense
     - Add error handling for failed DB requests
     - On update trigger to set updated_at timestamp on category, thread, reply and user tables
@@ -31,7 +26,6 @@
     - Whitespace and special characters
     - WTForms?
 - Project file structure cleanup
-    - Move non-admin routes out of admin.py
     - Perhaps split content.py into smaller modules
 - Code
   - Unify code, single/double quotation marks etc
