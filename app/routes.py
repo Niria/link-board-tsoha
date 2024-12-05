@@ -7,7 +7,8 @@ from flask import (jsonify, redirect, render_template, request, session,
 from .content import get_category, get_threads, get_thread, \
     get_replies, add_reply, add_thread, toggle_thread_like, \
     toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, \
-    get_user_followers, toggle_category_fav, update_thread, update_reply
+    get_user_followers, toggle_category_fav, update_thread, update_reply, \
+    update_profile
 from .db import db
 from .users import check_csrf, login_required
 
@@ -113,7 +114,7 @@ def edit_thread(thread_id):
     thread = get_thread(thread_id, session["user_id"])
     if session["user_id"] != thread.user_id and session["user_role"] < 1:
         return render_template("error.html",
-                               message="You are not authorized to edit this "
+                               message="You are not authorised to edit this "
                                        "thread.")
     if request.method == "GET":
         return render_template("thread_form.html", editing=True, thread=thread)
@@ -166,6 +167,29 @@ def like_reply(thread_id: int, reply_id: int):
         return jsonify({"likes":like_count[0]})
 
 
+@app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
+def edit_reply(thread_id, reply_id):
+    if request.method == "POST":
+        check_csrf()
+        reply = db.session.execute(text("""SELECT user_id 
+                                             FROM replies 
+                                            WHERE id=:reply_id"""),
+                                   {"reply_id": reply_id}).fetchone()
+        if session["user_id"] != reply.user_id and session["user_role"] < 1:
+            flash("You are not authorised to edit this reply.", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
+        content = request.form["content"]
+        visible = None
+        if 'visible' in request.form:
+            visible = True if request.form["visible"] == "true" else False
+        if not 1 <= len(content) <= 1000:
+            flash("Reply content must be between 1 and 1000 characters.",
+                  "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
+        update_reply(reply_id, content, visible)
+        return redirect(url_for('thread_page', thread_id=thread_id))
+
+
 @app.route("/u/<string:username>/<string:page>")
 @app.route("/u/<string:username>")
 @login_required
@@ -187,6 +211,33 @@ def profile(username: str, page=None):
     return render_template("user_profile.html", user=user)
 
 
+@app.route("/u/<string:username>/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile(username: str):
+    if request.method == "GET":
+        user = get_profile(username, session["user_id"])
+        if user.id != session["user_id"] and session["user_role"] < 1:
+            flash("You are not authorised to edit this profile.", "error")
+            return redirect(url_for("profile", username=username))
+        return render_template("user_profile_form.html", user=user)
+
+    if request.method == "POST":
+        user = get_profile(username, session["user_id"])
+        if user.id != session["user_id"] and session["user_role"] < 1:
+            flash("You are not authorised to edit this profile.", "error")
+            return redirect(url_for("profile", username=username))
+        display_name = request.form.get("display_name")
+        if 3 > len(display_name) > 20:
+            flash("Display name must be between 3 and 20 characters.", "error")
+            return redirect(url_for("edit_profile", username=username))
+        description = request.form.get("description")
+        public_toggle = request.form.get("is_public")
+        is_public = None
+        if public_toggle:
+            is_public = True if public_toggle == "true" else False
+        update_profile(user.id, display_name, description, is_public)
+        return redirect(url_for("profile", username=username))
+
 @app.route("/u/<string:username>/follow", methods=["POST"])
 @login_required
 def follow(username: str):
@@ -202,26 +253,3 @@ def follow(username: str):
 def catch_all(path):
     return render_template("error.html",
                            message="Nothing to be found here")
-
-
-@app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
-def edit_reply(thread_id, reply_id):
-    if request.method == "POST":
-        check_csrf()
-        reply = db.session.execute(text("""SELECT user_id 
-                                             FROM replies 
-                                            WHERE id=:reply_id"""),
-                                   {"reply_id": reply_id}).fetchone()
-        if session["user_id"] != reply.user_id and session["user_role"] < 1:
-            flash("You are not authorized to edit this reply.", "error")
-            return redirect(url_for("thread_page", thread_id=thread_id))
-        content = request.form["content"]
-        visible = None
-        if 'visible' in request.form:
-            visible = True if request.form["visible"] == "true" else False
-        if not 1 <= len(content) <= 1000:
-            flash("Reply content must be between 1 and 1000 characters.",
-                  "error")
-            return redirect(url_for("thread_page", thread_id=thread_id))
-        update_reply(reply_id, content, visible)
-        return redirect(url_for('thread_page', thread_id=thread_id))

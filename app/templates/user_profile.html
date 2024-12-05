@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
 {% block content %}
-    <div  class="category-title-container"><h1>{{ user.display_name }}</h1>
+    <div  class="category-title-container">
+        <h1>{{ user.display_name }}</h1>
         {% if user.username != session.username %}
             <button id="user-follow"
                     class="btn btn-small btn-follow {{ 'following' if user.followed else '' }}"
@@ -12,81 +13,103 @@
             </button>
         {% endif %}
     </div>
-    <div class="profile-nav-container">
-        <button class="btn btn-big"
-                type="button"
-                onclick="window.location.href='{{ url_for('profile', username=user.username) }}';">
-            Profile
-        </button>
-        <button class="btn btn-big"
-                type="button"
-                onclick="window.location.href='{{ url_for('profile', username=user.username, page='threads') }}';">
-            Threads
-        </button>
-        <button class="btn btn-big"
-                type="button"
-                onclick="window.location.href='{{ url_for('profile', username=user.username, page='replies') }}';">
-            Comments
-        </button>
-        <button class="btn btn-big"
-                type="button"
-                onclick="window.location.href='{{ url_for('profile', username=user.username, page='followers') }}';">
-            Followers
-        </button>
-    </div>
+    {% if not user.profile_public %}
+        <div>Profile is private</div>
+    {% else %}
+        <div class="profile-nav-container">
+            <button class="btn btn-big"
+                    type="button"
+                    onclick="window.location.href='{{ url_for('profile', username=user.username) }}';">
+                Profile
+            </button>
+            <button class="btn btn-big"
+                    type="button"
+                    onclick="window.location.href='{{ url_for('profile', username=user.username, page='threads') }}';">
+                Threads
+            </button>
+            <button class="btn btn-big"
+                    type="button"
+                    onclick="window.location.href='{{ url_for('profile', username=user.username, page='replies') }}';">
+                Comments
+            </button>
+            <button class="btn btn-big"
+                    type="button"
+                    onclick="window.location.href='{{ url_for('profile', username=user.username, page='followers') }}';">
+                Followers
+            </button>
+        </div>
 
-    {% if page == "threads" %}
-        <h3>{{ user.display_name }}'s submissions</h3>
-        {% include "thread_list.html" %}
-    {% elif page == "replies" %}
-        <h3>{{ user.display_name }}'s comments</h3>
-        {% for reply in replies %}
-            <div class="reply-content-container profile-reply-container">
-                <div class="profile-replies-thread-container">
-                    <a href="{{ url_for('thread_page', thread_id=reply.thread_id) }}"><h3>{{ reply.thread_title }}</h3>
-                    </a>
-                    <div class="profile-replies-thread-details">
-                        <div>
-                            in <a
-                                href="{{ url_for('category_page', category=reply.thread_category) }}">{{ reply.thread_category }}</a>
+        {% if page == "threads" %}
+            <h3>{{ user.display_name }}'s submissions</h3>
+            {% include "thread_list.html" %}
+        {% elif page == "replies" %}
+            <h3>{{ user.display_name }}'s comments</h3>
+            {% for reply in replies %}
+                <div class="reply-content-container profile-reply-container">
+                    <div class="profile-replies-thread-container">
+                        <a href="{{ url_for('thread_page', thread_id=reply.thread_id) }}"><h3>{{ reply.thread_title }}</h3>
+                        </a>
+                        <div class="profile-replies-thread-details">
+                            <div>
+                                in <a
+                                    href="{{ url_for('category_page', category=reply.thread_category) }}">{{ reply.thread_category }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-replies-reply-container">
+                        <div>{{ reply.reply_content }}</div>
+                        <div class="profile-replies-reply-details">
+                            <span>{{ user.display_name }} replied</span>
+                            <span class="tooltip" data-tooltip="{{ reply.created_at }}">{{ reply.reply_age }}</span>
+                            {% if reply.edited %}
+                                <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
+                            {% endif %}
+                            <button type="button"
+                                    id="like-reply"
+                                    class="btn btn-small"
+                                    data-url='{{ url_for("like_reply", thread_id=reply.thread_id, reply_id=reply.reply_id) }}'
+                                    data-csrf='{{ session.csrf_token|tojson }}'>
+                                <div id="thumb" class="{{ 'thumb-active' if reply.liked else '' }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-6"
+                                         fill="currentColor">
+                                        <path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.777ZM2.331 10.727a11.969 11.969 0 0 0-.831 4.398 12 12 0 0 0 .52 3.507C2.28 19.482 3.105 20 3.994 20H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 0 1-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227Z"></path>
+                                    </svg>
+                                </div>
+                                <div id="reply-likes">{{ reply.likes }}</div>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="profile-replies-reply-container">
-                    <div>{{ reply.reply_content }}</div>
-                    <div class="profile-replies-reply-details">
-                        <span>{{ user.display_name }} replied</span>
-                        <span class="tooltip" data-tooltip="{{ reply.created_at }}">{{ reply.reply_age }}</span>
-                        {% if reply.edited %}
-                            <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
-                        {% endif %}
-                        <button type="button"
-                                id="like-reply"
-                                class="btn btn-small"
-                                data-url='{{ url_for("like_reply", thread_id=reply.thread_id, reply_id=reply.reply_id) }}'
-                                data-csrf='{{ session.csrf_token|tojson }}'>
-                            <div id="thumb" class="{{ 'thumb-active' if reply.liked else '' }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-6"
-                                     fill="currentColor">
-                                    <path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.777ZM2.331 10.727a11.969 11.969 0 0 0-.831 4.398 12 12 0 0 0 .52 3.507C2.28 19.482 3.105 20 3.994 20H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 0 1-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227Z"></path>
-                                </svg>
-                            </div>
-                            <div id="reply-likes">{{ reply.likes }}</div>
-                        </button>
-                    </div>
-                </div>
+            {% else %}
+                <p>User has no replies yet.</p>
+            {% endfor %}
+        {% elif page == "followers" %}
+            <h3>{{ user.display_name }}'s followers</h3>
+            {% for follower in followers %}
+                <a href="{{ url_for('profile', username=follower.username)  }}">{{ follower.display_name }}</a>
+            {% else %}
+                <p>User has no followers.</p>
+            {% endfor %}
+        {% else %}
+            <div>
+                <h4>Display Name:</h4>
+                <div>{{ user.display_name }}</div>
             </div>
-        {% else %}
-            <p>User has no replies yet.</p>
-        {% endfor %}
-    {% elif page == "followers" %}
-        <h3>{{ user.display_name }}'s followers</h3>
-        {% for follower in followers %}
-            <a href="{{ url_for('profile', username=follower.username)  }}">{{ follower.display_name }}</a>
-        {% else %}
-            <p>User has no followers.</p>
-        {% endfor %}
-    {% else %}
-        <h3>General profile info goes here (WIP)</h3>
+            <div>
+                <h4>Username:</h4>
+                <div>{{ user.username }}</div>
+            </div>
+            <div>
+                <h4>Join Date:</h4>
+                <div>{{ user.join_date }}</div>
+            </div>
+            <div>
+                <h4>Description:</h4>
+                <div>{{ user.description }}</div>
+            </div>
+            {% if user.id == session.user_id or session.user_role > 0 %}
+                <button class="btn btn-big" onclick="window.location.href='{{ url_for('edit_profile', username=user.username) }}';">Edit Profile</button>
+            {% endif %}
+        {% endif %}
     {% endif %}
 {% endblock %}

@@ -50,9 +50,9 @@ def get_threads(category_id: int = None, by_user: int = None,
                t.thumbnail,
                COALESCE(likes, 0) AS likes,
                COALESCE(comments, 0) AS comments,
-               to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
+               to_char(t.created_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(t.created_at) AS age,
-               to_char(t.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
+               to_char(t.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
                (CASE WHEN t.updated_at IS NULL 
                 THEN null 
                 ELSE time_ago(t.updated_at) END
@@ -113,9 +113,9 @@ def get_thread(thread_id: int, user_id: int):
                u.display_name,
                u.id AS user_id,
                (SELECT count(*) FROM replies WHERE thread_id=:id) AS comments,
-               to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
+               to_char(t.created_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(t.created_at) AS age,
-               to_char(t.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
+               to_char(t.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
                (CASE WHEN t.updated_at IS NULL 
                 THEN null 
                 ELSE time_ago(t.updated_at) END
@@ -195,9 +195,9 @@ def get_replies(thread_id: int, user_id: int):
                rt.visible,
                u.username,
                u.display_name,
-               to_char(rt.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
+               to_char(rt.created_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                time_ago(rt.created_at) AS age,
-               to_char(rt.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
+               to_char(rt.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
                (CASE WHEN rt.updated_at IS NULL 
                 THEN null 
                 ELSE time_ago(rt.updated_at) END
@@ -290,15 +290,21 @@ def get_profile(username: str, session_user: int):
     sql = text("""SELECT u.id,
                          u.username, 
                          u.display_name,
+                         u.description,
+                         u.profile_public,
+                         to_char(u.created_at, 'DD.MM.YYYY') as join_date,
+                         u.created_at,
+                         to_char(u.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
+                         u.updated_at,
                          (SELECT EXISTS (SELECT user_id 
                                            FROM user_followers 
                                           WHERE user_id=u.id
-                                            AND follower_id=:follower_id)
+                                            AND follower_id=:session_user) 
                          ) AS followed
                     FROM users AS u 
                    WHERE username=:username""")
     user = db.session.execute(sql, {"username":username,
-                                    "follower_id": session_user})
+                                    "session_user": session_user})
     return user.fetchone()
 
 
@@ -307,12 +313,12 @@ def get_user_replies(user_id: int, session_user: int):
                          r.content AS reply_content,
                          count(rl.user_id) AS likes,
                          time_ago(r.created_at) AS reply_age,
-                         to_char(t.created_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
+                         to_char(t.created_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as created_at,
                          (CASE WHEN r.updated_at IS NULL 
                           THEN null 
                           ELSE time_ago(r.updated_at) END
                          ) AS edited,
-                         to_char(r.updated_at, 'DD/MM/YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
+                         to_char(r.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') as updated_at,
                          (SELECT EXISTS (SELECT *
                            FROM reply_likes AS rl
                           WHERE rl.user_id=:session_user
@@ -524,4 +530,16 @@ def toggle_permissions(user_id: int, category: str):
             """DELETE FROM permissions 
                 WHERE user_id=:user_id AND category_id=:category_id""")
     db.session.execute(sql, {"user_id": user_id, "category_id": category_id})
+    db.session.commit()
+
+
+def update_profile(user_id: int, display_name: str, description: str, is_public: bool):
+    sql = text("""UPDATE users 
+                     SET display_name=:display_name,
+                         description=:description,
+                         profile_public=(COALESCE(:is_public, profile_public))
+                   WHERE id=:user_id
+    """)
+    db.session.execute(sql, {"user_id": user_id, "display_name": display_name,
+                             "description": description, "is_public": is_public})
     db.session.commit()

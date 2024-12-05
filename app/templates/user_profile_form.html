@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}- Edit Profile{% endblock %}
+{% block content %}
+    <div class="category-title-container">
+        <h1>{{ user.display_name }}</h1>
+        {% if user.username != session.username %}
+            <button id="user-follow"
+                    class="btn btn-small btn-follow {{ 'following' if user.followed else '' }}"
+                    data-user="{{ user.user_id }}"
+                    data-url='{{ url_for('follow', username=user.username) }}'
+                    data-csrf='{{ session.csrf_token|tojson }}'>
+                {{ 'Following' if user.followed else 'Follow' }}
+            </button>
+        {% endif %}
+    </div>
+    <form action="{{ url_for("edit_profile", username=user.username) }}" method="post">
+        <div class="form-input">
+            <label for="display_name">Display Name</label>
+            <input id="display_name" type="text" name="display_name" value="{{ user.display_name }}" />
+        </div>
+        <div class="form-input">
+            <label for="Description">Description</label>
+            <textarea id="Description" name="description">{{ user.description }}</textarea>
+        </div>
+        <div class="form-input">
+            <p>Privacy</p>
+            <label>
+                Public
+                <input type="radio" name="is_public" value="true" checked/>
+            </label>
+            <br>
+            <label>
+                Private
+                <input type="radio" name="is_public" value="false"/>
+            </label>
+            <br>
+        </div>
+        <input class="btn btn-big" type="submit" value="Update Profile" />
+    </form>
+    <button class="btn btn-big" onclick="window.location.href='{{ url_for('profile', username=user.username) }}';">Cancel</button>
+{% endblock %}

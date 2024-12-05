@@ -51,7 +51,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if session.get("user_role") < 1:
             return render_template("error.html",
-                                   message="Unauthorized.")
+                                   message="Unauthorised.")
         return f(*args, **kwargs)
 
     return decorated_function
