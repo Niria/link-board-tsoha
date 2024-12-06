@@ -2,8 +2,8 @@ BEGIN;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(64) UNIQUE NOT NULL,
-    display_name VARCHAR(64) UNIQUE NOT NULL,
+    username VARCHAR(24) UNIQUE NOT NULL,
+    display_name VARCHAR(24) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     profile_public BOOLEAN DEFAULT TRUE,
     description TEXT,
@@ -14,8 +14,8 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(64) UNIQUE NOT NULL,
-    description TEXT,
+    name VARCHAR(32) UNIQUE NOT NULL,
+    description VARCHAR(255),
     is_public BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL

@@ -12,7 +12,7 @@
             <button id="category-favourite"
                     class="btn-favourite"
                     data-url='{{ url_for('favourite_category', category=category.name) }}'
-                    data-csrf='{{ session.csrf_token|tojson }}'
+                    data-csrf='{{ csrf_token() }}'
                     style="{{ 'fill: gold;' if category.favourite else 'fill: none;' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                      class="size-6">

@@ -1,100 +1,36 @@
 {% extends "base.html" %}
 {% block title %}Submit link{% endblock %}
+{% from "_macros.html" import render_field %}
 {% block content %}
     <div class="category-title-container">
         <a href="{{ url_for('category_page', category=category) }}"><h1>{{ category }}</h1></a>
     </div>
     {% if not editing %}
         <h2>Submit link</h2>
-        <form action="{{ url_for('new_thread', category=category) }}" method="POST">
-            <div class="form-input">
-                <p>Url:</p>
-                <label>
-                    <input type="text" name="link_url" minlength="3" maxlength="50" required/>
-                </label>
-            </div>
-            <div class="form-input">
-                <p>Title:</p>
-                <label>
-                    <input type="text" name="title" minlength="3" maxlength="50" required/>
-                </label>
-            </div>
-            <div class="form-input">
-                <p>Message:</p>
-                <label>
-                    <textarea name="content" rows="3" cols="80"></textarea>
-                </label>
-            </div>
-            <div class="form-input">
-                <p>Fetch thumbnail?</p>
-                <label>
-                    Yes
-                    <input type="radio" name="fetch-img" value="true" checked/>
-                </label>
-                <br>
-                <label>
-                    No
-                    <input type="radio" name="fetch-img" value="false"/>
-                </label>
-                <br>
-            </div>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-            <input class="btn btn-big" type="submit" value="Submit link"/>
+        <form method="POST" action="" novalidate>
+            <dl>
+                {{ render_field(form.url) }}
+                {{ render_field(form.title) }}
+                {{ render_field(form.message) }}
+                {{ render_field(form.fetch_image) }}
+                {{ form.csrf_token }}
+                {{ form.submit(class="btn btn-big") }}
+            </dl>
         </form>
     {% else %}
         <h2>Edit thread</h2>
-        <form action="{{ url_for('edit_thread', category=category, thread_id=thread.id) }}" method="POST">
-            <div class="form-input">
-                <p>Url:</p>
-                <label>
-                    <input type="text" name="link_url" value="{{ thread.link_url }}" minlength="3" maxlength="50" required/>
-                </label>
-            </div>
-            <div class="form-input">
-                <p>Title:</p>
-                <label>
-                    <input type="text" name="title" value="{{ thread.title }}" minlength="3" maxlength="50" required/>
-                </label>
-            </div>
-            <div class="form-input">
-                <p>Message:</p>
-                <label>
-                    <textarea name="content" rows="3" cols="80">{{ thread.content }}</textarea>
-                </label>
-            </div>
-            {% if session.user_role > 0 %}<p>Visibility:</p>
-                <label>
-                    Show
-                    <input type="radio" name="visible" value="true" {{ 'checked' if thread.visible }}/>
-                </label>
-                <br>
-                <label>
-                    Hide
-                    <input type="radio" name="visible" value="false" {{ 'checked' if not thread.visible }}/>
-                </label>
-                <br>
-            {% endif %}
-            <div class="form-input">
-                <p>Thumbnail:</p>
-                <label>
-                    Refresh
-                    <input type="radio" name="fetch-img" value="true" />
-                </label>
-                <br>
-                <label>
-                    Keep
-                    <input type="radio" name="fetch-img" value="false" checked/>
-                </label>
-                <br>
-                <label>
-                    Delete
-                    <input type="radio" name="fetch-img" value="delete" />
-                </label>
-                <br>
-            </div>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-            <input class="btn btn-big" type="submit" value="Edit thread"/>
+        <form method="POST" action="" novalidate>
+            <dl>
+                {{ render_field(form.url) }}
+                {{ render_field(form.title) }}
+                {{ render_field(form.message) }}
+                {{ render_field(form.refresh_image) }}
+                {% if session.user_role > 0 %}
+                    {{ render_field(form.visible) }}
+                {% endif %}
+                {{ form.csrf_token }}
+                {{ form.submit(class="btn btn-big") }}
+            </dl>
         </form>
-
     {% endif %}
 {% endblock %}

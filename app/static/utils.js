@@ -1,14 +1,14 @@
 function toggleThreadLike(event) {
   const url = event.target.dataset.url;
-  const csrf_token = JSON.parse(event.target.dataset.csrf);
   const image = document.getElementById('thumb');
   image.classList.toggle('thumb-active');
+  const csrf_token = event.target.dataset.csrf;
 
   fetch(url, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "csrf-token": csrf_token
+      "X-CSRFToken": csrf_token,
     }
   })
       .then((response) => response.json())
@@ -17,14 +17,15 @@ function toggleThreadLike(event) {
 
 function toggleReplyLike(reply) {
   const url = reply.dataset.url;
-  const csrf_token = JSON.parse(reply.dataset.csrf);
+  const csrf_token = reply.dataset.csrf;
   const image = reply.querySelector('#thumb');
   image.classList.toggle('thumb-active');
+
   fetch(url, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "csrf-token": csrf_token
+      "X-CSRFToken": csrf_token
     }
   })
       .then((response) => response.json())
@@ -34,12 +35,13 @@ function toggleReplyLike(reply) {
 function toggleUserFollow(follow) {
   const user_id = follow.dataset.user_id;
   const url = follow.dataset.url;
-  const csrf_token = JSON.parse(follow.dataset.csrf);
+  const csrf_token = follow.dataset.csrf;
+
   fetch(url, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "csrf-token": csrf_token
+      "X-CSRFToken": csrf_token
     }
   })
       .then((response) => response.json())
@@ -51,13 +53,14 @@ function toggleUserFollow(follow) {
 
 function toggleCategoryFavourite(favourite) {
   const url = favourite.dataset.url;
-  const csrf_token = JSON.parse(favourite.dataset.csrf);
+  const csrf_token = favourite.dataset.csrf;
   const user_id = favourite.dataset.user_id;
+
   fetch(url, {
     method: "POST",
     headers: {
       "Content-type": "application/json",
-      "csrf-token": csrf_token
+      "X-CSRFToken": csrf_token
     }
   })
       .then((response) => response.json())

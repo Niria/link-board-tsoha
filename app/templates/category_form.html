@@ -26,7 +26,7 @@
                 No
                 <input type="radio" name="public" value="false" {{ 'checked' if not category.is_public }}/>
             </label>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <br>
             <input type="submit" value="Edit Category"/>
         </form>
@@ -50,7 +50,7 @@
                 No
                 <input type="radio" name="public" value="false"/>
             </label>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <br>
             <input type="submit" value="Create Category"/>
         </form>

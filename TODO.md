@@ -2,8 +2,8 @@
 
 ## Features
 - User profile page
-    - Public/private and if profile private hide user from follower lists?
-    - Profile tab (bio, like/follower count, registration date)
+    - Hide users with private profile from follower lists
+    - Follower count
     - Favourite categories tab
 - Admin
     - Delete category
@@ -24,7 +24,7 @@
     - Double check that user can't access features when they lack permissions
 - Form input validation 
     - Whitespace and special characters
-    - WTForms?
+    - WTForms
 - Project file structure cleanup
     - Perhaps split content.py into smaller modules
 - Code

@@ -1,17 +1,11 @@
 import secrets
 from functools import wraps
 
-from flask import session, request, abort, redirect, url_for, render_template
+from flask import session, request, redirect, url_for, render_template
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash
 
 from .db import db
-
-
-def check_csrf():
-    if session["csrf_token"] != request.headers.get("csrf-token") \
-            and session["csrf_token"] != request.form.get("csrf_token"):
-        abort(403)
 
 
 def login(username, password):

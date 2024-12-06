@@ -17,6 +17,7 @@
                 </label>
             </p>
             <input type="hidden" name="next" value="{{ request.args.get('next', '') }}"/>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="submit" value="Log in"/>
         </form>
     {% endif %}

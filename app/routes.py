@@ -2,15 +2,16 @@ from sqlalchemy import text
 
 from app import app
 from flask import (jsonify, redirect, render_template, request, session,
-                   url_for, \
-    flash)
-from .content import get_category, get_threads, get_thread, \
-    get_replies, add_reply, add_thread, toggle_thread_like, \
-    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow, \
-    get_user_followers, toggle_category_fav, update_thread, update_reply, \
-    update_profile
+                   url_for, flash)
+from .content import (get_category, get_threads, get_thread,
+    get_replies, add_reply, add_thread, toggle_thread_like,
+    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow,
+    get_user_followers, toggle_category_fav, update_thread, update_reply,
+    update_profile)
 from .db import db
-from .users import check_csrf, login_required
+from .forms import (EditUserProfileForm, EditReplyForm, EditThreadForm,
+    AdminEditThreadForm, NewThreadForm, AdminEditReplyForm)
+from .users import login_required
 
 from .utils import fetch_thumbnail
 
@@ -47,7 +48,6 @@ def category_page(category: str):
 @login_required
 def favourite_category(category: str):
     if request.method == "POST":
-        check_csrf()
         user_id = session["user_id"]
         favourite = toggle_category_fav(category, user_id)
         return jsonify({"favourite": favourite[0]})
@@ -62,12 +62,11 @@ def thread_page(thread_id: int):
         replies = get_replies(thread_id, session["user_id"])
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
-        check_csrf()
         user_id = session["user_id"]
         thread_id = request.form["thread_id"]
         parent_id = request.form["parent_id"] or None
         content = request.form["content"]
-        if not 1 <= len(content) <= 1000:
+        if not 1 <= len(content.strip()) <= 1000:
             flash("Reply must be between 1 and 1000 characters long.", "error")
             return redirect(url_for("thread_page", thread_id=thread_id))
         add_reply(user_id, thread_id, parent_id, content)
@@ -77,81 +76,61 @@ def thread_page(thread_id: int):
 @app.route("/c/<string:category>/new", methods=["GET", "POST"])
 @login_required
 def new_thread(category: str):
-    if request.method == "GET":
-        return render_template("thread_form.html", category=category,
-                               editing=False)
-    if request.method == "POST":
-        check_csrf()
-        category_id = get_category(category, session["user_id"])
-        if not category_id:
+    form = NewThreadForm()
+    if form.validate_on_submit():
+        category = get_category(category, session["user_id"])
+        if not category:
             flash("Category does not exist.", "error")
             return redirect(url_for("category_page", category=category))
-        category_id = category_id[0]
-        user_id = session["user_id"]
-        link_url = request.form["link_url"]
-        redirect_user = False
-        if not 3 <= len(link_url) <= 50:
-            flash("Link URL must be between 3 and 50 characters long.", "error")
-            redirect_user = True
-        title = request.form["title"]
-        if not 3 <= len(title) <= 50:
-            flash("Title must be between 3 and 50 characters long.", "error")
-            redirect_user = True
-        if redirect_user:
-            return redirect(url_for("new_thread", category=category))
-        content = request.form["content"]
-
-        thread_thumbnail = None
-        if request.form["fetch-img"] == "true":
-            thread_thumbnail = fetch_thumbnail(link_url)
-
-        add_thread(user_id, category_id, link_url, title, content, thread_thumbnail)
-        return redirect(url_for("category_page", category=category))
+        thumbnail = None
+        if form.fetch_image.data:
+            thumbnail = fetch_thumbnail(form.url.data)
+        add_thread(session["user_id"], category.id, form.url.data, form.title.data, form.message.data, thumbnail)
+        return redirect(url_for("category_page", category=category.name))
+    return render_template("thread_form.html", category=category,
+                               editing=False, form=form)
 
 
 @app.route("/p/<int:thread_id>/edit", methods=["GET", "POST"])
 def edit_thread(thread_id):
     thread = get_thread(thread_id, session["user_id"])
-    if session["user_id"] != thread.user_id and session["user_role"] < 1:
+    if not thread:
+        flash("Invalid thread", "error")
+        return redirect(url_for("index"))
+    if session["user_role"] > 0:
+        form = AdminEditThreadForm()
+    elif session["user_id"] == thread.user_id:
+        form = EditThreadForm()
+    else:
         return render_template("error.html",
-                               message="You are not authorised to edit this "
-                                       "thread.")
-    if request.method == "GET":
-        return render_template("thread_form.html", editing=True, thread=thread)
-    if request.method == "POST":
-        check_csrf()
-        link_url = request.form["link_url"]
-        redirect_user = False
-        if not 3 <= len(link_url) <= 50:
-            flash("Link URL must be between 3 and 50 characters.", "error")
-            redirect_user = True
-        title = request.form["title"]
-        if not 3 <= len(title) <= 50:
-            flash("Title must be between 3 and 50 characters.", "error")
-            redirect_user = True
-        if redirect_user:
-            return redirect(url_for("edit_thread", thread_id=thread.id))
-        content = request.form["content"]
-        visible = None
-        if 'visible' in request.form:
-            visible = True if request.form["visible"] == "true" else False
-        thread_thumbnail = None
+                               message="You are not authorised to edit this thread.")
+    if form.validate_on_submit():
         update_thumbnail = False
-        if request.form["fetch-img"] == "true":
-            thread_thumbnail = fetch_thumbnail(link_url)
+        thread_thumbnail = None
+        if form.refresh_image.data == "refresh":
+            thread_thumbnail = fetch_thumbnail(form.url.data)
             update_thumbnail = True
-        elif request.form["fetch-img"] == "delete":
+        elif form.refresh_image.data == "delete":
             update_thumbnail = True
-        update_thread(thread_id, link_url, title, content, visible, thread_thumbnail, update_thumbnail)
-
-        return redirect(url_for("thread_page", thread_id=thread_id))
+        visible = None
+        if session["user_role"] > 0:
+            visible = form.visible.data
+        update_thread(thread.id, form.url.data, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
+        return redirect(url_for("thread_page", thread_id=thread.id))
+    elif request.method == "GET":
+        if session["user_role"] > 0:
+            form.visible.data = thread.visible
+        form.url.data = thread.link_url
+        form.title.data = thread.title
+        form.message.data = thread.content
+        form.refresh_image.data = "keep"
+    return render_template("thread_form.html", editing=True, thread=thread, form=form)
 
 
 @app.route("/p/<int:thread_id>/like", methods=["POST"])
 @login_required
 def like_thread(thread_id: int):
     if request.method == "POST":
-        check_csrf()
         user_id = session["user_id"]
         like_count = toggle_thread_like(user_id, thread_id)
         return jsonify({"likes":like_count[0]})
@@ -161,7 +140,6 @@ def like_thread(thread_id: int):
 @login_required
 def like_reply(thread_id: int, reply_id: int):
     if request.method == "POST":
-        check_csrf()
         user_id = session["user_id"]
         like_count = toggle_reply_like(user_id, reply_id)
         return jsonify({"likes":like_count[0]})
@@ -170,23 +148,34 @@ def like_reply(thread_id: int, reply_id: int):
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
 def edit_reply(thread_id, reply_id):
     if request.method == "POST":
-        check_csrf()
-        reply = db.session.execute(text("""SELECT user_id 
+        reply = db.session.execute(text("""SELECT id, user_id, visible
                                              FROM replies 
                                             WHERE id=:reply_id"""),
                                    {"reply_id": reply_id}).fetchone()
         if session["user_id"] != reply.user_id and session["user_role"] < 1:
             flash("You are not authorised to edit this reply.", "error")
             return redirect(url_for("thread_page", thread_id=thread_id))
-        content = request.form["content"]
+
+        content = request.form.get("content")
+        if content:
+            content = content.strip()
         visible = None
         if 'visible' in request.form:
             visible = True if request.form["visible"] == "true" else False
-        if not 1 <= len(content) <= 1000:
-            flash("Reply content must be between 1 and 1000 characters.",
-                  "error")
-            return redirect(url_for("thread_page", thread_id=thread_id))
-        update_reply(reply_id, content, visible)
+        if session["user_role"] > 0:
+            form = AdminEditReplyForm()
+            form.visible.data = visible
+        else:
+            form = EditReplyForm()
+        form.message.data = content
+        if form.validate_on_submit():
+            visible = None
+            if session["user_role"] > 0:
+                visible = form.visible.data
+            update_reply(reply.id, form.message.data, visible)
+        else:
+            for field, error in form.errors.items():
+                flash(error[0], "error")
         return redirect(url_for('thread_page', thread_id=thread_id))
 
 
@@ -214,35 +203,28 @@ def profile(username: str, page=None):
 @app.route("/u/<string:username>/edit", methods=["GET", "POST"])
 @login_required
 def edit_profile(username: str):
-    if request.method == "GET":
-        user = get_profile(username, session["user_id"])
-        if user.id != session["user_id"] and session["user_role"] < 1:
-            flash("You are not authorised to edit this profile.", "error")
-            return redirect(url_for("profile", username=username))
-        return render_template("user_profile_form.html", user=user)
-
-    if request.method == "POST":
-        user = get_profile(username, session["user_id"])
-        if user.id != session["user_id"] and session["user_role"] < 1:
-            flash("You are not authorised to edit this profile.", "error")
-            return redirect(url_for("profile", username=username))
-        display_name = request.form.get("display_name")
-        if 3 > len(display_name) > 20:
-            flash("Display name must be between 3 and 20 characters.", "error")
-            return redirect(url_for("edit_profile", username=username))
-        description = request.form.get("description")
-        public_toggle = request.form.get("is_public")
-        is_public = None
-        if public_toggle:
-            is_public = True if public_toggle == "true" else False
-        update_profile(user.id, display_name, description, is_public)
+    form = EditUserProfileForm()
+    user = get_profile(username, session["user_id"])
+    if not user:
+        flash("Invalid user.", "error")
+        return redirect(url_for("index"))
+    if user.id != session["user_id"] and session["user_role"] < 1:
+        flash("You are not authorised to edit this profile.", "error")
         return redirect(url_for("profile", username=username))
+    if form.validate_on_submit():
+        update_profile(user.id, form.display_name.data, form.description.data, form.is_public.data)
+        return redirect(url_for("profile", username=username))
+    elif request.method == "GET":
+        form.display_name.data = user.display_name
+        form.description.data = user.description
+        form.is_public.data = user.profile_public
+    return render_template("user_profile_form.html", user=user, form=form)
+
 
 @app.route("/u/<string:username>/follow", methods=["POST"])
 @login_required
 def follow(username: str):
     if request.method == "POST":
-        check_csrf()
         following = toggle_user_follow(username, session["user_id"])
         return jsonify({"following": following[0]})
 

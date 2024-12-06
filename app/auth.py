@@ -28,6 +28,7 @@ def logout():
     del session["display_name"]
     del session["user_id"]
     del session["user_role"]
+    del session["csrf_token"]
     return redirect(url_for("login"))
 
 

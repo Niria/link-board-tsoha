@@ -8,7 +8,7 @@
                     class="btn btn-small btn-follow {{ 'following' if user.followed else '' }}"
                     data-user="{{ user.user_id }}"
                     data-url='{{ url_for('follow', username=user.username) }}'
-                    data-csrf='{{ session.csrf_token|tojson }}'>
+                    data-csrf='{{ csrf_token() }}'>
                 {{ 'Following' if user.followed else 'Follow' }}
             </button>
         {% endif %}

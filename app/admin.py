@@ -4,7 +4,8 @@ from app import app
 from .content import (create_category, get_category, update_category,
                       users_without_permissions, users_with_permissions,
                       toggle_permissions)
-from .users import admin_required, check_csrf
+from .forms import AddPermissionsForm, RemovePermissionsForm
+from .users import admin_required
 
 
 @app.route("/new_category", methods=["GET", "POST"])
@@ -14,7 +15,6 @@ def new_category():
         return render_template("category_form.html")
     if request.method == "POST":
         print(request.form.get('csrf_token'))
-        check_csrf()
         category_name = request.form["category_name"]
         if len(category_name) < 3:
             flash("Category name must be at least 3 characters.", "error")
@@ -32,7 +32,6 @@ def edit_category(category):
         category = get_category(category, session["user_id"])
         return render_template("category_form.html", category=category)
     if request.method == "POST":
-        check_csrf()
         new_category_name = request.form["category_name"]
         if len(new_category_name) < 3:
             flash("Category name must be at least 3 characters.", "error")
@@ -52,19 +51,25 @@ def edit_user(user_id):
 @app.route("/c/<string:category>/permissions", methods=["GET", "POST"])
 @admin_required
 def edit_permissions(category: str):
-    if request.method == "GET":
-        category = get_category(category, session["user_id"])
-        if not category:
-            flash("Invalid category.", "error")
-            return redirect(url_for("edit_permissions", category=category))
-        unapproved_users = users_without_permissions(category.id)
-        approved_users = users_with_permissions(category.id)
-        return render_template("category_permissions.html", category=category,
-                               unapproved_users=unapproved_users,
-                               approved_users=approved_users)
+    category = get_category(category, session["user_id"])
+    if not category:
+        flash("Invalid category.", "error")
+        return redirect(url_for("index"))
+    add_user_form = AddPermissionsForm()
+    remove_user_form = RemovePermissionsForm()
 
-    if request.method == "POST":
-        check_csrf()
+    if remove_user_form.validate_on_submit():
         user_id = request.form.get('user_id', type=int)
-        toggle_permissions(user_id, category)
-        return redirect(request.url)
+        toggle_permissions(user_id, category.name)
+        return redirect(url_for("edit_permissions", category=category.name))
+
+    unapproved_users = users_without_permissions(category.id)
+    approved_users = users_with_permissions(category.id)
+    add_user_form.user_id.choices = [(u.id, u.username) for u in unapproved_users]
+    return render_template("category_permissions.html",
+                           category=category,
+                           unapproved_users=unapproved_users,
+                           approved_users=approved_users,
+                           add_form=add_user_form,
+                           remove_form=remove_user_form)
+

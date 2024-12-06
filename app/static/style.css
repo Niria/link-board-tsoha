@@ -512,6 +512,17 @@ a:has(> .thread-link) {
   background-color: #ef3d3d;
 }
 
+.approved-user input[type="submit"] {
+  width: 4rem;
+  height: 1.5rem;
+  border-radius: 0.375rem;
+  font-size: small;
+  text-align: center;
+  color: white;
+  background-color: #ef3d3d;
+}
+
+
 .messages {
   list-style: none;
   font-size: small;
