@@ -10,7 +10,8 @@ from .content import (get_category, get_threads, get_thread,
     update_profile)
 from .db import db
 from .forms import (EditUserProfileForm, EditReplyForm, EditThreadForm,
-    AdminEditThreadForm, NewThreadForm, AdminEditReplyForm)
+                    AdminEditThreadForm, NewThreadForm, AdminEditReplyForm,
+                    NewReplyForm)
 from .users import login_required
 
 from .utils import fetch_thumbnail
@@ -37,6 +38,7 @@ def category_page(category: str):
     category = get_category(category, session["user_id"])
     if not category or (not category.is_public and session["user_role"] < 1
                         and not category.permission):
+        flash("Unauthorized", "error")
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
     return render_template("category.html",
@@ -55,21 +57,25 @@ def favourite_category(category: str):
 @app.route("/p/<int:thread_id>", methods=["GET", "POST"])
 @login_required
 def thread_page(thread_id: int):
+    thread = get_thread(thread_id, session["user_id"])
+    if not thread:
+        flash("Thread does not exist", "error")
+        return redirect("/")
     if request.method == "GET":
-        thread = get_thread(thread_id, session["user_id"])
-        if not thread:
-            return redirect("/")
         replies = get_replies(thread_id, session["user_id"])
         return render_template("thread.html", thread=thread, replies=replies)
     if request.method == "POST":
-        user_id = session["user_id"]
-        thread_id = request.form["thread_id"]
-        parent_id = request.form["parent_id"] or None
-        content = request.form["content"]
-        if not 1 <= len(content.strip()) <= 1000:
-            flash("Reply must be between 1 and 1000 characters long.", "error")
-            return redirect(url_for("thread_page", thread_id=thread_id))
-        add_reply(user_id, thread_id, parent_id, content)
+        form = NewReplyForm(request.form)
+        form.parent_id.data = request.form.get("parent_id")
+        if form.parent_id.data == "":
+            form.parent_id.data = None
+        form.message.data = request.form.get("content").strip()
+        if form.validate_on_submit():
+            user_id = session["user_id"]
+            add_reply(user_id, thread.id, form.parent_id.data, form.message.data)
+        else:
+            for field, error in form.errors.items():
+                flash(error[0], "error")
         return redirect(url_for('thread_page', thread_id=thread_id))
 
 
@@ -85,7 +91,7 @@ def new_thread(category: str):
         thumbnail = None
         if form.fetch_image.data:
             thumbnail = fetch_thumbnail(form.url.data)
-        add_thread(session["user_id"], category.id, form.url.data, form.title.data, form.message.data, thumbnail)
+        add_thread(session["user_id"], category.id, form.url.data, form.title.data.strip(), form.message.data, thumbnail)
         return redirect(url_for("category_page", category=category.name))
     return render_template("thread_form.html", category=category,
                                editing=False, form=form)

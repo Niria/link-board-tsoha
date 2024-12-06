@@ -1,32 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
+{% from "_macros.html" import render_field %}
 {% block content %}
     {% if session.username %}
         <p>You are logged in as {{ session.username }}</p>
         <a href="{{ url_for('logout') }}">Log out</a>
     {% else %}
-        <form action="{{ url_for('register') }}" method="POST">
-            <p>Username:<br>
-                <label>
-                    <input type="text" name="username" minlength="3" maxlength="20" required>
-                </label>
-            </p>
-            <p>Display name:<br>
-                <label>
-                    <input type="text" name="displayname" minlength="3" maxlength="20" required>
-                </label>
-            </p>
-            <p>Password:<br>
-                <label>
-                    <input type="password" name="password1" minlength="8" maxlength="64" required>
-                </label>
-            </p>
-            <p>Password again:<br>
-                <label>
-                    <input type="password" name="password2" minlength="8" maxlength="64" required>
-                </label>
-            </p>
-            <input type="submit" value="Register">
+        <form method="POST" action="" novalidate>
+            <dl>
+                {{ render_field(form.username) }}
+                {{ render_field(form.display_name) }}
+                {{ render_field(form.password) }}
+                {{ render_field(form.confirm) }}
+                {{ form.csrf_token }}
+                {{ render_field(form.submit) }}
+            </dl>
         </form>
     {% endif %}
 {% endblock %}

@@ -4,43 +4,38 @@ from app import app
 from .content import (create_category, get_category, update_category,
                       users_without_permissions, users_with_permissions,
                       toggle_permissions)
-from .forms import AddPermissionsForm, RemovePermissionsForm
+from .forms import AddPermissionsForm, RemovePermissionsForm, EditCategoryForm, \
+    NewCategoryForm
 from .users import admin_required
 
 
 @app.route("/new_category", methods=["GET", "POST"])
 @admin_required
 def new_category():
-    if request.method == "GET":
-        return render_template("category_form.html")
-    if request.method == "POST":
-        print(request.form.get('csrf_token'))
-        category_name = request.form["category_name"]
-        if len(category_name) < 3:
-            flash("Category name must be at least 3 characters.", "error")
-            return redirect(url_for("new_category"))
-        description = request.form["description"]
-        public = True if request.form["public"] == "true" else False
-        create_category(category_name, description, public)
-        return redirect(url_for("index"))
+    form = NewCategoryForm()
+    if form.validate_on_submit():
+        create_category(form.name.data, form.description.data, form.is_public.data)
+        return redirect(url_for("category_page", category=form.name.data))
+    return render_template("category_form.html", form=form)
 
 
 @app.route("/c/<string:category>/edit", methods=["GET", "POST"])
 @admin_required
 def edit_category(category):
+    form = EditCategoryForm()
+    category = get_category(category, session["user_id"])
+    if not category:
+        flash("Category does not exist.", "error")
+        return redirect(url_for("index"))
+    if form.validate_on_submit():
+        update_category(category.id, form.name.data, form.description.data,
+                        form.is_public.data)
+        return redirect(url_for("category_page", category=form.name.data, form=form))
     if request.method == "GET":
-        category = get_category(category, session["user_id"])
-        return render_template("category_form.html", category=category)
-    if request.method == "POST":
-        new_category_name = request.form["category_name"]
-        if len(new_category_name) < 3:
-            flash("Category name must be at least 3 characters.", "error")
-            return redirect(url_for("new_category"))
-        description = request.form["description"]
-        public = True if request.form["public"] == "true" else False
-        update_category(category, new_category_name, description, public)
-        return redirect(url_for("category_page", category=new_category_name))
-
+        form.name.data = category.name
+        form.description.data = category.description
+        form.is_public.data = category.is_public
+    return render_template("category_form.html", category=category, form=form)
 
 @app.route("/u/<int:user_id>/edit", methods=["POST"])
 @admin_required

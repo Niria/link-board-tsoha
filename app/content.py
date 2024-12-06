@@ -1,3 +1,6 @@
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
 from .db import db
 from sqlalchemy.sql import text
 
@@ -427,19 +430,14 @@ def create_category(category_name: str, description: str, public: bool):
     db.session.commit()
 
 
-def update_category(category_name: str, new_category_name: str,
+def update_category(category_id: int, new_category_name: str,
                     description: str, public: bool):
-    sql = text("""SELECT 1 FROM categories WHERE name=:category_name""")
-    category_exists = db.session.execute(sql, {
-        "category_name": category_name}).fetchone()
-    if not category_exists:
-        raise(ValueError("Category not found"))
     sql = text("""UPDATE categories 
                      SET name=:new_category_name, 
                          description=:description,
                          is_public=:public
-                   WHERE name=:category_name""")
-    db.session.execute(sql, {"category_name":category_name,
+                   WHERE id=:category_id""")
+    db.session.execute(sql, {"category_id":category_id,
                              "new_category_name":new_category_name,
                              "description":description,
                              "public":public})
@@ -543,3 +541,17 @@ def update_profile(user_id: int, display_name: str, description: str, is_public:
     db.session.execute(sql, {"user_id": user_id, "display_name": display_name,
                              "description": description, "is_public": is_public})
     db.session.commit()
+
+
+def register_user(username: str, display_name: str, password: str):
+    sql = text("""INSERT INTO users (username, display_name, password) 
+                  VALUES (:username, :display_name, :password)""")
+    try:
+        db.session.execute(sql,
+                           {"username": username,
+                            "display_name": display_name,
+                            "password": password})
+        db.session.commit()
+        return True
+    except SQLAlchemyError:
+        return False
