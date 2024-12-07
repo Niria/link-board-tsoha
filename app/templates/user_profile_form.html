@@ -3,7 +3,7 @@
 {% block content %}
     <div class="category-title-container">
         <h1>{{ user.display_name }}</h1>
-        {% if user.username != session.username %}
+        {% if user.username != session.username and user.profile_public %}
             <button id="user-follow"
                     class="btn btn-small btn-follow {{ 'following' if user.followed else '' }}"
                     data-user="{{ user.user_id }}"

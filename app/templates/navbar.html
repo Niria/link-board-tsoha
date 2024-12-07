@@ -25,13 +25,4 @@
             {% endfor %}
         </div>
     {% endif %}
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul class="messages">
-                {% for type, message in messages %}
-                    <li class="{{ type }}-message">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
 </nav>

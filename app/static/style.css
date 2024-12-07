@@ -13,6 +13,14 @@
   --tooltip-data: '';
 }
 
+* {
+  --focus-outline: solid 0.125rem rgba(0, 0, 111, 0.25);
+}
+
+*:focus {
+  outline: var(--focus-outline);
+}
+
 a {
   width: fit-content;
   text-decoration: none;
@@ -58,9 +66,9 @@ button {
   all: unset;
 }
 
-button:focus {
-  outline: revert;
-}
+/*button:focus {*/
+/*  outline: revert;*/
+/*}*/
 
 .navbar-container {
   margin: 0 auto;
@@ -398,8 +406,6 @@ a:has(> .thread-link) {
   background-color: lightgreen;
 }
 
-#category-favourite {
-}
 
 .btn-favourite {
   width: 1.5rem;
@@ -409,6 +415,7 @@ a:has(> .thread-link) {
   stroke: black;
   stroke-width: 1.5;
   stroke-opacity: 50%;
+  outline: none;
 }
 
 .btn-favourite:hover {
@@ -427,12 +434,14 @@ a:has(> .thread-link) {
   & span {
     margin-bottom: 0.5rem;
   }
-  & .private {
-    color: rgba(255, 0, 0, 0.5);
-  }
-  & .public {
-    color: rgba(0, 128, 0, 0.5);
-  }
+}
+
+.private {
+  color: rgba(255, 0, 0, 0.5);
+}
+
+.public {
+  color: rgba(0, 128, 0, 0.5);
 }
 
 .thread-hidden {
@@ -525,25 +534,34 @@ a:has(> .thread-link) {
 
 .messages {
   list-style: none;
-  font-size: small;
-  margin: 0;
+  font-size: smaller;
+  font-weight: bold;
+  text-align: center;
+  margin: 0.5rem auto;
   padding: 0 1rem;
-  width: 100%;
   background-color: var(--bg-color-1);
   & li {
     width: 60%;
     padding: 0.5rem;
     border-radius: 0.375rem;
     margin: 0.25rem auto;
+    box-shadow: 0 0.25rem 0.5rem -0.25rem rgba(0, 0, 0, 0.3);
+  }
+  & li:hover {
+    filter: brightness(95%);
+    cursor: pointer;
   }
   & .success-message {
     background-color: lightgreen;
+    color: darkgreen;
   }
   & .error-message {
     background-color: lightcoral;
+    color: darkred;
   }
   & .info-message {
     background-color: lightblue;
+    color: darkblue;
   }
 }
 
@@ -582,5 +600,78 @@ a:has(> .thread-link) {
 @keyframes tooltip {
   to {
     opacity: 1;
+  }
+}
+
+dl {
+  & img {
+    margin: 0.5rem 0;
+  }
+  & dt {
+    margin-bottom: 0.5rem;
+  }
+  & dd {
+    margin-left: 0;
+    margin-bottom: 1rem;
+  }
+  & label {
+    color: var(--text-color-1);
+    font-size: large;
+  }
+  & input[type="text"], input[type="password"], input[type="url"] {
+    width: 16rem;
+    border: solid 0.0625rem lightgray;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+  }
+  & input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="url"]:focus {
+    outline: none;
+    border-color: dimgray;
+  }
+  & dd:has(ul) input[type="text"],
+    dd:has(ul) input[type="password"],
+    dd:has(ul) input[type="url"] {
+    border-color: red;
+  }
+  & textarea {
+    border: solid 0.0625rem lightgray;
+    border-radius: 0.25rem;
+    width: 32rem;
+    height: 10rem;
+  }
+  & dd ul {
+    list-style: none;
+    padding: 0;
+    & label {
+      font-size: small;
+    }
+  }
+  & .errors {
+    margin: 0.25rem 0;
+    padding-left: 0;
+    & li {
+      color: red;
+      list-style: none;
+      font-size: small;
+    }
+  }
+}
+
+.comment-form {
+  & textarea {
+    width: 32rem;
+    height: 10rem;
+    border: 0.0625rem solid lightgray;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+  }
+  & p {
+    color: var(--text-color-1);
+  }
+  & label {
+    color: var(--text-color-1);
+    font-size: small;
   }
 }

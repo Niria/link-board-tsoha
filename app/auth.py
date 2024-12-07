@@ -14,8 +14,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         if not users.login(form.username.data, form.password.data):
-            flash("Wrong username or password.", "error")
+            flash("Wrong username or password", "error")
             return render_template("login.html", form=form)
+        flash("Login successful", "success")
         if request.args.get("next"):
             return redirect(request.args.get("next"))
         return redirect(url_for("index"))
@@ -28,6 +29,7 @@ def logout():
     del session["display_name"]
     del session["user_id"]
     del session["user_role"]
+    flash("You have been logged out", "success")
     return redirect(url_for("login"))
 
 
@@ -39,7 +41,7 @@ def register():
         user = db.session.execute(sql, {"username": form.username.data}).fetchone()
         if user:
             flash("Username already in use.", "error")
-            return redirect(url_for("register"))
+            return render_template("register.html", form=form)
         hashed_password = generate_password_hash(form.password.data)
         registered = register_user(form.username.data, form.display_name.data, hashed_password)
         if registered:

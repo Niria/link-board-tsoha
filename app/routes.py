@@ -51,8 +51,12 @@ def category_page(category: str):
 def favourite_category(category: str):
     if request.method == "POST":
         user_id = session["user_id"]
-        favourite = toggle_category_fav(category, user_id)
-        return jsonify({"favourite": favourite[0]})
+        try:
+            favourite = toggle_category_fav(category, user_id)
+            return jsonify({"success": True, "favourite": favourite[0]})
+        except ValueError as e:
+            flash(str(e), "error")
+            return jsonify({"success": False})
 
 @app.route("/p/<int:thread_id>", methods=["GET", "POST"])
 @login_required
@@ -121,8 +125,13 @@ def edit_thread(thread_id):
         visible = None
         if session["user_role"] > 0:
             visible = form.visible.data
-        update_thread(thread.id, form.url.data, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
-        return redirect(url_for("thread_page", thread_id=thread.id))
+        try:
+            update_thread(thread.id, form.url.data, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
+            return redirect(url_for("thread_page", thread_id=thread.id))
+        except ValueError as e:
+            flash(str(e), "error")
+            return render_template("thread_form.html", editing=True,
+                                   thread=thread, form=form)
     elif request.method == "GET":
         if session["user_role"] > 0:
             form.visible.data = thread.visible
@@ -178,7 +187,11 @@ def edit_reply(thread_id, reply_id):
             visible = None
             if session["user_role"] > 0:
                 visible = form.visible.data
-            update_reply(reply.id, form.message.data, visible)
+            try:
+                update_reply(reply.id, form.message.data, visible)
+                flash("Reply updated")
+            except ValueError as e:
+                flash(str(e), "error")
         else:
             for field, error in form.errors.items():
                 flash(error[0], "error")
@@ -231,8 +244,12 @@ def edit_profile(username: str):
 @login_required
 def follow(username: str):
     if request.method == "POST":
-        following = toggle_user_follow(username, session["user_id"])
-        return jsonify({"following": following[0]})
+        try:
+            following = toggle_user_follow(username, session["user_id"])
+            return jsonify({"success": True, "following":following[0]})
+        except ValueError as e:
+            flash(str(e), "error")
+            return jsonify({"success": False})
 
 
 # Catches invalid paths

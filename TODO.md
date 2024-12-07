@@ -16,16 +16,14 @@
     - Indexes
     - Check that composite primary keys actually make sense
     - Add error handling for failed DB requests
-    - On update trigger to set updated_at timestamp on category, thread, reply and user tables
 - Server
     - Fix crash on category creation when name exists
     - Fix crash when all users have permissions
     - Possibly change reply_like route, thread_id seems so unnecessary
     - Double check that user can't access features when they lack permissions
 - Form input validation 
-    - Whitespace and special characters
-    - WTForms
-- Project file structure cleanup
+    - Special characters
+  Project file structure cleanup
     - Perhaps split content.py into smaller modules
 - Code
   - Unify code, single/double quotation marks etc

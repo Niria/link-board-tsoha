@@ -13,7 +13,7 @@
                 {{ render_field(form.password) }}
                 {{ render_field(form.confirm) }}
                 {{ form.csrf_token }}
-                {{ render_field(form.submit) }}
+                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
     {% endif %}

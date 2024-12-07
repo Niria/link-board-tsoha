@@ -24,6 +24,9 @@
                 {{ render_field(form.url) }}
                 {{ render_field(form.title) }}
                 {{ render_field(form.message) }}
+                {% if thread.thumbnail %}
+                    <img src="data:;base64, {{ thread.thumbnail|b64encode }}" alt="Thumbnail of {{ thread.title }}" />
+                {% endif %}
                 {{ render_field(form.refresh_image) }}
                 {% if session.user_role > 0 %}
                     {{ render_field(form.visible) }}

@@ -46,8 +46,10 @@ function toggleUserFollow(follow) {
   })
       .then((response) => response.json())
       .then((json) => {
-        follow.innerHTML = json.following ? 'Following' : 'Follow';
-        follow.classList.toggle('following');
+        if (json.success === true) {
+          follow.innerHTML = json.following ? 'Following' : 'Follow';
+          follow.classList.toggle('following');
+        }
       })
 }
 
@@ -65,7 +67,9 @@ function toggleCategoryFavourite(favourite) {
   })
       .then((response) => response.json())
       .then((json) => {
-        favourite.style.fill = json.favourite ? 'gold' : 'none';
+        if (json.success === true) {
+          favourite.style.fill = json.favourite ? 'gold' : 'none';
+        }
       })
 }
 
@@ -123,10 +127,12 @@ function setEventHandlers() {
     categoryFavourite.addEventListener('click', () => toggleCategoryFavourite(categoryFavourite));
   }
 
-  // Initialize eventListener for closing messages
-  const messages = document.querySelector('.messages');
-  if (messages !== null) {
-    messages.addEventListener('click', () => messages.remove())
+  // Initialize eventListeners for closing messages
+  const messageList = document.querySelector('.messages');
+  if (messageList!== null) {
+    messageList.querySelectorAll('li').forEach((e) => e.addEventListener('click', () => {
+      e.remove();
+    }))
   }
 }
 

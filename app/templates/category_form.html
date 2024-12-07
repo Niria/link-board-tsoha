@@ -14,7 +14,7 @@
                 {{ render_field(form.description) }}
                 {{ render_field(form.is_public) }}
                 {{ form.csrf_token }}
-                {{ render_field(form.submit) }}
+                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
     {% else %}
@@ -24,31 +24,8 @@
                 {{ render_field(form.description) }}
                 {{ render_field(form.is_public) }}
                 {{ form.csrf_token }}
-                {{ render_field(form.submit) }}
+                {{ form.submit(class="btn btn-big") }}
             </dl>
-        </form>
-        <form action="{{ url_for('new_category') }}" method="POST">
-            <p>Category Name:</p>
-            <label>
-                <input type="text" name="category_name" placeholder="Category Name" minlength="3" maxlength="64" required/>
-            </label>
-            <p>Description:</p>
-            <label>
-                <textarea name="description" rows="5" cols="80"></textarea>
-            </label>
-            <p>Public?</p>
-            <label>
-                Yes
-                <input type="radio" name="public" value="true" checked/>
-            </label>
-            <br>
-            <label>
-                No
-                <input type="radio" name="public" value="false"/>
-            </label>
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <br>
-            <input type="submit" value="Create Category"/>
         </form>
         {% endif %}
     {% endif %}

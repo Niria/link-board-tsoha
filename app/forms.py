@@ -1,38 +1,38 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, TextAreaField, URLField
 from wtforms.fields.choices import RadioField, SelectField
-from wtforms.validators import Length, EqualTo, URL, InputRequired, DataRequired
+from wtforms.validators import Length, EqualTo, URL, InputRequired
 
 
 class StripFlaskForm(FlaskForm):
     class Meta:
         def bind_field(self, form, unbound_field, options):
             filters = unbound_field.kwargs.get('filters', [])
-            if my_strip_filter not in filters:
-                filters.append(my_strip_filter)
+            if strip_filter not in filters:
+                filters.append(strip_filter)
             return unbound_field.bind(form=form, filters=filters, **options)
 
-def my_strip_filter(value):
+def strip_filter(value):
     if value is not None and hasattr(value, 'strip'):
         return value.strip()
     return value
 
 class UserForm(StripFlaskForm):
-    username = StringField("Username", validators=[InputRequired(), Length(min=3, max=24)])
-    password = PasswordField("Password", validators=[InputRequired(), Length(min=8, max=64)])
+    username = StringField("Username", validators=[InputRequired("Username is required"), Length(min=3, max=24, message="Username must be between %(min)d and %(max)d characters long")])
+    password = PasswordField("Password", validators=[InputRequired("Password is required"), Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long")])
 
 class LoginForm(UserForm):
     submit = SubmitField("Login")
 
 class RegistrationForm(UserForm):
-    display_name = StringField("Display name", validators=[InputRequired(), Length(min=3, max=24)])
-    confirm = PasswordField("Confirm password", validators=[InputRequired(), Length(min=8, max=64), EqualTo("password")])
+    display_name = StringField("Display Name", validators=[InputRequired(message="Display name is required"), Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
+    confirm = PasswordField("Confirm Password", validators=[InputRequired("Password confirmation is required"), Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"), EqualTo("password", message="Passwords must match")])
     submit = SubmitField("Register")
 
 class CategoryForm(StripFlaskForm):
-    name = StringField("Name", validators=[InputRequired(), Length(min=2, max=32)])
-    description = StringField("Description", validators=[Length(min=0, max=255)])
-    is_public = BooleanField("Is public")
+    name = StringField("Name", validators=[InputRequired("Category name is required"), Length(min=2, max=32, message="Category name must be between %(min)d and %(max)d characters long")])
+    description = TextAreaField("Description", validators=[Length(min=0, max=255, message="Category description can be up to %(max)d characters long")])
+    is_public = BooleanField("Public Category")
 
 class NewCategoryForm(CategoryForm):
     submit = SubmitField("Create")
@@ -41,9 +41,9 @@ class EditCategoryForm(CategoryForm):
     submit = SubmitField("Update")
 
 class ThreadForm(StripFlaskForm):
-    url = StringField("URL", validators=[InputRequired(), Length(min=3, max=64), URL()])
-    title = StringField("Title", validators=[InputRequired(), Length(min=3, max=64)])
-    message = StringField("Message", validators=[Length(min=0, max=1000)])
+    url = URLField("URL", validators=[InputRequired("Link URL is required"), Length(min=3, max=64, message="Link URL must be between %(min)d and %(max)d characters long"), URL()])
+    title = StringField("Title", validators=[InputRequired("Link title is required"), Length(min=3, max=64, message="Link title must be between %(min)d and %(max)d characters long")])
+    message = StringField("Message", validators=[Length(min=0, max=1000, message="Message must be between %(min)d and %(max)d characters long")])
 
 class NewThreadForm(ThreadForm):
     fetch_image = BooleanField("Fetch image")
@@ -59,7 +59,7 @@ class AdminEditThreadForm(EditThreadForm):
 class ReplyForm(StripFlaskForm):
     message = TextAreaField("Message",
                             validators=[Length(min=1, max=1000,
-                                               message=f"Reply must be between %(min)d  and %(max)d characters")])
+                                               message="Reply must be between %(min)d and %(max)d characters long")])
 
 class NewReplyForm(ReplyForm):
     parent_id = HiddenField("parent_id")
@@ -69,18 +69,18 @@ class EditReplyForm(ReplyForm):
     submit = SubmitField("Confirm")
 
 class AdminEditReplyForm(EditReplyForm):
-    visible = BooleanField("Visible", validators=[InputRequired()])
+    visible = BooleanField("Visible", validators=[InputRequired("Visibility setting is required")])
 
 class EditUserProfileForm(StripFlaskForm):
-    display_name = StringField("Display name", validators=[InputRequired(), Length(min=3, max=24)])
-    description = TextAreaField("Description", validators=[Length(min=0, max=1000)])
-    is_public = BooleanField("Is public")
+    display_name = StringField("Display Name", validators=[InputRequired("Display name is required"), Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
+    description = TextAreaField("Description", validators=[Length(min=0, max=1000, message="Profile description can be up to %(max)d characters long")])
+    is_public = BooleanField("Public Profile")
     submit = SubmitField("Update profile")
 
 class AddPermissionsForm(StripFlaskForm):
-    user_id = SelectField("Username", coerce=int, validators=[InputRequired()])
+    user_id = SelectField("Username", coerce=int, validators=[InputRequired("User id is required")])
     submit = SubmitField("Add")
 
 class RemovePermissionsForm(StripFlaskForm):
-    user_id = HiddenField("user_id", validators=[InputRequired()])
+    user_id = HiddenField("user_id", validators=[InputRequired("User id is required")])
     submit = SubmitField("Remove")
