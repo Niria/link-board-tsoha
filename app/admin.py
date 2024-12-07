@@ -35,7 +35,7 @@ def edit_category(category):
         update_category(category.id, form.name.data, form.description.data,
                         form.is_public.data)
         flash(f"Category '{form.name.data}' updated successfully!", "success")
-        return redirect(url_for("category_page", category=form.name.data, form=form))
+        return redirect(url_for("category_page", category=form.name.data))
     if request.method == "GET":
         form.name.data = category.name
         form.description.data = category.description

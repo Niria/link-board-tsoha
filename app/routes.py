@@ -4,14 +4,16 @@ from app import app
 from flask import (jsonify, redirect, render_template, request, session,
                    url_for, flash)
 from .content import (get_category, get_threads, get_thread,
-    get_replies, add_reply, add_thread, toggle_thread_like,
-    toggle_reply_like, get_profile, get_user_replies, toggle_user_follow,
-    get_user_followers, toggle_category_fav, update_thread, update_reply,
-    update_profile)
+                      get_replies, add_reply, add_thread, toggle_thread_like,
+                      toggle_reply_like, get_profile, get_user_replies,
+                      toggle_user_follow,
+                      get_user_followers, toggle_category_fav, update_thread,
+                      update_reply,
+                      update_profile, keyword_search)
 from .db import db
 from .forms import (EditUserProfileForm, EditReplyForm, EditThreadForm,
                     AdminEditThreadForm, NewThreadForm, AdminEditReplyForm,
-                    NewReplyForm)
+                    NewReplyForm, SearchForm)
 from .users import login_required
 
 from .utils import fetch_thumbnail
@@ -192,7 +194,7 @@ def edit_reply(thread_id, reply_id):
                 visible = form.visible.data
             try:
                 update_reply(reply.id, form.message.data, visible)
-                flash("Reply updated")
+                flash("Reply updated", "success")
             except ValueError as e:
                 flash(str(e), "error")
         else:
@@ -235,7 +237,7 @@ def edit_profile(username: str):
         return redirect(url_for("profile", username=username))
     if form.validate_on_submit():
         update_profile(user.id, form.display_name.data, form.description.data, form.is_public.data)
-        flash(f"Profile updated")
+        flash(f"Profile updated", "success")
         return redirect(url_for("profile", username=username))
     elif request.method == "GET":
         form.display_name.data = user.display_name
@@ -254,6 +256,25 @@ def follow(username: str):
         except ValueError as e:
             flash(str(e), "error")
             return jsonify({"success": False})
+
+@app.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    form = SearchForm()
+    form.search_type.choices = [('user', 'Users'),
+                                ('category', 'Categories'),
+                                ('thread', 'Threads')]
+
+    if form.validate_on_submit():
+        results = keyword_search(form.search_type.data,
+                                 form.search_string.data,
+                                 session["user_id"])
+        print(results)
+        return render_template("search.html", form=form,
+                               type=form.search_type.data, results=results)
+
+
+    return render_template("search.html", form=form, results=None)
 
 
 # Catches invalid paths

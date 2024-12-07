@@ -3,11 +3,9 @@
 ## Features
 - User profile page
     - Hide users with private profile from follower lists
-    - Follower count
     - Favourite categories tab
 - Admin
     - Delete category
-- Thread search
 
 ## Technical
 - Installation
@@ -15,9 +13,8 @@
 - Database
     - Indexes
     - Check that composite primary keys actually make sense
-    - Add error handling for failed DB requests
+    - Check that all necessary db requests have error handling
 - Server
-    - Fix crash on category creation when name exists
     - Fix crash when all users have permissions
     - Possibly change reply_like route, thread_id seems so unnecessary
     - Double check that user can't access features when they lack permissions

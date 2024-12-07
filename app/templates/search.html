@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% from "_macros.html" import render_field %}
+{% block content %}
+    <h2>Search</h2>
+    <form method="POST" action="" novalidate>
+        <dl>
+            {{ render_field(form.search_type) }}
+            {{ render_field(form.search_string) }}
+            {{ form.csrf_token }}
+            {{ form.submit(class="btn btn-big") }}
+        </dl>
+    </form>
+    {% if results %}
+        {% if type == "user" %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Display Name</th>
+                        <th>Join Date</th>
+                        <th>Threads Posted</th>
+                        <th>Replies Posted</th>
+                        <th>Following</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in results %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.display_name}}</td>
+                        <td>{{ user.join_date }}</td>
+                        <td>{{ user.threads }}</td>
+                        <td>{{ user.replies }}</td>
+                        <td>{{ user.following }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% elif type == "category" %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Public</th>
+                        <th>Creation Date</th>
+                        <th>Threads</th>
+                        <th>Favourites</th>
+                        <th>Favourited</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for category in results %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>{{ category.is_public }}</td>
+                        <td>{{ category.creation_date }}</td>
+                        <td>{{ category.threads }}</td>
+                        <td>{{ category.favourites }}</td>
+                        <td>{{ category.favourited }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        {% elif type == "thread" %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>URL</th>
+                        <th>Likes</th>
+                        <th>Comments</th>
+                        <th>Creation Date</th>
+                        <th>Submitted By</th>
+                        <th>Category</th>
+                        {% if session.user_role > 0 %}
+                            <th>Visible</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for thread in results %}
+                    <tr>
+                        <td>{{ thread.title }}</td>
+                        <td>{{ thread.link_url }}</td>
+                        <td>{{ thread.likes }}</td>
+                        <td>{{ thread.comments }}</td>
+                        <td>{{ thread.creation_date }}</td>
+                        <td>{{ thread.display_name }} ({{ thread.username }})</td>
+                        <td>{{ thread.category }}</td>
+                        {% if session.user_role > 0 %}
+                            <td>{{ thread.visible }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% else  %}
+        <div>No search results!</div>
+    {% endif %}
+
+{% endblock %}

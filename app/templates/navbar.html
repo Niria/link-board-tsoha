@@ -17,6 +17,7 @@
     {% if session.user_id %}
         <div class="category-nav-container">
             <span><a class="category-link" href="{{ url_for('index') }}">All</a></span>
+            <span><a class="category-link" href="{{ url_for('search') }}">Search</a></span>
             <span><a class="category-link" href="{{ url_for('favourites') }}">Favourites</a></span>
             {% for category in category_list %}
                 <span>

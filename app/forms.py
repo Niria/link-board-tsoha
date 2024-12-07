@@ -72,8 +72,11 @@ class AdminEditReplyForm(EditReplyForm):
     visible = BooleanField("Visible", validators=[InputRequired("Visibility setting is required")])
 
 class EditUserProfileForm(StripFlaskForm):
-    display_name = StringField("Display Name", validators=[InputRequired("Display name is required"), Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
-    description = TextAreaField("Description", validators=[Length(min=0, max=1000, message="Profile description can be up to %(max)d characters long")])
+    display_name = StringField("Display Name",
+                               validators=[InputRequired("Display name is required"),
+                                           Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
+    description = TextAreaField("Description",
+                                validators=[Length(min=0, max=1000, message="Profile description can be up to %(max)d characters long")])
     is_public = BooleanField("Public Profile")
     submit = SubmitField("Update profile")
 
@@ -85,3 +88,10 @@ class RemovePermissionsForm(StripFlaskForm):
     user_id = HiddenField("user_id", validators=[InputRequired("User id is required")])
     username = HiddenField("username", validators=[InputRequired("Username is required")])
     submit = SubmitField("Remove")
+
+class SearchForm(StripFlaskForm):
+    search_type = SelectField("Search Type", validators=[InputRequired("Search type is required")])
+    search_string = StringField("Search Keyword",
+                                validators=[InputRequired("Search string is required"),
+                                            Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long")])
+    submit = SubmitField("Search")
