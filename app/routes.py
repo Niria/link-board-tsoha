@@ -77,6 +77,7 @@ def thread_page(thread_id: int):
         if form.validate_on_submit():
             user_id = session["user_id"]
             add_reply(user_id, thread.id, form.parent_id.data, form.message.data)
+            flash(f"Reply added to thread '{thread.title}'", "success")
         else:
             for field, error in form.errors.items():
                 flash(error[0], "error")
@@ -96,6 +97,7 @@ def new_thread(category: str):
         if form.fetch_image.data:
             thumbnail = fetch_thumbnail(form.url.data)
         add_thread(session["user_id"], category.id, form.url.data, form.title.data.strip(), form.message.data, thumbnail)
+        flash(f"New thread created: '{form.title.data.strip()}'", "success")
         return redirect(url_for("category_page", category=category.name))
     return render_template("thread_form.html", category=category,
                                editing=False, form=form)
@@ -127,6 +129,7 @@ def edit_thread(thread_id):
             visible = form.visible.data
         try:
             update_thread(thread.id, form.url.data, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
+            flash(f"Edited thread: '{form.title.data.strip()}'", "success")
             return redirect(url_for("thread_page", thread_id=thread.id))
         except ValueError as e:
             flash(str(e), "error")
@@ -232,6 +235,7 @@ def edit_profile(username: str):
         return redirect(url_for("profile", username=username))
     if form.validate_on_submit():
         update_profile(user.id, form.display_name.data, form.description.data, form.is_public.data)
+        flash(f"Profile updated")
         return redirect(url_for("profile", username=username))
     elif request.method == "GET":
         form.display_name.data = user.display_name

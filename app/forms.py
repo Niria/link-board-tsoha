@@ -83,4 +83,5 @@ class AddPermissionsForm(StripFlaskForm):
 
 class RemovePermissionsForm(StripFlaskForm):
     user_id = HiddenField("user_id", validators=[InputRequired("User id is required")])
+    username = HiddenField("username", validators=[InputRequired("Username is required")])
     submit = SubmitField("Remove")

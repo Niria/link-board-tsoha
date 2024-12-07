@@ -16,7 +16,7 @@ def new_category():
     if form.validate_on_submit():
         try:
             create_category(form.name.data, form.description.data, form.is_public.data)
-            flash(f"Category {form.name.data} created successfully!", "success")
+            flash(f"Category '{form.name.data}' created successfully!", "success")
             return redirect(url_for("category_page", category=form.name.data))
         except ValueError as e:
             flash(str(e), "error")
@@ -34,6 +34,7 @@ def edit_category(category):
     if form.validate_on_submit():
         update_category(category.id, form.name.data, form.description.data,
                         form.is_public.data)
+        flash(f"Category '{form.name.data}' updated successfully!", "success")
         return redirect(url_for("category_page", category=form.name.data, form=form))
     if request.method == "GET":
         form.name.data = category.name
@@ -63,6 +64,8 @@ def edit_permissions(category: str):
     if request.form.get("submit") == "Add" and add_user_form.validate_on_submit():
         try:
             toggle_permissions(add_user_form.user_id.data, category.name)
+            username = dict(add_user_form.user_id.choices).get(add_user_form.user_id.data)
+            flash(f"Added permissions for user '{username}' successfully!", "success")
         except ValueError as e:
             flash(str(e), "error")
         return redirect(url_for("edit_permissions", category=category.name))
@@ -70,6 +73,7 @@ def edit_permissions(category: str):
         user_id = request.form.get('user_id', type=int)
         try:
             toggle_permissions(user_id, category.name)
+            flash(f"Removed permissions from user '{request.form.get("username")}' successfully!", "success")
         except ValueError as e:
             flash(str(e), "error")
         return redirect(url_for("edit_permissions", category=category.name))

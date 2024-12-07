@@ -136,4 +136,15 @@ function setEventHandlers() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => setEventHandlers())
+document.addEventListener('DOMContentLoaded', () => {
+  setEventHandlers();
+  const messages = document.querySelector('.messages');
+  if (messages !== null) {
+    setTimeout(() => {
+      messages.style.opacity = '0';
+    }, 3000);
+    setTimeout(() => {
+      messages.remove()
+    }, 8000)
+  }
+})
