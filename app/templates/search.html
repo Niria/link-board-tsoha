@@ -13,91 +13,172 @@
     </form>
     {% if results %}
         {% if type == "user" %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Display Name</th>
-                        <th>Join Date</th>
-                        <th>Threads Posted</th>
-                        <th>Replies Posted</th>
-                        <th>Following</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-grid user-grid">
+                <div>Username</div>
+                <div>Display Name</div>
+                <div>Join Date</div>
+                <div>Threads Submitted</div>
+                <div>Replies Submitted</div>
+                <div>Following</div>
                 {% for user in results %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.display_name}}</td>
-                        <td>{{ user.join_date }}</td>
-                        <td>{{ user.threads }}</td>
-                        <td>{{ user.replies }}</td>
-                        <td>{{ user.following }}</td>
-                    </tr>
+                    <a class="table-grid-row" href="{{ url_for('profile', username=user.username) }}">
+                        <div>{{ user.username }}</div>
+                        <div>{{ user.display_name }}</div>
+                        <div>{{ user.join_date }}</div>
+                        <div>{{ user.threads }}</div>
+                        <div>{{ user.replies }}</div>
+                        <div>{{ user.following }}</div>
+                    </a>
                 {% endfor %}
-                </tbody>
-            </table>
+            </div>
+
+{#            <table class="users-table">#}
+{#                <thead>#}
+{#                    <tr>#}
+{#                        <th>Username</th>#}
+{#                        <th>Display Name</th>#}
+{#                        <th>Join Date</th>#}
+{#                        <th>Threads Posted</th>#}
+{#                        <th>Replies Posted</th>#}
+{#                        <th>Following</th>#}
+{#                    </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for user in results %}#}
+{#                    <a href="{{ url_for('profile', username=user.username) }}">#}
+{#                    <tr>#}
+{#                        <td>{{ user.username }}</td>#}
+{#                        <td>{{ user.display_name}}</td>#}
+{#                        <td>{{ user.join_date }}</td>#}
+{#                        <td>{{ user.threads }}</td>#}
+{#                        <td>{{ user.replies }}</td>#}
+{#                        <td>{{ user.following }}</td>#}
+{#                    </tr>#}
+{#                    </a>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
         {% elif type == "category" %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Public</th>
-                        <th>Creation Date</th>
-                        <th>Threads</th>
-                        <th>Favourites</th>
-                        <th>Favourited</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-grid category-grid">
+                <div>Name</div>
+                <div>Description</div>
+                <div>Public</div>
+                <div>Creation Date</div>
+                <div>Threads</div>
+                <div>Favourites</div>
+                <div>Favourited</div>
                 {% for category in results %}
-                    <tr>
-                        <td>{{ category.name }}</td>
-                        <td>{{ category.description }}</td>
-                        <td>{{ category.is_public }}</td>
-                        <td>{{ category.creation_date }}</td>
-                        <td>{{ category.threads }}</td>
-                        <td>{{ category.favourites }}</td>
-                        <td>{{ category.favourited }}</td>
-                    </tr>
+                    <a class="table-grid-row" href="{{ url_for('category_page', category=category.name) }}">
+                        <div>{{ category.name }}</div>
+                        <div>{{ category.description }}</div>
+                        <div>{{ category.is_public }}</div>
+                        <div>{{ category.creation_date }}</div>
+                        <div>{{ category.threads }}</div>
+                        <div>{{ category.favourites }}</div>
+                        <div>{{ category.favourited }}</div>
+                    </a>
                 {% endfor %}
-                </tbody>
-            </table>
+            </div>
+
+{##}
+{##}
+{#            <table class="categories-table">#}
+{#                <thead>#}
+{#                    <tr>#}
+{#                        <th>Name</th>#}
+{#                        <th>Description</th>#}
+{#                        <th>Public</th>#}
+{#                        <th>Creation Date</th>#}
+{#                        <th>Threads</th>#}
+{#                        <th>Favourites</th>#}
+{#                        <th>Favourited</th>#}
+{#                    </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for category in results %}#}
+{#                    <tr>#}
+{#                        <td>{{ category.name }}</td>#}
+{#                        <td>{{ category.description }}</td>#}
+{#                        <td>{{ category.is_public }}</td>#}
+{#                        <td>{{ category.creation_date }}</td>#}
+{#                        <td>{{ category.threads }}</td>#}
+{#                        <td>{{ category.favourites }}</td>#}
+{#                        <td>{{ category.favourited }}</td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
 
         {% elif type == "thread" %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>URL</th>
-                        <th>Likes</th>
-                        <th>Comments</th>
-                        <th>Creation Date</th>
-                        <th>Submitted By</th>
-                        <th>Category</th>
-                        {% if session.user_role > 0 %}
-                            <th>Visible</th>
-                        {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-grid thread-grid">
+                <div>Thumbnail</div>
+                <div>Title</div>
+                <div>URL</div>
+                <div>Creation Date</div>
+                <div>Submitted By</div>
+                <div>Category</div>
+                <div>Likes</div>
+                <div>Comments</div>
+                {% if session.user_role > 0 %}
+                    <div>Visible</div>
+                {% endif %}
                 {% for thread in results %}
-                    <tr>
-                        <td>{{ thread.title }}</td>
-                        <td>{{ thread.link_url }}</td>
-                        <td>{{ thread.likes }}</td>
-                        <td>{{ thread.comments }}</td>
-                        <td>{{ thread.creation_date }}</td>
-                        <td>{{ thread.display_name }} ({{ thread.username }})</td>
-                        <td>{{ thread.category }}</td>
-                        {% if session.user_role > 0 %}
-                            <td>{{ thread.visible }}</td>
+                    <a class="table-grid-row" href="{{ url_for('thread_page', thread_id=thread.id) }}">
+                        {% if thread.thumbnail %}
+                            <div>
+                                <img src="data:;base64, {{ thread.thumbnail|b64encode }}" alt="Thumbnail of {{ thread.title }}"/>
+                            </div>
+                        {% else %}
+                            <div>N/A</div>
                         {% endif %}
-                    </tr>
+                        <div>{{ thread.title }}</div>
+                        <div>{{ thread.link_url }}</div>
+                        <div>{{ thread.creation_date }}</div>
+                        <div>{{ thread.display_name }} ({{ thread.username }})</div>
+                        <div>{{ thread.category }}</div>
+                        <div>{{ thread.likes }}</div>
+                        <div>{{ thread.comments }}</div>
+                        {% if session.user_role > 0 %}
+                         <div>{{ thread.visible }}</div>
+                        {% endif %}
+                    </a>
                 {% endfor %}
-                </tbody>
-            </table>
+            </div>
+
+
+
+{#            <table class="threads-table">#}
+{#                <thead>#}
+{#                    <tr>#}
+{#                        <th>Title</th>#}
+{#                        <th>URL</th>#}
+{#                        <th>Creation Date</th>#}
+{#                        <th>Submitted By</th>#}
+{#                        <th>Category</th>#}
+{#                        <th>Likes</th>#}
+{#                        <th>Comments</th>#}
+{#                        {% if session.user_role > 0 %}#}
+{#                            <th>Visible</th>#}
+{#                        {% endif %}#}
+{#                    </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for thread in results %}#}
+{#                    <tr>#}
+{#                        <td>{{ thread.title }}</td>#}
+{#                        <td>{{ thread.link_url }}</td>#}
+{#                        <td>{{ thread.creation_date }}</td>#}
+{#                        <td>{{ thread.display_name }} ({{ thread.username }})</td>#}
+{#                        <td>{{ thread.category }}</td>#}
+{#                        <td>{{ thread.likes }}</td>#}
+{#                        <td>{{ thread.comments }}</td>#}
+{#                        {% if session.user_role > 0 %}#}
+{#                            <td>{{ thread.visible }}</td>#}
+{#                        {% endif %}#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
         {% endif %}
     {% else  %}
         <div>No search results!</div>

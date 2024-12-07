@@ -2,7 +2,6 @@
 
 ## Features
 - User profile page
-    - Hide users with private profile from follower lists
     - Favourite categories tab
 - Admin
     - Delete category

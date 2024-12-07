@@ -18,7 +18,6 @@
                         id="like-thread"
                         class="btn btn-small"
                         data-url='{{ url_for("like_thread", thread_id=thread.id) }}'
-{#                        data-csrf='{{ session.csrf_token|tojson }}'>#}
                         data-csrf='{{ csrf_token() }}'>
                     <div id="thumb" class="{{ 'thumb-active' if thread.liked else '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-6" fill="currentColor">

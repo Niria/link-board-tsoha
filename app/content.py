@@ -309,9 +309,12 @@ def get_profile(username: str, session_user: int):
                          COALESCE(replies, 0) AS replies
                     FROM users AS u
                          LEFT JOIN (SELECT user_id, count(*) AS followers
-                                      FROM user_followers
-                                     GROUP BY user_id) AS uf
-                           ON uf.user_id=u.id
+                                      FROM user_followers AS uf
+                                      JOIN users AS u
+                                        ON u.id=uf.follower_id
+                                     WHERE u.profile_public=true
+                                     GROUP BY user_id) AS fc
+                           ON fc.user_id=u.id
                          LEFT JOIN (SELECT user_id, count(*) AS threads
                                       FROM threads
                                      GROUP BY user_id) AS t 
@@ -404,7 +407,8 @@ def get_user_followers(user_id: int):
                     FROM user_followers AS uf
                     JOIN users AS u
                       ON uf.follower_id=u.id
-                   WHERE uf.user_id=:user_id""")
+                   WHERE uf.user_id=:user_id
+                     AND u.profile_public=true""")
     followers = db.session.execute(sql, {"user_id":user_id})
     return followers.fetchall()
 
@@ -629,7 +633,8 @@ def keyword_search(search_type: str, keyword: str, user_id: int):
             WITH curr_user(is_admin) AS (
                  SELECT user_role > 0 FROM users WHERE id=:user_id
             ) 
-            SELECT t.title, 
+            SELECT t.id,
+                   t.title, 
                    t.link_url,
                    t.visible,
                    t.thumbnail,
