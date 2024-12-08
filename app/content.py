@@ -657,8 +657,7 @@ def keyword_search(search_type: str, keyword: str, user_id: int):
                                 FROM replies AS r 
                                GROUP BY r.thread_id) AS rc
                      ON rc.thread_id=t.id
-             WHERE (t.title ILIKE '%' || :keyword || '%'
-                    OR display_name ILIKE '%' || :keyword || '%')
+             WHERE t.title ILIKE '%' || :keyword || '%'
                AND (t.visible OR (SELECT is_admin FROM curr_user))""")
         case _:
             raise ValueError("Invalid search type")

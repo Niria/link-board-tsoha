@@ -9,8 +9,8 @@ of these categories.
 ## Planned Features
 
 - [x] User can create an account, sign in and out
-- [ ] User can edit their profile
-- [ ] User profiles can be set to either public or private
+- [x] User can edit their profile
+- [x] User profiles can be set to either public or private
 - [x] User can view public profiles of other users
 - [x] Threads and replies submitted by users can be seen on their profile page
 - [x] User can view all the public discussion threads on the home page
@@ -22,7 +22,7 @@ of these categories.
 - [x] User can edit the content of their replies
 - [x] User can choose favourite categories
 - [x] User can follow other users
-- [ ] User can search thread titles and messages using a keyword search function
+- [x] User can search thread titles and messages using a keyword search function
 - [x] Admin can create new public and private categories for links
 - [x] Admin can grant/revoke private category access permissions for users
 - [x] Admin can edit and hide/soft delete threads/messages submitted by users
