@@ -312,7 +312,6 @@ def get_profile(username: str, session_user: int):
                                       FROM user_followers AS uf
                                       JOIN users AS u
                                         ON u.id=uf.follower_id
-                                     WHERE u.profile_public=true
                                      GROUP BY user_id) AS fc
                            ON fc.user_id=u.id
                          LEFT JOIN (SELECT user_id, count(*) AS threads
@@ -658,7 +657,8 @@ def keyword_search(search_type: str, keyword: str, user_id: int):
                                GROUP BY r.thread_id) AS rc
                      ON rc.thread_id=t.id
              WHERE t.title ILIKE '%' || :keyword || '%'
-               AND (t.visible OR (SELECT is_admin FROM curr_user))""")
+               AND (t.visible OR (SELECT is_admin FROM curr_user))
+             ORDER BY t.created_at DESC""")
         case _:
             raise ValueError("Invalid search type")
     result = db.session.execute(sql, {"keyword": keyword, "user_id": user_id}).fetchall()

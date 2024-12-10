@@ -26,6 +26,7 @@
 - Display weeks/months instead of days for submission age?
 
 ## Style
+- Search results style, fix outline bottom edge
 - Button click events fail on the edge due to scale transform
 - Modify style of forms
 - Go through css classes and combine them if possible

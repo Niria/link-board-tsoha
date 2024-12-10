@@ -7,6 +7,7 @@ from . import users
 from .content import register_user
 from .db import db
 from .forms import RegistrationForm, LoginForm
+from .users import login_required
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -17,13 +18,12 @@ def login():
             flash("Wrong username or password", "error")
             return render_template("login.html", form=form)
         flash("Login successful", "success")
-        if request.args.get("next"):
-            return redirect(request.args.get("next"))
         return redirect(url_for("index"))
     return render_template("login.html", form=form)
 
 
 @app.route("/logout")
+@login_required
 def logout():
     del session["username"]
     del session["display_name"]

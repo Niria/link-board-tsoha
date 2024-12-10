@@ -106,6 +106,7 @@ def new_thread(category: str):
 
 
 @app.route("/p/<int:thread_id>/edit", methods=["GET", "POST"])
+@login_required
 def edit_thread(thread_id):
     thread = get_thread(thread_id, session["user_id"])
     if not thread:
@@ -166,12 +167,16 @@ def like_reply(thread_id: int, reply_id: int):
 
 
 @app.route("/p/<int:thread_id>/<int:reply_id>/edit", methods=["POST"])
+@login_required
 def edit_reply(thread_id, reply_id):
     if request.method == "POST":
         reply = db.session.execute(text("""SELECT id, user_id, visible
                                              FROM replies 
                                             WHERE id=:reply_id"""),
                                    {"reply_id": reply_id}).fetchone()
+        if not reply:
+            flash("Invalid reply", "error")
+            return redirect(url_for("thread_page", thread_id=thread_id))
         if session["user_id"] != reply.user_id and session["user_role"] < 1:
             flash("You are not authorised to edit this reply.", "error")
             return redirect(url_for("thread_page", thread_id=thread_id))
@@ -208,6 +213,9 @@ def edit_reply(thread_id, reply_id):
 @login_required
 def profile(username: str, page=None):
     user = get_profile(username, session["user_id"])
+    if not user:
+        flash("User not found", "error")
+        return redirect(url_for("index"))
     if page == "threads":
         user_threads = get_threads(by_user=user.id)
         return render_template("user_profile.html", page=page,
@@ -280,6 +288,7 @@ def search():
 # Catches invalid paths
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
+@login_required
 def catch_all(path):
     return render_template("error.html",
                            message="Nothing to be found here")
