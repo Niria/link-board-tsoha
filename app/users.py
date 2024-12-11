@@ -25,13 +25,13 @@ def login(username, password):
     session["display_name"] = user.display_name
     session["user_id"] = user.id
     session["user_role"] = user.user_role
-    session["csrf_token"] = secrets.token_hex(16)
     return True
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print("Login")
         if session.get("username") is None:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
@@ -42,6 +42,7 @@ def login_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print("admin")
         if session.get("user_role") < 1:
             return render_template("error.html",
                                    message="Unauthorised.")

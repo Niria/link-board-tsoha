@@ -17,8 +17,6 @@
     - Fix crash when all users have permissions
     - Possibly change reply_like route, thread_id seems so unnecessary
     - Double check that user can't access features when they lack permissions
-- Form input validation 
-    - Special characters
   Project file structure cleanup
     - Perhaps split content.py into smaller modules
 - Code
@@ -26,10 +24,7 @@
 - Display weeks/months instead of days for submission age?
 
 ## Style
-- Search results style, fix outline bottom edge
-- Button click events fail on the edge due to scale transform
 - Modify style of forms
 - Go through css classes and combine them if possible
-- Flash message style adjustment
 - Transitions 
 

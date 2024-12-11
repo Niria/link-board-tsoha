@@ -6,10 +6,11 @@ from .content import (create_category, get_category, update_category,
                       toggle_permissions)
 from .forms import AddPermissionsForm, RemovePermissionsForm, EditCategoryForm, \
     NewCategoryForm
-from .users import admin_required
+from .users import admin_required, login_required
 
 
 @app.route("/new_category", methods=["GET", "POST"])
+@login_required
 @admin_required
 def new_category():
     form = NewCategoryForm()
@@ -24,6 +25,7 @@ def new_category():
 
 
 @app.route("/c/<string:category>/edit", methods=["GET", "POST"])
+@login_required
 @admin_required
 def edit_category(category):
     form = EditCategoryForm()
@@ -42,13 +44,9 @@ def edit_category(category):
         form.is_public.data = category.is_public
     return render_template("category_form.html", category=category, form=form)
 
-@app.route("/u/<int:user_id>/edit", methods=["POST"])
-@admin_required
-def edit_user(user_id):
-    pass
-
 
 @app.route("/c/<string:category>/permissions", methods=["GET", "POST"])
+@login_required
 @admin_required
 def edit_permissions(category: str):
     category = get_category(category, session["user_id"])

@@ -6,7 +6,7 @@
     <form class="search-form" method="POST" action="" novalidate>
         <dl>
             {{ render_field(form.search_type) }}
-            {{ render_field(form.search_string) }}
+            {{ render_field(form.search_string, placeholder="Enter search term") }}
             {{ form.csrf_token }}
             {{ form.submit(class="btn btn-big") }}
         </dl>

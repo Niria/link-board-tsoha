@@ -96,9 +96,10 @@ def new_thread(category: str):
             flash("Category does not exist.", "error")
             return redirect(url_for("category_page", category=category))
         thumbnail = None
+        url = form.url.data.strip("/")
         if form.fetch_image.data:
-            thumbnail = fetch_thumbnail(form.url.data)
-        add_thread(session["user_id"], category.id, form.url.data, form.title.data.strip(), form.message.data, thumbnail)
+            thumbnail = fetch_thumbnail(url)
+        add_thread(session["user_id"], category.id, url, form.title.data.strip(), form.message.data, thumbnail)
         flash(f"New thread created: '{form.title.data.strip()}'", "success")
         return redirect(url_for("category_page", category=category.name))
     return render_template("thread_form.html", category=category,
