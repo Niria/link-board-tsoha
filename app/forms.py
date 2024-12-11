@@ -90,8 +90,8 @@ class RemovePermissionsForm(StripFlaskForm):
     submit = SubmitField("Remove")
 
 class SearchForm(StripFlaskForm):
-    search_type = SelectField("Search Type", validators=[InputRequired("Search type is required")])
-    search_string = StringField("Search Keyword",
+    search_type = SelectField("Find", validators=[InputRequired("Search type is required")])
+    search_string = StringField("With Keyword",
                                 validators=[InputRequired("Search string is required"),
                                             Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long")])
     submit = SubmitField("Search")

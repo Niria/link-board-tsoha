@@ -277,7 +277,6 @@ def search():
         results = keyword_search(form.search_type.data,
                                  form.search_string.data,
                                  session["user_id"])
-        print(results)
         return render_template("search.html", form=form,
                                type=form.search_type.data, results=results)
 
