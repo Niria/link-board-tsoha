@@ -23,5 +23,5 @@
             {{ form.submit(class="btn btn-big") }}
         </dl>
     </form>
-    <button class="btn btn-big" onclick="window.location.href='{{ url_for('profile', username=user.username) }}';">Cancel</button>
+    <button class="btn btn-small" onclick="window.location.href='{{ url_for('profile', username=user.username) }}';">Cancel</button>
 {% endblock %}

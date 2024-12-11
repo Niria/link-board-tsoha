@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, TextAreaField, URLField
 from wtforms.fields.choices import RadioField, SelectField
-from wtforms.validators import Length, EqualTo, URL, InputRequired
+from wtforms.validators import Length, EqualTo, URL, InputRequired, Regexp
 
 
 class StripFlaskForm(FlaskForm):
@@ -18,20 +18,37 @@ def strip_filter(value):
     return value
 
 class UserForm(StripFlaskForm):
-    username = StringField("Username", validators=[InputRequired("Username is required"), Length(min=3, max=24, message="Username must be between %(min)d and %(max)d characters long")])
-    password = PasswordField("Password", validators=[InputRequired("Password is required"), Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long")])
+    username = StringField("Username",
+                           validators=[
+                               InputRequired("Username is required"),
+                               Length(min=3, max=24, message="Username must be between %(min)d and %(max)d characters long"),
+                               Regexp('^\w+$', message="Username must contain only letters, numbers, underscores and hyphens")])
+    password = PasswordField("Password",
+                             validators=[InputRequired("Password is required"),
+                                         Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"),
+                                         Regexp('^\w+$', message="Password must contain only letters, numbers, underscores and hyphens")])
 
 class LoginForm(UserForm):
     submit = SubmitField("Login")
 
 class RegistrationForm(UserForm):
-    display_name = StringField("Display Name", validators=[InputRequired(message="Display name is required"), Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
-    confirm = PasswordField("Confirm Password", validators=[InputRequired("Password confirmation is required"), Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"), EqualTo("password", message="Passwords must match")])
+    display_name = StringField("Display Name",
+                               validators=[InputRequired(message="Display name is required"),
+                                           Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long"),
+                                           Regexp('^\w+$', message="Display name must contain only letters, numbers, underscores and hyphens")])
+    confirm = PasswordField("Confirm Password",
+                            validators=[InputRequired("Password confirmation is required"),
+                                        Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"),
+                                        EqualTo("password", message="Passwords must match"),
+                                        Regexp('^\w+$', message="Password must contain only letters, numbers, underscores and hyphens")])
     submit = SubmitField("Register")
 
 class CategoryForm(StripFlaskForm):
-    name = StringField("Name", validators=[InputRequired("Category name is required"), Length(min=2, max=32, message="Category name must be between %(min)d and %(max)d characters long")])
-    description = TextAreaField("Description", validators=[Length(min=0, max=255, message="Category description can be up to %(max)d characters long")])
+    name = StringField("Name",
+                       validators=[InputRequired("Category name is required"),
+                                   Length(min=2, max=32, message="Category name must be between %(min)d and %(max)d characters long")])
+    description = TextAreaField("Description",
+                                validators=[Length(min=0, max=255, message="Category description can be up to %(max)d characters long")])
     is_public = BooleanField("Public Category")
 
 class NewCategoryForm(CategoryForm):
@@ -54,7 +71,7 @@ class EditThreadForm(ThreadForm):
     submit = SubmitField("Confirm")
 
 class AdminEditThreadForm(EditThreadForm):
-    visible = BooleanField("Visibility")
+    visible = BooleanField("Visible")
 
 class ReplyForm(StripFlaskForm):
     message = TextAreaField("Message",
@@ -74,10 +91,11 @@ class AdminEditReplyForm(EditReplyForm):
 class EditUserProfileForm(StripFlaskForm):
     display_name = StringField("Display Name",
                                validators=[InputRequired("Display name is required"),
-                                           Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long")])
+                                           Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long"),
+                                           Regexp('^\w+$', message="Display name must contain only letters, numbers, underscores and hyphens")])
     description = TextAreaField("Description",
                                 validators=[Length(min=0, max=1000, message="Profile description can be up to %(max)d characters long")])
-    is_public = BooleanField("Public Profile")
+    is_public = BooleanField("Set profile public")
     submit = SubmitField("Update profile")
 
 class AddPermissionsForm(StripFlaskForm):
@@ -93,5 +111,6 @@ class SearchForm(StripFlaskForm):
     search_type = SelectField("Find", validators=[InputRequired("Search type is required")])
     search_string = StringField("With Keyword",
                                 validators=[InputRequired("Search string is required"),
-                                            Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long")])
+                                            Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long"),
+                                            Regexp('^\w+$', message="Search keyword must contain only letters, numbers, underscores and hyphens")])
     submit = SubmitField("Search")

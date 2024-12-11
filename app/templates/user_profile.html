@@ -3,9 +3,9 @@
 {% block content %}
     <div  class="category-title-container">
         <h1>{{ user.display_name }}</h1>
-        {% if user.username != session.username and (user.profile_public or session.user_role > 0) %}
             <span class="category-buttons">
                 <span class="{{ 'public' if user.profile_public else 'private' }}">{{ 'Public' if user.profile_public else 'Private' }}</span>
+                {% if user.username != session.username and (user.profile_public or session.user_role > 0) %}
                 <button id="user-follow"
                         class="btn btn-small btn-follow {{ 'following' if user.followed else '' }}"
                         data-user="{{ user.user_id }}"
@@ -13,8 +13,8 @@
                         data-csrf='{{ csrf_token() }}'>
                     {{ 'Following' if user.followed else 'Follow' }}
                 </button>
+                {% endif %}
             </span>
-        {% endif %}
     </div>
     {% if not user.profile_public and session.user_role < 1 %}
         <div>Profile is private</div>
@@ -123,7 +123,7 @@
                 <div>{{ user.followers }}</div>
             </div>
             {% if user.id == session.user_id or session.user_role > 0 %}
-                <button class="btn btn-big" onclick="window.location.href='{{ url_for('edit_profile', username=user.username) }}';">Edit Profile</button>
+                <button class="btn btn-small" onclick="window.location.href='{{ url_for('edit_profile', username=user.username) }}';">Edit Profile</button>
             {% endif %}
         {% endif %}
     {% endif %}
