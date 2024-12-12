@@ -27,7 +27,7 @@
                         <div>{{ user.join_date }}</div>
                         <div>{{ user.threads }}</div>
                         <div>{{ user.replies }}</div>
-                        <div>{{ user.following }}</div>
+                        <div>{{ 'Yes' if user.following else 'No' }}</div>
                     </a>
                 {% endfor %}
             </div>
@@ -48,7 +48,7 @@
                         <div>{{ category.creation_date }}</div>
                         <div>{{ category.threads }}</div>
                         <div>{{ category.favourites }}</div>
-                        <div>{{ category.favourited }}</div>
+                        <div>{{ 'Yes' if category.favourited else 'No' }}</div>
                     </a>
                 {% endfor %}
             </div>
@@ -82,7 +82,7 @@
                         <div>{{ thread.likes }}</div>
                         <div>{{ thread.comments }}</div>
                         {% if session.user_role > 0 %}
-                         <div>{{ thread.visible }}</div>
+                         <div>{{ 'Yes' if thread.visible else 'No' }}</div>
                         {% endif %}
                     </a>
                 {% endfor %}

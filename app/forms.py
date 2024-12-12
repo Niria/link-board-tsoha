@@ -22,12 +22,7 @@ class UserForm(StripFlaskForm):
                            validators=[
                                InputRequired("Username is required"),
                                Length(min=3, max=24, message="Username must be between %(min)d and %(max)d characters long"),
-                               Regexp('^[^\W_]+(?:_[^\W_]+)*_?$', message="Username must contain only letters, numbers and underscores")])
-    password = PasswordField("Password",
-                             validators=[InputRequired("Password is required"),
-                                         Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"),
-                                         Regexp('^(?=.*[^\W_])(?=.*[\?\-_\(\)\{\}\[\]\"\'\+=&%§~å!@#$&*<>\\\/\^\.\,;:\|])(?=.*[0-9]).{8,}$',
-                                                message="Password must contain at least one letter, number and special character")])
+                               Regexp('^[^\W_]+(?:_[^\W_]+)*$', message="Username must contain only letters, numbers and single underscores")])
 
 class LoginForm(UserForm):
     password = PasswordField("Password",
@@ -39,7 +34,7 @@ class RegistrationForm(UserForm):
     display_name = StringField("Display Name",
                                validators=[InputRequired(message="Display name is required"),
                                            Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long"),
-                                           Regexp('^[^\W_]+(?:_[^\W_]+)*_?$', message="Display name must contain only letters, numbers and underscores")])
+                                           Regexp('^[^\W_\s]+(?:[_\s][^\W_\s]+)*$', message="Display name must contain only letters, numbers, underscores and spaces")])
     password = PasswordField("Password",
                              validators=[InputRequired("Password is required"),
                                          Length(min=8, max=64, message="Password must be between %(min)d and %(max)d characters long"),
@@ -56,7 +51,8 @@ class RegistrationForm(UserForm):
 class CategoryForm(StripFlaskForm):
     name = StringField("Name",
                        validators=[InputRequired("Category name is required"),
-                                   Length(min=2, max=32, message="Category name must be between %(min)d and %(max)d characters long")])
+                                   Length(min=2, max=32, message="Category name must be between %(min)d and %(max)d characters long"),
+                                   Regexp('^[^\W_]+(?:_[^\W_]+)*$', message="Category name must contain only letters, numbers and underscores")])
     description = TextAreaField("Description",
                                 validators=[Length(min=0, max=255, message="Category description can be up to %(max)d characters long")])
     is_public = BooleanField("Public Category")
@@ -102,7 +98,7 @@ class EditUserProfileForm(StripFlaskForm):
     display_name = StringField("Display Name",
                                validators=[InputRequired("Display name is required"),
                                            Length(min=3, max=24, message="Display name must be between %(min)d and %(max)d characters long"),
-                                           Regexp('^[^\W_]+(?:_[^\W_]+)*_?$', message="Display name must contain only letters, numbers and underscores")])
+                                           Regexp('^[^\W_\s]+(?:[_\s][^\W_\s]+)*$', message="Display name must contain only letters, numbers, underscores and whitespace")])
     description = TextAreaField("Description",
                                 validators=[Length(min=0, max=1000, message="Profile description can be up to %(max)d characters long")])
     is_public = BooleanField("Set profile public")
@@ -122,5 +118,5 @@ class SearchForm(StripFlaskForm):
     search_string = StringField("With",
                                 validators=[InputRequired("Search string is required"),
                                             Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long"),
-                                            Regexp('^[^\W_]+(?:_[^\W_]+)*_?$', message="Search keyword must contain only letters, numbers and underscores")])
+                                            Regexp('^[^\W_\s]+(?:\s[^\W_\s]+)*$', message="Search keyword must contain only letters, numbers and single spaces")])
     submit = SubmitField("Search")

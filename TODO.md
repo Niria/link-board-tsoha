@@ -24,6 +24,7 @@
 - Display weeks/months instead of days for submission age?
 
 ## Style
+- Category nav convert to grid
 - Modify style of forms
 - Go through css classes and combine them if possible
 - Transitions 
