@@ -4,18 +4,22 @@
     <div class="category-title-container">
         <a href="{{ url_for('category_page', category=category.name) }}"><h1>{{ category.name }}</h1></a>
     </div>
-    <h2>Permissions</h2>
-    <h4>Add user</h4>
-    {% from "_macros.html" import render_field %}
-    <form class="approve-user-form" name="add-permissions" method="POST" action="" novalidate>
-        <dl>
-            {{ render_field(add_form.user_id) }}
-            {{ add_form.hidden_tag() }}
-            {{ add_form.submit(class="btn btn-big") }}
-        </dl>
-    </form>
+    <h2>Manage Permissions</h2>
+    <h3>Add user</h3>
+    {% if not unapproved_users %}
+        <div>All users have permissions to this category.</div>
+    {% else %}
+        {% from "_macros.html" import render_field %}
+        <form class="approve-user-form" name="add-permissions" method="POST" action="" novalidate>
+            <dl>
+                {{ render_field(add_form.user_id) }}
+                {{ add_form.hidden_tag() }}
+                {{ add_form.submit(class="btn btn-big") }}
+            </dl>
+        </form>
+    {% endif %}
 
-    <h4>Approved users</h4>
+    <h3>Approved users</h3>
     <ul class="approved-users-list">
         {% for user in approved_users %}
             <li class="approved-user">

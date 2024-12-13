@@ -12,6 +12,7 @@
         </dl>
     </form>
     {% if results %}
+        <h2>Search results for "{{ form.search_string.data }}"</h2>
         {% if type == "user" %}
             <div class="table-grid user-grid">
                 <div>Username</div>
@@ -44,7 +45,7 @@
                     <a class="table-grid-row" href="{{ url_for('category_page', category=category.name) }}">
                         <div>{{ category.name }}</div>
                         <div>{{ category.description }}</div>
-                        <div>{{ category.is_public }}</div>
+                        <div>{{ 'Yes' if category.is_public else 'No' }}</div>
                         <div>{{ category.creation_date }}</div>
                         <div>{{ category.threads }}</div>
                         <div>{{ category.favourites }}</div>

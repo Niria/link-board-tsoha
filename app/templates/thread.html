@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ thread.title }}{% endblock %} }}
 {% block content %}
-    <div class="thread-container">
+    <div class="thread-container {{ 'following-user' if thread.following else '' }}">
         <a href="{{ thread.link_url }}">
             <div class="thread-link">
                 {% if thread.thumbnail %}
@@ -40,7 +40,7 @@
     </div>
     {% for reply in replies %}
         <div class="reply-content-container">
-            <div class="reply-content  {{ 'reply-deleted' if not reply.visible else '' }}" style="--reply-depth:{{ reply.depth }}">
+            <div class="reply-content {{ 'reply-deleted' if not reply.visible else '' }} {{'following-user' if reply.following else '' }}" style="--reply-depth:{{ reply.depth }}">
                 <div class="debug">id: {{ reply.id }} - parent: {{ reply.parent_id }} - depth: {{ reply.depth }} -
                     path: {{ reply.path }}</div>
                 <div class="reply-user-container">
@@ -52,9 +52,9 @@
                         {% endif %}
                     </span>
                     <span class="tooltip" data-tooltip="{{ reply.created_at }}">{{ reply.age }}</span>
-                        {% if reply.edited %}
-                            <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
-                        {% endif %}
+                    {% if reply.edited %}
+                        <span class="tooltip" data-tooltip="{{ reply.updated_at }}">(edited {{ reply.edited }})</span>
+                    {% endif %}
                 </div>
                 {% if reply.visible or session.user_role > 0 %}
                     <div class="reply-message">{{ reply.content }}</div>

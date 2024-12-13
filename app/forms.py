@@ -105,7 +105,7 @@ class EditUserProfileForm(StripFlaskForm):
     submit = SubmitField("Update profile")
 
 class AddPermissionsForm(StripFlaskForm):
-    user_id = SelectField("Username", coerce=int, validators=[InputRequired("User id is required")])
+    user_id = SelectField("Username", coerce=int, validators=[InputRequired("Username is required")])
     submit = SubmitField("Add")
 
 class RemovePermissionsForm(StripFlaskForm):
@@ -117,6 +117,6 @@ class SearchForm(StripFlaskForm):
     search_type = SelectField("Find", validators=[InputRequired("Search type is required")])
     search_string = StringField("With",
                                 validators=[InputRequired("Search string is required"),
-                                            Length(min=3, max=12, message="Search keyword must be between %(min)d and %(max)d characters long"),
+                                            Length(min=3, max=20, message="Search keyword must be between %(min)d and %(max)d characters long"),
                                             Regexp('^[^\W_\s]+(?:\s[^\W_\s]+)*$', message="Search keyword must contain only letters, numbers and single spaces")])
     submit = SubmitField("Search")

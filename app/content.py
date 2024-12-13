@@ -57,9 +57,12 @@ def get_threads(category_id: int = None, by_user: int = None,
                time_ago(t.created_at) AS age,
                to_char(t.updated_at, 'DD.MM.YYYY HH24:MI:SS UTC OF (TZ)') AS updated_at,
                (CASE WHEN t.updated_at IS NULL 
-                THEN null 
-                ELSE time_ago(t.updated_at) END
+                     THEN null 
+                     ELSE time_ago(t.updated_at) END
                ) AS edited,
+               (CASE WHEN uf.user_id IS NULL
+                     THEN false
+                     ELSE true END) AS following,
                u.username,
                u.display_name,
                u.id AS user_id,
@@ -80,9 +83,14 @@ def get_threads(category_id: int = None, by_user: int = None,
                     ) AS r
             ON r.thread_id=t.id
           LEFT JOIN permissions AS p
-            ON p.category_id=c.id AND p.user_id=:user_id
+            ON p.category_id=c.id 
+           AND p.user_id=:user_id
           LEFT JOIN category_favourites AS cf
-            ON cf.category_id=c.id AND cf.user_id=:user_id
+            ON cf.category_id=c.id 
+           AND cf.user_id=:user_id
+          LEFT JOIN user_followers AS uf
+            ON uf.user_id=u.id
+           AND uf.follower_id=:user_id
          WHERE (c.is_public=:public
                OR (SELECT is_admin FROM curr_user)
                OR p.user_id IS NOT NULL)
@@ -125,6 +133,7 @@ def get_thread(thread_id: int, user_id: int):
                ) AS edited,
                c.name AS category,
                (CASE WHEN tl.user_id IS NULL THEN false ELSE true END) AS liked,
+               (CASE WHEN uf.user_id IS NULL THEN false ELSE true END) AS following,
                thumbnail
           FROM threads AS t
           JOIN categories AS c
@@ -136,9 +145,14 @@ def get_thread(thread_id: int, user_id: int):
                            GROUP BY thread_id) AS all_likes
                  ON all_likes.thread_id=t.id
                LEFT JOIN thread_likes AS tl
-                 ON tl.thread_id=t.id AND tl.user_id=:user_id
+                 ON tl.thread_id=t.id 
+                AND tl.user_id=:user_id
                LEFT JOIN permissions AS p
-                 ON p.category_id=c.id AND p.user_id=:user_id
+                 ON p.category_id=c.id 
+                AND p.user_id=:user_id
+               LEFT JOIN user_followers AS uf
+                 ON uf.user_id=u.id 
+                AND uf.follower_id=:user_id
          WHERE (t.visible=:visible OR (SELECT is_admin FROM curr_user))
            AND (c.is_public=:public
                OR (SELECT is_admin FROM curr_user)
@@ -207,8 +221,11 @@ def get_replies(thread_id: int, user_id: int):
                ) AS edited,
                COALESCE(likes, 0) AS likes,
                (CASE WHEN rl.user_id IS NULL 
-                    THEN false 
-                    ELSE true END) AS liked,
+                     THEN false 
+                     ELSE true END) AS liked,
+               (CASE WHEN uf.user_id IS NULL
+                     THEN false
+                     ELSE true END) AS following,
                array_length(rt.path, 1)-1 AS depth,
                rt.path
           FROM reply_tree AS rt
@@ -221,6 +238,9 @@ def get_replies(thread_id: int, user_id: int):
                LEFT JOIN reply_likes AS rl 
                  ON rl.reply_id=rt.id 
                 AND rl.user_id=:user_id
+               LEFT JOIN user_followers AS uf
+                 ON uf.user_id=u.id
+                AND uf.follower_id=:user_id
          ORDER BY path;""")
     replies = db.session.execute(sql, {"thread_id":thread_id, "user_id":user_id})
     return replies.fetchall()

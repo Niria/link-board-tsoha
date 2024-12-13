@@ -40,7 +40,7 @@ def category_page(category: str):
     category = get_category(category, session["user_id"])
     if not category or (not category.is_public and session["user_role"] < 1
                         and not category.permission):
-        flash("Unauthorized", "error")
+        flash("Category does not exist or is set to private.", "error")
         return redirect(url_for("index"))
     threads = get_threads(category_id=category.id, user_id=session["user_id"])
     return render_template("category.html",

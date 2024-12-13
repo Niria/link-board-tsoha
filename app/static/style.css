@@ -38,6 +38,7 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   word-break: break-word;
+  color: var(--text-color-1);
 }
 
 h1 {
@@ -446,6 +447,8 @@ a:has(> .thread-link) {
 }
 
 .reply-user-container {
+  display: flex;
+  align-items: center;
   margin-bottom: 0.25rem;
   & span:first-child {
     margin-right: 0.5rem;
@@ -527,12 +530,14 @@ a:has(> .thread-link) {
   & label {
     color: var(--text-color-1);
   }
-  & input {
-    margin-top: 1rem;
+  & dd {
+    display: inline-block;
   }
   & input[type="submit"] {
+    vertical-align: top;
     width: 4rem;
-    height: 1.5rem;
+    height: 2.125rem;
+    margin-left: 1rem;
     border-radius: 0.375rem;
     background-color: green;
     color: white;
@@ -563,16 +568,6 @@ a:has(> .thread-link) {
 
 .approved-user:hover {
   filter: brightness(95%);
-}
-
-.approved-user button {
-  width: 4rem;
-  height: 1.5rem;
-  border-radius: 0.375rem;
-  font-size: small;
-  text-align: center;
-  color: white;
-  background-color: #ef3d3d;
 }
 
 .approved-user input[type="submit"] {
@@ -754,10 +749,12 @@ dl {
 }
 
 .search-form > dl {
+  word-break: initial;
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 3fr auto;
-  /*column-gap: 1rem;*/
-  padding: 0.5rem;
+  width: fit-content;
+  grid-template-columns: repeat(5, min-content);
+  grid-gap: 1rem;
+  padding: 0.5rem 1rem;
   background-color: var(--bg-color-2);
   border-radius: 0.25rem;
   box-shadow: 0 0.25rem 1rem -0.5rem rgba(0, 0, 0, 0.3);
@@ -865,7 +862,22 @@ dl {
 .form-buttons {
   display: flex;
   gap: 1rem;
+  & button {
+    background-color: #ef3d3d;
+    color: white;
+  }
+  & input[type="submit"] {
+    box-sizing: border-box;
+    background-color: green;
+    color: white;
+    min-width: 5rem;
+  }
 }
+
+.following-user {
+  outline: 0.25rem solid rgba(255, 215, 0, 0.25);
+}
+
 
 
 
