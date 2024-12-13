@@ -1,8 +1,8 @@
 :root {
   --bg-color-1: rgb(223, 236, 235);
-  --bg-color-2: rgb(203, 222, 230); 
+  --bg-color-2: rgb(203, 222, 230);
   --bg-color-3: rgb(209, 213, 219);
-  --bg-color-4: rgb(38, 44, 80); 
+  --bg-color-4: rgb(38, 44, 80);
   --bg-color-5: rgb(196, 221, 216);
   --text-color-1: darkslategray;
   --text-color-2: darkcyan;
@@ -37,6 +37,7 @@ body {
   background-color: var(--bg-color-4);
   margin: 0;
   font-family: Arial, sans-serif;
+  word-break: break-word;
 }
 
 h1 {
@@ -75,7 +76,7 @@ button {
   justify-content: center;
   padding: 0 2rem;
 }
-    
+
 .navbar {
   height: 4rem;
   padding: 0 2rem;
@@ -118,6 +119,12 @@ button {
 
 .category-nav-container > span:not(:last-child)::after {
   content: " | ";
+}
+
+.login-register-title {
+  margin-bottom: 0;
+  padding: 0 0 0.5rem 0;
+  border-bottom: solid 0.25rem var(--bg-color-4);
 }
 
 .category-title-container {
@@ -203,6 +210,7 @@ button {
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  overflow: hidden;
   margin: 1rem;
   padding: 1rem;
   border-radius: 0.25rem;
@@ -238,9 +246,9 @@ button {
 
 .btn {
   border: none;
-  padding: 0;
   cursor: pointer;
   background-color: var(--btn-color-primary);
+  color: var(--text-color-1);
   user-select: none;
   box-shadow: 0 0.125rem 0.375rem -0.125rem dimgray;
 }
@@ -357,7 +365,7 @@ a:has(> .thread-link) {
   display: flex;
   flex-direction: column;
   & div {
-     font-size: small;
+    font-size: small;
   }
 }
 
@@ -388,6 +396,41 @@ a:has(> .thread-link) {
   & button {
     margin-left: auto;
   }
+}
+
+.user-profile-details {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 5%;
+  color: var(--text-color-1);
+  &>div:first-child {
+    min-height: 12rem;
+  }
+  & > div {
+    padding: 1rem;
+    background-color: var(--bg-color-2);
+    border-radius: 0.375rem;
+    align-self: start;
+    & > div {
+      margin: 0.5rem 0;
+      &:not(:has(span)) > div:nth-child(1) {
+        color: var(--text-color-2);
+        margin-bottom: 0.25rem;
+      }
+      &:has(span) {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        & > span:first-child {
+          color: var(--text-color-2);
+        }
+      }
+    }
+  }
+}
+
+.user-profile-details ~ button {
+  margin-top: 1rem;
 }
 
 #like-thread, #like-reply {
@@ -651,14 +694,14 @@ dl {
     padding: 0.5rem;
   }
   & input[type="text"]:focus,
-    input[type="password"]:focus,
-    input[type="url"]:focus {
+  input[type="password"]:focus,
+  input[type="url"]:focus {
     outline: none;
     border-color: dimgray;
   }
   & dd:has(ul) input[type="text"],
-    dd:has(ul) input[type="password"],
-    dd:has(ul) input[type="url"] {
+  dd:has(ul) input[type="password"],
+  dd:has(ul) input[type="url"] {
     border-color: red;
   }
   & textarea {
@@ -758,9 +801,9 @@ dl {
     &:first-child {
       text-align: center;
       & img {
-       line-height: 0;
-       display: block;
-       margin: auto;
+        line-height: 0;
+        display: block;
+        margin: auto;
       }
     }
   }
@@ -768,12 +811,12 @@ dl {
 .user-grid > div:nth-child(-n+6),
 .category-grid > div:nth-child(-n+7),
 .thread-grid > div:nth-child(-n+9) {
-    background-color: var(--bg-color-5);
-    font-size: 1.1rem;
-    font-weight: bold;
-    align-content: center;
-    padding: 0.5rem 0.5rem;
-    border-radius: 0.25rem 0.25rem 0 0;
+  background-color: var(--bg-color-5);
+  font-size: 1.1rem;
+  font-weight: bold;
+  align-content: center;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.25rem 0.25rem 0 0;
 }
 
 .table-grid {
@@ -818,5 +861,11 @@ dl {
     }
   }
 }
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
 
 

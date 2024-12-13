@@ -2,24 +2,33 @@
 {% block title %}Submit link{% endblock %}
 {% from "_macros.html" import render_field %}
 {% block content %}
-    <div class="category-title-container">
-        <a href="{{ url_for('category_page', category=category) }}"><h1>{{ category }}</h1></a>
-    </div>
     {% if not editing %}
+        <div class="category-title-container">
+            <a href="{{ url_for('category_page', category=category) }}"><h1>{{ category }}</h1></a>
+        </div>
         <h2>Submit link</h2>
-        <form method="POST" action="" novalidate>
+        <form id="new-thread-form" method="POST" action="" novalidate>
             <dl>
                 {{ render_field(form.url) }}
                 {{ render_field(form.title) }}
                 {{ render_field(form.message) }}
                 {{ render_field(form.fetch_image) }}
                 {{ form.csrf_token }}
-                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
+        <div class="form-buttons">
+            <button class="btn btn-small"
+                    onclick="window.location.href='{{ url_for('category_page', category=category) }}'">
+                Cancel
+            </button>
+            {{ form.submit(class="btn btn-big", form="new-thread-form") }}
+        </div>
     {% else %}
+        <div class="category-title-container">
+            <a href="{{ url_for('thread_page', thread_id=thread.id) }}"><h1>{{ thread.title }}</h1></a>
+        </div>
         <h2>Edit thread</h2>
-        <form method="POST" action="" novalidate>
+        <form id="edit-thread-form" method="POST" action="" novalidate>
             <dl>
                 {{ render_field(form.url) }}
                 {{ render_field(form.title) }}
@@ -32,8 +41,13 @@
                     {{ render_field(form.visible) }}
                 {% endif %}
                 {{ form.csrf_token }}
-                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
+        <div class="form-buttons">
+            <button class="btn btn-small"
+                    onclick="window.location.href='{{ url_for('thread_page', thread_id=thread.id) }}'">Cancel
+            </button>
+            {{ form.submit(class="btn btn-big", form="edit-thread-form") }}
+        </div>
     {% endif %}
 {% endblock %}

@@ -50,6 +50,9 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r ./requirements.txt
 ```
+If you run into issues when installing `psycopg2` you can try using `psycopg2-binary` instead.
+
+
 ### Database
 If postgres isn't already up and running, start it manually or run the following tsoha start-up script:
 ```

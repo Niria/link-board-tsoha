@@ -6,6 +6,7 @@
         <p>You are logged in as {{ session.username }}</p>
         <a href="{{ url_for('logout') }}">Log out</a>
     {% else %}
+        <h2 class="login-register-title">Log in</h2>
         <form method="POST" action="" novalidate>
             <dl>
                 {{ render_field(form.username) }}

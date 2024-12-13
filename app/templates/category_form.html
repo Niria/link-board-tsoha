@@ -8,25 +8,32 @@
             <a href="{{ url_for('category_page', category=category.name) }}"><h1>{{ category.name }}</h1></a>
         </div>
         <h2>Edit Category</h2>
-        <form method="POST" action="" novalidate>
+        <form id="edit-category-form" method="POST" action="" novalidate>
             <dl>
                 {{ render_field(form.name) }}
                 {{ render_field(form.description) }}
                 {{ render_field(form.is_public) }}
                 {{ form.csrf_token }}
-                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
+        <div class="form-buttons">
+            <button class="btn btn-small" onclick="location.href='{{ url_for('category_page', category=category.name) }}'">Cancel</button>
+            {{ form.submit(class="btn btn-big", form="edit-category-form") }}
+        </div>
     {% else %}
-        <form method="POST" action="" novalidate>
+        <h2>Create Category</h2>
+        <form id="new-category-form" method="POST" action="" novalidate>
             <dl>
                 {{ render_field(form.name) }}
                 {{ render_field(form.description) }}
                 {{ render_field(form.is_public) }}
                 {{ form.csrf_token }}
-                {{ form.submit(class="btn btn-big") }}
             </dl>
         </form>
+        <div class="form-buttons">
+            <button class="btn btn-small" onclick="location.href='{{ url_for('index') }}'">Cancel</button>
+            {{ form.submit(class="btn btn-big", form="new-category-form") }}
+        </div>
         {% endif %}
     {% endif %}
 {% endblock %}

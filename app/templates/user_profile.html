@@ -94,35 +94,40 @@
                 <p>User has no followers.</p>
             {% endfor %}
         {% else %}
-            <div>
-                <h4>Display Name:</h4>
-                <div>{{ user.display_name }}</div>
-            </div>
-            <div>
-                <h4>Username:</h4>
-                <div>{{ user.username }}</div>
-            </div>
-            <div>
-                <h4>Join Date:</h4>
-                <div>{{ user.join_date }}</div>
-            </div>
-            <div>
-                <h4>Description:</h4>
-                <div>{{ user.description }}</div>
-            </div>
-            <div>
-                <h4>Threads Submitted:</h4>
-                <div>{{ user.threads }}</div>
-            </div>
-            <div>
-                <h4>Replies Submitted:</h4>
-                <div>{{ user.replies }}</div>
-            </div>
-            <div>
-                <h4>Follower Count</h4>
-                <div>{{ user.followers }}</div>
-            </div>
-            {% if user.id == session.user_id or session.user_role > 0 %}
+            <div class="user-profile-details">
+                <div>
+                    <div>
+                        <div>Display Name:</div>
+                        <div>{{ user.display_name }}</div>
+                    </div>
+                    <div>
+                        <div>Username:</div>
+                        <div>{{ user.username }}</div>
+                    </div>
+                    <div>
+                        <div>Description:</div>
+                        <div>{{ user.description }}</div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <span>Join Date:</span>
+                        <span>{{ user.join_date }}</span>
+                    </div>
+                    <div>
+                        <span>Threads Submitted:</span>
+                        <span>{{ user.threads }}</span>
+                    </div>
+                    <div>
+                        <span>Replies Submitted:</span>
+                        <span>{{ user.replies }}</span>
+                    </div>
+                    <div>
+                        <span>Follower Count:</span>
+                        <span>{{ user.followers }}</span>
+                    </div>
+                </div>
+            </div>            {% if user.id == session.user_id or session.user_role > 0 %}
                 <button class="btn btn-small" onclick="window.location.href='{{ url_for('edit_profile', username=user.username) }}';">Edit Profile</button>
             {% endif %}
         {% endif %}

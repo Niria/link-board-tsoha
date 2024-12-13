@@ -6,15 +6,19 @@
         <p>You are logged in as {{ session.username }}</p>
         <a href="{{ url_for('logout') }}">Log out</a>
     {% else %}
-        <form method="POST" action="" novalidate>
-            <dl>
-                {{ render_field(form.username) }}
-                {{ render_field(form.display_name) }}
-                {{ render_field(form.password) }}
-                {{ render_field(form.confirm) }}
-                {{ form.csrf_token }}
-                {{ form.submit(class="btn btn-big") }}
-            </dl>
-        </form>
+        <h2 class="login-register-title">Register</h2>
+            <form id="register-form" method="POST" action="" novalidate>
+                <dl>
+                    {{ render_field(form.username) }}
+                    {{ render_field(form.display_name) }}
+                    {{ render_field(form.password) }}
+                    {{ render_field(form.confirm) }}
+                    {{ form.csrf_token }}
+                </dl>
+            </form>
+            <div class="form-buttons">
+                <button class="btn btn-small" onclick="window.location.href='{{ url_for('login') }}'">Cancel</button>
+                {{ form.submit(class="btn btn-small", form="register-form") }}
+            </div>
     {% endif %}
 {% endblock %}

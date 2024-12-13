@@ -41,7 +41,7 @@ VALUES ('user5', 'User 5', 'scrypt:32768:8:1$gGcL4tROHg2ObV9m$aa0a5a3a7905027992
 
 -- Generate 100 dummy users
 INSERT INTO users (username, display_name, password, user_role, created_at)
-SELECT 'dummy_user_' || i::varchar(8), 'DummyUser-' || i::varchar(8), md5(random()::text), 0, now() - random() * interval '21 days'
+SELECT 'dummy_user_' || i::varchar(8), 'DummyUser ' || i::varchar(8), md5(random()::text), 0, now() - random() * interval '21 days'
 FROM generate_series(1,100) AS i;
 
 -- Generate dummy threads 

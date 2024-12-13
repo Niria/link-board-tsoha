@@ -28,6 +28,7 @@ CREATE TABLE threads (
     title VARCHAR(64) NOT NULL,
     content TEXT,
     link_url VARCHAR(64) NOT NULL,
+    thumbnail BYTEA,
     visible BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NULL

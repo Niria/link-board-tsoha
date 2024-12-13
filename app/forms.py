@@ -66,7 +66,7 @@ class EditCategoryForm(CategoryForm):
 class ThreadForm(StripFlaskForm):
     url = URLField("URL", validators=[InputRequired("Link URL is required"), Length(min=3, max=64, message="Link URL must be between %(min)d and %(max)d characters long"), URL()])
     title = StringField("Title", validators=[InputRequired("Link title is required"), Length(min=3, max=64, message="Link title must be between %(min)d and %(max)d characters long")])
-    message = StringField("Message", validators=[Length(min=0, max=1000, message="Message must be between %(min)d and %(max)d characters long")])
+    message = TextAreaField("Message", validators=[Length(min=0, max=1000, message="Message can be up to %(max)d characters long")])
 
 class NewThreadForm(ThreadForm):
     fetch_image = BooleanField("Fetch image")
