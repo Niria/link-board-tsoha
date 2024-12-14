@@ -1,12 +1,11 @@
 from flask import render_template, redirect, request, session, url_for, flash
 
 from app import app
-from .content import (create_category, get_category, update_category,
-                      users_without_permissions, users_with_permissions,
-                      toggle_permissions)
-from .forms import AddPermissionsForm, RemovePermissionsForm, EditCategoryForm, \
+from app.services import users as user_service
+from app.services import categories as category_service
+from app.utils.forms import AddPermissionsForm, RemovePermissionsForm, EditCategoryForm, \
     NewCategoryForm
-from .users import admin_required, login_required
+from app.utils.decorators import admin_required, login_required
 
 
 @app.route("/new_category", methods=["GET", "POST"])
@@ -16,7 +15,7 @@ def new_category():
     form = NewCategoryForm()
     if form.validate_on_submit():
         try:
-            create_category(form.name.data, form.description.data, form.is_public.data)
+            category_service.create_category(form.name.data, form.description.data, form.is_public.data)
             flash(f"Category '{form.name.data}' created successfully!", "success")
             return redirect(url_for("category_page", category=form.name.data))
         except ValueError as e:
@@ -29,12 +28,12 @@ def new_category():
 @admin_required
 def edit_category(category):
     form = EditCategoryForm()
-    category = get_category(category, session["user_id"])
+    category = category_service.get_category(category, session["user_id"])
     if not category:
         flash("Category does not exist.", "error")
         return redirect(url_for("index"))
     if form.validate_on_submit():
-        update_category(category.id, form.name.data, form.description.data,
+        category_service.update_category(category.id, form.name.data, form.description.data,
                         form.is_public.data)
         flash(f"Category '{form.name.data}' updated successfully!", "success")
         return redirect(url_for("category_page", category=form.name.data))
@@ -49,19 +48,19 @@ def edit_category(category):
 @login_required
 @admin_required
 def edit_permissions(category: str):
-    category = get_category(category, session["user_id"])
+    category = category_service.get_category(category, session["user_id"])
     if not category:
         flash("Invalid category.", "error")
         return redirect(url_for("index"))
     add_user_form = AddPermissionsForm()
     remove_user_form = RemovePermissionsForm()
-    unapproved_users = users_without_permissions(category.id)
-    approved_users = users_with_permissions(category.id)
+    unapproved_users = user_service.users_without_permissions(category.id)
+    approved_users = user_service.users_with_permissions(category.id)
     add_user_form.user_id.choices = [(u.id, u.username) for u in unapproved_users]
 
     if request.form.get("submit") == "Add" and add_user_form.validate_on_submit():
         try:
-            toggle_permissions(add_user_form.user_id.data, category.name)
+            user_service.toggle_permissions(add_user_form.user_id.data, category.name)
             username = dict(add_user_form.user_id.choices).get(add_user_form.user_id.data)
             flash(f"Added permissions for user '{username}' successfully!", "success")
         except ValueError as e:
@@ -70,7 +69,7 @@ def edit_permissions(category: str):
     elif request.form.get("submit") == "Remove" and remove_user_form.validate_on_submit():
         user_id = request.form.get('user_id', type=int)
         try:
-            toggle_permissions(user_id, category.name)
+            user_service.toggle_permissions(user_id, category.name)
             flash(f"Removed permissions from user '{request.form.get("username")}' successfully!", "success")
         except ValueError as e:
             flash(str(e), "error")

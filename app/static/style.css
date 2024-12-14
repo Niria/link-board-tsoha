@@ -241,6 +241,10 @@ button {
   box-shadow: 0 0.125rem 0.75rem -0.25rem dimgray;
 }
 
+.thread-message {
+  margin: 0.5rem 0;
+}
+
 .thread-message,
 .reply-message{
   word-break: break-word;

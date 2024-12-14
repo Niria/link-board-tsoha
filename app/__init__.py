@@ -1,16 +1,16 @@
-from flask import Flask, session
 from os import getenv
 
+from flask import Flask, session
 from flask_wtf import CSRFProtect
 
-from app.utils import b64encode
+from app.utils.thumbnail import b64encode
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 CSRFProtect(app)
 app.jinja_env.filters['b64encode'] = b64encode
-from app import routes, auth, admin
-from app.content import get_category_list
+from app import routes
+from app.services.categories import get_category_list
 
 
 @app.context_processor
