@@ -11,12 +11,19 @@ def get_category_list(user_id: int = None):
           FROM categories AS c
                LEFT JOIN permissions AS p
                  ON p.category_id=c.id AND p.user_id=:user_id
+               LEFT JOIN category_favourites AS cf
+                 ON cf.category_id=c.id AND cf.user_id=:user_id
+               LEFT JOIN (SELECT category_id, count(*) AS threads
+                            FROM threads
+                           GROUP BY category_id) AS t
+                 ON t.category_id=c.id
          WHERE (c.is_public=:public 
                OR (SELECT user_role > 0 
                     FROM users 
                    WHERE id=:user_id)
                OR p.user_id IS NOT NULL)
-         ORDER BY c.name;""")
+         ORDER BY cf.user_id, threads DESC NULLS LAST, c.name
+         LIMIT 15;""")
     categories = db.session.execute(sql, {"public":True, "user_id":user_id})
     return categories.fetchall()
 
@@ -646,7 +653,7 @@ def keyword_search(search_type: str, keyword: str, user_id: int):
                                    ON cf.category_id=c.id
                                   AND cf.user_id=:user_id
                            WHERE c.name ILIKE '%' || :keyword || '%'
-                           ORDER BY c.name""")
+                           ORDER BY threads DESC, favourites DESC, c.name""")
         case "thread":
             sql = text("""
             WITH curr_user(is_admin) AS (

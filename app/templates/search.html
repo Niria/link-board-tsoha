@@ -73,7 +73,7 @@
                                 <img src="data:;base64, {{ thread.thumbnail|b64encode }}" alt="Thumbnail of {{ thread.title }}"/>
                             </div>
                         {% else %}
-                            <div>N/A</div>
+                            <div></div>
                         {% endif %}
                         <div>{{ thread.title }}</div>
                         <div>{{ thread.link_url }}</div>

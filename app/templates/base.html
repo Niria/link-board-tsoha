@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>Link-board - {% block title %}{% endblock %}</title>
-    <script type="text/javascript" src="{{ url_for('static', filename='utils.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-{% include "navbar.html" %}
-<div class="content-container">
-    <div class="content">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="messages">
-                    {% for type, message in messages %}
-                        <li class="{{ type }}-message">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </div>
-</div>
-</body>
+    <head>
+        <title>Link-board - {% block title %}{% endblock %}</title>
+        <script type="text/javascript" src="{{ url_for('static', filename='utils.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        {% include "navbar.html" %}
+        <div class="content-container">
+            <div class="content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for type, message in messages %}
+                                <li class="{{ type }}-message">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <footer>
+        </footer>
+    </body>
 </html>
