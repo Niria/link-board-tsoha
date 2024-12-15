@@ -7,7 +7,7 @@
     <h2>Manage Permissions</h2>
     <h3>Add user</h3>
     {% if not unapproved_users %}
-        <div>All users have permissions to this category.</div>
+        <div class="all-approved">All users have permissions to this category.</div>
     {% else %}
         {% from "_macros.html" import render_field %}
         <form class="approve-user-form" name="add-permissions" method="POST" action="" novalidate>

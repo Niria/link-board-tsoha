@@ -1,39 +1,44 @@
 # Link Board | Tsoha
 
-Link Board is an app where users can post links to news, articles and pictures. Links 
-submitted by users start a new discussion thread where other users can participate. The board 
-is divided into categories for all the various topics and each link submission belongs to one
-of these categories.
+Link Board is an app where users can submit links to for example news, articles and pictures. Links 
+submitted by users start a new discussion thread where other users can participate. The board is 
+divided into categories for all the various topics and each link submission belongs to one specific 
+category. Admins can moderate user submitted content by creating private categories, managing access
+permissions and editing user submissions. All available features in the app are listed below.
 
 
 ## Features
 
 ### User can
-- [x] Create an account, sign in and out
-- [x] Edit their own profile
-- [x] Set their profile public or private
-- [x] View public profiles of other users
-- [x] View threads and replies submitted by users on their profile page
-- [x] View all the public discussion threads on the home page
-- [x] Select categories to filter threads to their liking
-- [x] Search for users, categories and threads
-- [x] Submit links which creates a new discussion thread
-- [x] Choose to fetch a thumbnail for their link submission
-- [x] Write messages in threads as a reply to the thread or another comment
-- [x] Edit the link, title, message and thumbnail of their own threads
-- [x] Edit their own replies
-- [x] Choose favourite categories
-- [x] Like threads and replies
-- [x] Follow other users which highlights their threads and replies
+- Create an account, sign in and out
+- Edit their own profile
+- Set their profile public or private
+- View public profiles of other users
+- View threads and replies submitted by users on their profile page
+- View all the public discussion threads on the home page
+- Select categories to filter threads to their liking
+- Search for users, categories and threads
+- Submit links to create a new discussion thread
+- Choose to fetch a thumbnail for their link submission
+- Submit replies in threads to the main thread or another reply
+- Edit the link, title, message and thumbnail of their own threads
+- Edit their own replies
+- Choose favourite categories and view threads from them on a separate page
+- Like threads and replies
+- Follow other users to highlight their threads and replies
 
 ### Admin can
-- [x] Create new public and private categories for links
-- [x] Edit category name, description and privacy status
-- [x] Grant and revoke private category access permissions for users
-- [x] Edit and hide/soft delete threads/messages submitted by users
+- Create new public and private categories for links
+- Edit category name, description and privacy status
+- Grant and revoke private category access permissions for users
+- Edit and hide/soft delete threads/messages submitted by users
+- View hidden content
 
-Check `TODO.md` for up to date tasklist.
+Check `TODO.md` for a list of potential future features.
 
+
+## Fly.io
+This app is not available on Fly.io, but you can test it locally using the instructions below.
 
 ## Installation
 ### Environment
