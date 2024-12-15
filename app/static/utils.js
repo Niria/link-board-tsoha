@@ -1,7 +1,7 @@
 function toggleThreadLike(event) {
   const url = event.target.dataset.url;
-  const image = document.getElementById('thumb');
-  image.classList.toggle('thumb-active');
+  const image = document.getElementById("thumb");
+  image.classList.toggle("thumb-active");
   const csrf_token = event.target.dataset.csrf;
 
   fetch(url, {
@@ -12,14 +12,14 @@ function toggleThreadLike(event) {
     }
   })
       .then((response) => response.json())
-      .then((json) => event.target.querySelector('#thread-likes').innerHTML = json.likes);
+      .then((json) => event.target.querySelector("#thread-likes").innerHTML = json.likes);
 }
 
 function toggleReplyLike(reply) {
   const url = reply.dataset.url;
   const csrf_token = reply.dataset.csrf;
-  const image = reply.querySelector('#thumb');
-  image.classList.toggle('thumb-active');
+  const image = reply.querySelector("#thumb");
+  image.classList.toggle("thumb-active");
 
   fetch(url, {
     method: "POST",
@@ -29,7 +29,7 @@ function toggleReplyLike(reply) {
     }
   })
       .then((response) => response.json())
-      .then((json) => reply.querySelector('#reply-likes').innerHTML = json.likes);
+      .then((json) => reply.querySelector("#reply-likes").innerHTML = json.likes);
 }
 
 function toggleUserFollow(follow) {
@@ -47,8 +47,8 @@ function toggleUserFollow(follow) {
       .then((response) => response.json())
       .then((json) => {
         if (json.success === true) {
-          follow.innerHTML = json.following ? 'Following' : 'Follow';
-          follow.classList.toggle('following');
+          follow.innerHTML = json.following ? "Following" : "Follow";
+          follow.classList.toggle("following");
         }
       })
 }
@@ -68,7 +68,7 @@ function toggleCategoryFavourite(favourite) {
       .then((response) => response.json())
       .then((json) => {
         if (json.success === true) {
-          favourite.style.fill = json.favourite ? 'gold' : 'none';
+          favourite.style.fill = json.favourite ? "gold" : "none";
         }
       })
 }
@@ -76,72 +76,72 @@ function toggleCategoryFavourite(favourite) {
 
 function setEventHandlers() {
   // Initialize eventListener for thread clicks
-  const threadContent = document.querySelector('.thread-content');
+  const threadContent = document.querySelector(".thread-content");
   if (threadContent !== null) {
-    const threadComment = threadContent.querySelector('.toggle-comment-form');
-    threadContent.querySelector('.form-toggle').addEventListener('click', () => {
-      threadComment.classList.toggle('hidden');
+    const threadComment = threadContent.querySelector(".toggle-comment-form");
+    threadContent.querySelector(".form-toggle").addEventListener("click", () => {
+      threadComment.classList.toggle("hidden");
     })
-    threadContent.querySelector('#like-thread').addEventListener('click', (e) => toggleThreadLike(e));
+    threadContent.querySelector("#like-thread").addEventListener("click", (e) => toggleThreadLike(e));
   }
 
   // Initialize eventlisteners for reply clicks
-  const replyContent = document.querySelectorAll('.reply-content-container');
+  const replyContent = document.querySelectorAll(".reply-content-container");
   if (replyContent !== null) {
     replyContent.forEach((reply) => {
-      const replyComment = reply.querySelectorAll('.toggle-comment-form');
+      const replyComment = reply.querySelectorAll(".toggle-comment-form");
       if (replyComment.length > 0) {
-        reply.querySelector('.form-toggle').addEventListener('click', () => {
-          replyComment[0].classList.toggle('hidden');
-          if (!replyComment[1].classList.contains('hidden')) {
-            replyComment[1].classList.toggle('hidden');
+        reply.querySelector(".form-toggle").addEventListener("click", () => {
+          replyComment[0].classList.toggle("hidden");
+          if (!replyComment[1].classList.contains("hidden")) {
+            replyComment[1].classList.toggle("hidden");
           }
         })
-        const editReply = reply.querySelector('.form-toggle-edit')
+        const editReply = reply.querySelector(".form-toggle-edit")
         if (editReply !== null) {
-          editReply.addEventListener('click', () => {
-            const existingComment = reply.querySelector('.reply-message');
-            replyComment[1].querySelector('textarea').innerHTML = existingComment.innerHTML;
-            replyComment[1].classList.toggle('hidden');
-            if (!replyComment[0].classList.contains('hidden')) {
-              replyComment[0].classList.toggle('hidden');
+          editReply.addEventListener("click", () => {
+            const existingComment = reply.querySelector(".reply-message");
+            replyComment[1].querySelector("textarea").innerHTML = existingComment.innerHTML;
+            replyComment[1].classList.toggle("hidden");
+            if (!replyComment[0].classList.contains("hidden")) {
+              replyComment[0].classList.toggle("hidden");
             }
         })
         }
 
       }
-      const likeReply = reply.querySelector('#like-reply');
-      likeReply.addEventListener('click', () => toggleReplyLike(likeReply));
+      const likeReply = reply.querySelector("#like-reply");
+      likeReply.addEventListener("click", () => toggleReplyLike(likeReply));
     })
   }
 
   // Initialize eventListener for following user
-  const userFollow = document.querySelector('#user-follow');
+  const userFollow = document.querySelector("#user-follow");
   if (userFollow !== null) {
-    userFollow.addEventListener('click', () => toggleUserFollow(userFollow));
+    userFollow.addEventListener("click", () => toggleUserFollow(userFollow));
   }
 
   // Initialize eventListener for favouriting category
-  const categoryFavourite = document.querySelector('#category-favourite');
+  const categoryFavourite = document.querySelector("#category-favourite");
   if (categoryFavourite !== null) {
-    categoryFavourite.addEventListener('click', () => toggleCategoryFavourite(categoryFavourite));
+    categoryFavourite.addEventListener("click", () => toggleCategoryFavourite(categoryFavourite));
   }
 
   // Initialize eventListeners for closing messages
-  const messageList = document.querySelector('.messages');
+  const messageList = document.querySelector(".messages");
   if (messageList!== null) {
-    messageList.querySelectorAll('li').forEach((e) => e.addEventListener('click', () => {
+    messageList.querySelectorAll("li").forEach((e) => e.addEventListener("click", () => {
       e.remove();
     }))
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   setEventHandlers();
-  const messages = document.querySelector('.messages');
+  const messages = document.querySelector(".messages");
   if (messages !== null) {
     setTimeout(() => {
-      messages.style.opacity = '0';
+      messages.style.opacity = "0";
     }, 3000);
     setTimeout(() => {
       messages.remove()

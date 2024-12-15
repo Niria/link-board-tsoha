@@ -7,7 +7,7 @@ from app.services import users as user_service
 
 from app import app
 from flask import (jsonify, redirect, render_template, request, session,
-                   url_for, flash)
+                   url_for, flash, abort)
 from app.utils.db import db
 from app.utils.forms import (EditUserProfileForm, EditReplyForm, EditThreadForm,
                              AdminEditThreadForm, NewThreadForm, AdminEditReplyForm,
@@ -121,8 +121,9 @@ def edit_thread(thread_id):
     if form.validate_on_submit():
         update_thumbnail = False
         thread_thumbnail = None
+        url = form.url.data.strip("/")
         if form.refresh_image.data == "refresh":
-            thread_thumbnail = fetch_thumbnail(form.url.data)
+            thread_thumbnail = fetch_thumbnail(url)
             update_thumbnail = True
         elif form.refresh_image.data == "delete":
             update_thumbnail = True
@@ -130,7 +131,7 @@ def edit_thread(thread_id):
         if session["user_role"] > 0:
             visible = form.visible.data
         try:
-            thread_service.update_thread(thread.id, form.url.data, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
+            thread_service.update_thread(thread.id, url, form.title.data, form.message.data, visible, thread_thumbnail, update_thumbnail)
             flash(f"Edited thread: '{form.title.data.strip()}'", "success")
             return redirect(url_for("thread_page", thread_id=thread.id))
         except ValueError as e:
@@ -184,7 +185,7 @@ def edit_reply(thread_id, reply_id):
         if content:
             content = content.strip()
         visible = None
-        if 'visible' in request.form:
+        if "visible" in request.form:
             visible = True if request.form["visible"] == "true" else False
         if session["user_role"] > 0:
             form = AdminEditReplyForm()
@@ -204,7 +205,7 @@ def edit_reply(thread_id, reply_id):
         else:
             for field, error in form.errors.items():
                 flash(error[0], "error")
-        return redirect(url_for('thread_page', thread_id=thread_id))
+        return redirect(url_for("thread_page", thread_id=thread_id))
 
 
 @app.route("/u/<string:username>/<string:page>")
@@ -268,9 +269,10 @@ def follow(username: str):
 @login_required
 def search():
     form = SearchForm()
-    form.search_type.choices = [('user', 'Users'),
-                                ('category', 'Categories'),
-                                ('thread', 'Threads')]
+    form.search_type.choices = [("user", "Users"),
+                                ("category", "Categories"),
+                                ("thread", "Threads")]
+
 
     if form.validate_on_submit():
         results = search_service.keyword_search(form.search_type.data,
@@ -283,9 +285,8 @@ def search():
 
 
 # Catches invalid paths
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
 @login_required
 def catch_all(path):
-    return render_template("error.html",
-                           message="Nothing to be found here")
+    abort(404)

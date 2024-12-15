@@ -26,7 +26,7 @@ def new_category():
 @app.route("/c/<string:category>/edit", methods=["GET", "POST"])
 @login_required
 @admin_required
-def edit_category(category):
+def edit_category(category: str):
     form = EditCategoryForm()
     category = category_service.get_category(category, session["user_id"])
     if not category:
@@ -67,7 +67,7 @@ def edit_permissions(category: str):
             flash(str(e), "error")
         return redirect(url_for("edit_permissions", category=category.name))
     elif request.form.get("submit") == "Remove" and remove_user_form.validate_on_submit():
-        user_id = request.form.get('user_id', type=int)
+        user_id = request.form.get("user_id", type=int)
         try:
             user_service.toggle_permissions(user_id, category.name)
             flash(f"Removed permissions from user '{request.form.get("username")}' successfully!", "success")

@@ -28,7 +28,7 @@
                         <div>{{ user.join_date }}</div>
                         <div>{{ user.threads }}</div>
                         <div>{{ user.replies }}</div>
-                        <div>{{ 'Yes' if user.following else 'No' }}</div>
+                        <div>{{ "Yes" if user.following else "No" }}</div>
                     </a>
                 {% endfor %}
             </div>
@@ -45,11 +45,11 @@
                     <a class="table-grid-row" href="{{ url_for('category_page', category=category.name) }}">
                         <div>{{ category.name }}</div>
                         <div>{{ category.description }}</div>
-                        <div>{{ 'Yes' if category.is_public else 'No' }}</div>
+                        <div>{{ "Yes" if category.is_public else "No" }}</div>
                         <div>{{ category.creation_date }}</div>
                         <div>{{ category.threads }}</div>
                         <div>{{ category.favourites }}</div>
-                        <div>{{ 'Yes' if category.favourited else 'No' }}</div>
+                        <div>{{ "Yes" if category.favourited else "No" }}</div>
                     </a>
                 {% endfor %}
             </div>
@@ -83,7 +83,7 @@
                         <div>{{ thread.likes }}</div>
                         <div>{{ thread.comments }}</div>
                         {% if session.user_role > 0 %}
-                         <div>{{ 'Yes' if thread.visible else 'No' }}</div>
+                         <div>{{ "Yes" if thread.visible else "No" }}</div>
                         {% endif %}
                     </a>
                 {% endfor %}

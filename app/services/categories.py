@@ -21,7 +21,7 @@ def get_category_list(user_id: int = None):
                    WHERE id=:user_id)
                OR p.user_id IS NOT NULL)
          ORDER BY cf.user_id, threads DESC NULLS LAST, c.name
-         LIMIT 12;""")
+         LIMIT 20;""")
     categories = db.session.execute(sql, {"public":True, "user_id":user_id})
     return categories.fetchall()
 

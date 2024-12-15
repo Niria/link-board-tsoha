@@ -6,28 +6,33 @@ is divided into categories for all the various topics and each link submission b
 of these categories.
 
 
-## Planned Features
+## Features
 
-- [x] User can create an account, sign in and out
-- [x] User can edit their profile
-- [x] User profiles can be set to either public or private
-- [x] User can view public profiles of other users
-- [x] Threads and replies submitted by users can be seen on their profile page
-- [x] User can view all the public discussion threads on the home page
-- [x] User can select categories to filter threads to their liking
-- [x] User can write messages in threads as a reply to another message or the main post
-- [x] User can post links and create new threads accompanying them
-- [x] User can like threads and replies
-- [x] User can edit the title and content of their own threads
-- [x] User can edit the content of their replies
-- [x] User can choose favourite categories
-- [x] User can follow other users
-- [x] User can search thread titles and messages using a keyword search function
-- [x] Admin can create new public and private categories for links
-- [x] Admin can grant/revoke private category access permissions for users
-- [x] Admin can edit and hide/soft delete threads/messages submitted by users
+### User can
+- [x] Create an account, sign in and out
+- [x] Edit their own profile
+- [x] Set their profile public or private
+- [x] View public profiles of other users
+- [x] View threads and replies submitted by users on their profile page
+- [x] View all the public discussion threads on the home page
+- [x] Select categories to filter threads to their liking
+- [x] Search for users, categories and threads
+- [x] Submit links which creates a new discussion thread
+- [x] Choose to fetch a thumbnail for their link submission
+- [x] Write messages in threads as a reply to the thread or another comment
+- [x] Edit the link, title, message and thumbnail of their own threads
+- [x] Edit their own replies
+- [x] Choose favourite categories
+- [x] Like threads and replies
+- [x] Follow other users which highlights their threads and replies
 
-Ticked features in the list above have been implemented. Check `TODO.md` for up to date tasklist.
+### Admin can
+- [x] Create new public and private categories for links
+- [x] Edit category name, description and privacy status
+- [x] Grant and revoke private category access permissions for users
+- [x] Edit and hide/soft delete threads/messages submitted by users
+
+Check `TODO.md` for up to date tasklist.
 
 
 ## Installation
@@ -105,6 +110,7 @@ $ flask run
 
 ## Usage
 
+### Users
 The testdata scripts include one admin user and 4 normal users:
 
 | username | password | role  |

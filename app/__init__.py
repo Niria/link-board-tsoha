@@ -8,7 +8,7 @@ from app.utils.thumbnail import b64encode
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 CSRFProtect(app)
-app.jinja_env.filters['b64encode'] = b64encode
+app.jinja_env.filters["b64encode"] = b64encode
 from app import routes
 from app.services.categories import get_category_list
 
