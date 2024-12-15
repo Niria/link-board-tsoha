@@ -221,7 +221,7 @@ button {
   flex-direction: row;
   gap: 1rem;
   overflow: hidden;
-  margin: 1rem;
+  margin: 1rem 0;
   padding: 1rem;
   border-radius: 0.25rem;
   background-color: var(--bg-color-2);
@@ -245,7 +245,7 @@ button {
 }
 
 .reply-content {
-  margin-left: calc(var(--reply-depth)*2rem + 1rem);
+  margin-left: calc(var(--reply-depth)*2rem);
   margin-right: 1rem;
   padding: 1rem;
   border-radius: 0.25rem;
@@ -842,6 +842,7 @@ dl {
         line-height: 0;
         display: block;
         margin: auto;
+        border-radius: 0.25rem;
       }
     }
     &:nth-child(4),
